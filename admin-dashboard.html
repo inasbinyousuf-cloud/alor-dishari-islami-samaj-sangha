@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — আলোর দিশারী</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --dk:#0a1628;--gd:#065f30;--gm:#0b8b44;--gl:#e8f7ee;--gp:#f0faf4;
+  --gold:#c9a84c;--goldl:#f5e6c0;--bg:#f0f3f5;--white:#fff;
+  --sh:0 4px 20px rgba(0,0,0,0.08);--r:14px;--sb:240px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Bengali',sans-serif;}
+body{background:var(--bg);color:#1a2e1e;overflow-x:hidden;}
+
+/* ===== HEADER ===== */
+.hdr{
+  background:var(--dk);height:62px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 22px;
+  position:sticky;top:0;z-index:900;box-shadow:0 2px 18px rgba(0,0,0,0.3);
+}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.mob-tog{background:none;border:none;color:rgba(255,255,255,0.8);font-size:19px;cursor:pointer;padding:6px;}
+.hdr-brand{font-size:15px;font-weight:700;color:white;}
+.admin-pill{background:var(--gold);color:var(--dk);font-size:10px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:0.7px;margin-left:6px;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.admin-info{display:flex;align-items:center;gap:8px;}
+.a-avatar{width:34px;height:34px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:var(--dk);}
+.a-meta{line-height:1.25;}
+.a-name{font-size:13px;font-weight:700;color:white;}
+.a-role{font-size:11px;color:rgba(255,255,255,0.5);}
+.btn-logout{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.85);border:1px solid rgba(255,255,255,0.2);padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:0.2s;}
+.btn-logout:hover{background:rgba(255,255,255,0.2);}
+
+/* ===== SIDEBAR ===== */
+.layout{display:flex;min-height:calc(100vh - 62px);}
+.sidebar{
+  width:var(--sb);background:var(--dk);
+  flex-shrink:0;position:sticky;top:62px;height:calc(100vh - 62px);
+  overflow-y:auto;padding-bottom:20px;transition:0.3s;
+}
+.sidebar::-webkit-scrollbar{width:4px;}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px;}
+.sec-lbl{padding:18px 18px 6px;font-size:10px;font-weight:800;color:rgba(255,255,255,0.28);letter-spacing:1.5px;text-transform:uppercase;}
+.nav-i{
+  display:flex;align-items:center;gap:11px;padding:11px 18px;
+  font-size:13px;font-weight:600;color:rgba(255,255,255,0.58);
+  cursor:pointer;transition:0.2s;text-decoration:none;
+  border-left:3px solid transparent;position:relative;
+}
+.nav-i i{width:18px;text-align:center;font-size:14px;}
+.nav-i:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.9);}
+.nav-i.active{background:rgba(11,139,68,0.22);color:var(--gm);border-left-color:var(--gm);}
+.nav-i .badge-count{
+  position:absolute;right:14px;background:#e74c3c;color:white;
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px;
+}
+.nav-divider{border:none;border-top:1px solid rgba(255,255,255,0.06);margin:10px 0;}
+.nav-i.danger:hover{color:#ff8888;}
+
+/* ===== MAIN ===== */
+.main{flex:1;padding:22px;overflow-x:hidden;}
+
+/* ===== STAT CARDS ===== */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.sc{background:white;border-radius:var(--r);padding:20px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:0.25s;}
+.sc:hover{transform:translateY(-3px);}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.sc-g::after{background:linear-gradient(90deg,var(--gm),#4caf50);}
+.sc-b::after{background:linear-gradient(90deg,#2980b9,#5dade2);}
+.sc-o::after{background:linear-gradient(90deg,var(--gold),#f5c842);}
+.sc-r::after{background:linear-gradient(90deg,#e74c3c,#ec7063);}
+.sc-ico{font-size:26px;margin-bottom:10px;}
+.sc-g .sc-ico{color:var(--gm);}
+.sc-b .sc-ico{color:#2980b9;}
+.sc-o .sc-ico{color:var(--gold);}
+.sc-r .sc-ico{color:#e74c3c;}
+.sc-val{font-size:30px;font-weight:800;color:var(--dk);margin-bottom:3px;}
+.sc-lbl{font-size:12px;color:#888;font-weight:600;}
+
+/* ===== PAGE HEADER ===== */
+.pg-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;}
+.pg-title{font-size:20px;font-weight:800;color:var(--gd);display:flex;align-items:center;gap:10px;}
+.pg-title i{color:var(--gm);}
+.pg-actions{display:flex;gap:10px;flex-wrap:wrap;}
+
+/* ===== TABLE CARD ===== */
+.tc{background:white;border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:22px;}
+.tc-head{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.tc-head h3{font-size:15px;font-weight:700;color:var(--gd);}
+.search-box{display:flex;align-items:center;gap:8px;}
+.search-box input{padding:8px 14px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;font-family:inherit;outline:none;width:200px;transition:0.2s;}
+.search-box input:focus{border-color:var(--gm);}
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{background:#f8f9fa;color:#555;padding:12px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;white-space:nowrap;}
+tbody td{padding:12px 14px;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
+tbody tr:hover td{background:#fafffe;}
+.empty-td{text-align:center;padding:50px;color:#bbb;}
+.empty-td i{font-size:32px;display:block;margin-bottom:10px;}
+.m-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;background:var(--gl);border:2px solid var(--gl);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--gm);}
+.m-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.member-cell{display:flex;align-items:center;gap:10px;}
+.member-cell .mc-info .mc-name{font-size:13px;font-weight:700;color:#1a2e1e;}
+.member-cell .mc-info .mc-phone{font-size:11px;color:#888;}
+
+/* ===== BADGES ===== */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;white-space:nowrap;}
+.b-ok{background:#d4edda;color:#155724;}
+.b-wait{background:#fff3cd;color:#856404;}
+.b-no{background:#ffe0e0;color:#721c24;}
+.b-blue{background:#d4e8ff;color:#0c4a8a;}
+.b-super{background:var(--goldl);color:#6b4e10;}
+
+/* ===== ACTION BUTTONS ===== */
+.act-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.ab{padding:6px 12px;border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:0.2s;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;}
+.ab-green{background:var(--gl);color:var(--gm);}
+.ab-green:hover{background:var(--gm);color:white;}
+.ab-red{background:#ffe8e8;color:#e74c3c;}
+.ab-red:hover{background:#e74c3c;color:white;}
+.ab-blue{background:#ddeeff;color:#1565c0;}
+.ab-blue:hover{background:#1565c0;color:white;}
+.ab-gold{background:var(--goldl);color:#6b4e10;}
+.ab-gold:hover{background:var(--gold);color:white;}
+.ab-gray{background:#f0f0f0;color:#555;}
+.ab-gray:hover{background:#ddd;}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;transition:0.25s;}
+.btn-g{background:var(--gm);color:white;}
+.btn-g:hover{background:var(--gd);}
+.btn-gold{background:var(--gold);color:var(--dk);}
+.btn-gold:hover{background:#b8922e;color:white;}
+.btn-r{background:#ffe0e0;color:#e74c3c;border:1px solid #ffc5c5;}
+.btn-r:hover{background:#e74c3c;color:white;border-color:#e74c3c;}
+.btn-outline{background:transparent;color:var(--gm);border:1.5px solid var(--gm);padding:9px 18px;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:0.2s;}
+.btn-outline:hover{background:var(--gl);}
+
+/* ===== MODAL ===== */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);}
+.modal-bg.open{display:flex;}
+.modal{background:white;border-radius:20px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 60px rgba(0,0,0,0.3);animation:msu 0.3s ease;}
+@keyframes msu{from{opacity:0;transform:scale(0.95)translateY(10px);}to{opacity:1;transform:scale(1)translateY(0);}}
+.mh{padding:20px 24px;border-bottom:1px solid #eee;display:flex;align-items:center;justify-content:space-between;}
+.mh h3{font-size:17px;font-weight:700;color:var(--gd);}
+.mclose{background:none;border:none;font-size:20px;cursor:pointer;color:#aaa;transition:0.2s;line-height:1;}
+.mclose:hover{color:#333;}
+.mb{padding:24px;}
+.mf{padding:16px 24px;border-top:1px solid #eee;display:flex;gap:10px;justify-content:flex-end;}
+
+/* ===== FORM INSIDE MODAL ===== */
+.fg2{margin-bottom:15px;}
+.fg2 label{display:block;font-size:13px;font-weight:600;color:#444;margin-bottom:6px;}
+.fg2 input,.fg2 select,.fg2 textarea{
+  width:100%;padding:11px 14px;border:1.5px solid #dde8e0;border-radius:9px;
+  font-size:14px;font-family:inherit;outline:none;transition:0.2s;
+}
+.fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus{border-color:var(--gm);box-shadow:0 0 0 3px rgba(11,139,68,0.08);}
+.perm-grid{display:grid;gap:8px;margin-top:6px;}
+.perm-item{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--gp);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:#444;}
+.perm-item input[type=checkbox]{width:16px;height:16px;accent-color:var(--gm);cursor:pointer;}
+.perm-item.disabled-perm{opacity:0.45;cursor:not-allowed;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* ===== NOTICE / FORM CARDS ===== */
+.fc{background:white;border-radius:var(--r);box-shadow:var(--sh);padding:24px;margin-bottom:22px;}
+.fc h3{font-size:16px;font-weight:700;color:var(--gd);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.notice-card{background:var(--gp);border-left:4px solid var(--gm);border-radius:10px;padding:16px 18px;margin-bottom:13px;display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+.nc-body h4{font-size:14px;font-weight:700;color:var(--gd);margin-bottom:5px;}
+.nc-body p{font-size:13px;color:#555;line-height:1.7;}
+.nc-date{font-size:11px;color:var(--gm);font-weight:600;margin-top:6px;}
+
+/* ===== COMMITTEE GRID ===== */
+.com-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:16px;}
+.com-card{background:white;border-radius:14px;padding:22px 16px;box-shadow:var(--sh);text-align:center;transition:0.25s;position:relative;}
+.com-card:hover{transform:translateY(-4px);}
+.com-img{width:80px;height:80px;border-radius:50%;margin:0 auto 12px;overflow:hidden;background:var(--gl);border:3px solid var(--gl);display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--gm);}
+.com-img img{width:100%;height:100%;object-fit:cover;}
+.com-pos{font-size:11px;font-weight:700;color:var(--gm);background:var(--gl);padding:3px 10px;border-radius:100px;display:inline-block;margin-bottom:8px;}
+.com-name{font-size:14px;font-weight:700;color:var(--dk);margin-bottom:4px;}
+.com-phone{font-size:12px;color:#888;margin-bottom:2px;}
+.com-email{font-size:11px;color:var(--gm);}
+.com-actions{display:flex;gap:6px;justify-content:center;margin-top:12px;}
+
+/* ===== PERMISSION BADGE ===== */
+.perm-tags{display:flex;flex-wrap:wrap;gap:4px;}
+.ptag{background:var(--gl);color:var(--gm);font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:9999;
+  background:var(--gd);color:white;padding:14px 22px;
+  border-radius:12px;font-size:14px;font-weight:700;
+  box-shadow:0 8px 28px rgba(0,0,0,0.25);
+  display:none;align-items:center;gap:10px;
+  animation:ti 0.3s ease;
+}
+.toast.show{display:flex;}
+.toast.error{background:#c0392b;}
+@keyframes ti{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== OVERLAY ===== */
+.mob-overlay{display:none;position:fixed;inset:0;top:62px;background:rgba(0,0,0,0.45);z-index:499;}
+.mob-overlay.show{display:block;}
+
+/* ===== LOADER ===== */
+.pg-loader{text-align:center;padding:60px 20px;color:#aaa;}
+.pg-sp{width:40px;height:40px;border:3px solid var(--gl);border-top-color:var(--gm);border-radius:50%;animation:sp 0.8s linear infinite;margin:0 auto 14px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1100px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){
+  .mob-tog{display:block;}
+  .sidebar{position:fixed;left:-250px;top:62px;z-index:500;height:calc(100vh - 62px);}
+  .sidebar.open{left:0;}
+  .a-meta,.a-name,.a-role{display:none;}
+  .main{padding:14px;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+  .com-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:480px){
+  .stat-row{grid-template-columns:1fr;}
+  .com-grid{grid-template-columns:1fr;}
+  .search-box input{width:130px;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fa fa-check-circle"></i><span id="toastMsg"></span></div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-left">
+    <button class="mob-tog" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+    <div class="hdr-brand">
+      আলোর দিশারী <span class="admin-pill">ADMIN</span>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <div class="admin-info">
+      <div class="a-avatar" id="aAvatar">A</div>
+      <div class="a-meta">
+        <div class="a-name" id="aName">Admin</div>
+        <div class="a-role" id="aRole">—</div>
+      </div>
+    </div>
+    <button class="btn-logout" onclick="doLogout()"><i class="fa fa-right-from-bracket"></i> <span class="hide-sm">Logout</span></button>
+  </div>
+</header>
+
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sec-lbl">প্রধান</div>
+  <a class="nav-i active" href="#" onclick="return nav('overview',this)"><i class="fa fa-gauge-high"></i> সারসংক্ষেপ</a>
+
+  <div class="sec-lbl">সদস্য</div>
+  <a class="nav-i" href="#" onclick="return nav('members',this)"><i class="fa fa-users"></i> সকল সদস্য</a>
+  <a class="nav-i" href="#" onclick="return nav('pending',this)" id="navPending"><i class="fa fa-user-clock"></i> অপেক্ষমাণ <span class="badge-count" id="pendingCount" style="display:none">0</span></a>
+
+  <div class="sec-lbl">আর্থিক</div>
+  <a class="nav-i" href="#" onclick="return nav('addpay',this)" id="navAddPay"><i class="fa fa-plus-circle"></i> পেমেন্ট যোগ</a>
+  <a class="nav-i" href="#" onclick="return nav('allpay',this)" id="navAllPay"><i class="fa fa-receipt"></i> সকল পেমেন্ট</a>
+
+  <div class="sec-lbl">কন্টেন্ট</div>
+  <a class="nav-i" href="#" onclick="return nav('notice',this)" id="navNotice"><i class="fa fa-bell"></i> নোটিশ ব্যবস্থাপনা</a>
+  <a class="nav-i" href="#" onclick="return nav('committee',this)"><i class="fa fa-people-group"></i> কমিটি</a>
+
+  <div class="sec-lbl">সিস্টেম</div>
+  <a class="nav-i" href="#" onclick="return nav('admins',this)" id="navAdmins"><i class="fa fa-user-shield"></i> Admin ব্যবস্থাপনা</a>
+
+  <hr class="nav-divider">
+  <a class="nav-i" href="index.html"><i class="fa fa-house"></i> হোম পেজ</a>
+  <a class="nav-i danger" href="#" onclick="doLogout();return false;"><i class="fa fa-right-from-bracket"></i> লগআউট</a>
+</aside>
+
+<!-- MAIN -->
+<main class="main" id="mainArea">
+  <div class="pg-loader"><div class="pg-sp"></div><p>লোড হচ্ছে...</p></div>
+</main>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Payment Modal -->
+<div class="modal-bg" id="payModal">
+  <div class="modal">
+    <div class="mh"><h3><i class="fa fa-money-bill-wave" style="color:var(--gm)"></i> পেমেন্ট যোগ</h3><button class="mclose" onclick="closeModal('payModal')">✕</button></div>
+    <div class="mb">
+      <div class="grid2">
+        <div class="fg2"><label>Member ID <span style="color:red">*</span></label><input id="pm-mid" placeholder="ADS-0001"></div>
+        <div class="fg2"><label>মাস <span style="color:red">*</span></label><input id="pm-month" placeholder="জানুয়ারি ২০২৬"></div>
+        <div class="fg2"><label>পরিমাণ (৳) <span style="color:red">*</span></label><input id="pm-amount" type="number" value="50"></div>
+        <div class="fg2"><label>মাধ্যম</label>
+          <select id="pm-method"><option>নগদ</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option></select>
+        </div>
+      </div>
+      <div class="fg2"><label>Transaction ID</label><input id="pm-trx" placeholder="ঐচ্ছিক"></div>
+    </div>
+    <div class="mf">
+      <button class="btn-outline" onclick="closeModal('payModal')">বাতিল</button>
+      <button class="btn btn-g" onclick="submitPayment()"><i class="fa fa-save"></i> সেভ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Notice Modal -->
+<div class="modal-bg" id="noticeModal">
+  <div class="modal">
+    <div class="mh"><h3><i class="fa fa-bell" style="color:var(--gm)"></i> নতুন নোটিশ</h3><button class="mclose" onclick="closeModal('noticeModal')">✕</button></div>
+    <div class="mb">
+      <div class="fg2"><label>শিরোনাম <span style="color:red">*</span></label><input id="nt-title" placeholder="নোটিশের শিরোনাম"></div>
+      <div class="fg2"><label>বিষয়বস্তু <span style="color:red">*</span></label><textarea id="nt-body" rows="5" placeholder="নোটিশের বিস্তারিত..."></textarea></div>
+    </div>
+    <div class="mf">
+      <button class="btn-outline" onclick="closeModal('noticeModal')">বাতিল</button>
+      <button class="btn btn-g" onclick="submitNotice()"><i class="fa fa-paper-plane"></i> প্রকাশ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Modal -->
+<div class="modal-bg" id="adminModal">
+  <div class="modal">
+    <div class="mh"><h3 id="adminModalTitle"><i class="fa fa-user-shield" style="color:var(--gold)"></i> নতুন Admin</h3><button class="mclose" onclick="closeModal('adminModal')">✕</button></div>
+    <div class="mb">
+      <div class="grid2">
+        <div class="fg2"><label>Username <span style="color:red">*</span></label><input id="adm-user" placeholder="username"></div>
+        <div class="fg2"><label>পাসওয়ার্ড <span style="color:red">*</span></label><input id="adm-pw" type="password" placeholder="পাসওয়ার্ড"></div>
+        <div class="fg2"><label>পূর্ণ নাম <span style="color:red">*</span></label><input id="adm-name" placeholder="Admin এর নাম"></div>
+        <div class="fg2"><label>Role / পদবী</label><input id="adm-role" placeholder="যেমন: সভাপতি"></div>
+      </div>
+      <div class="fg2">
+        <label>Permission (কী কী করতে পারবে)</label>
+        <div class="perm-grid" id="permGrid"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn-outline" onclick="closeModal('adminModal')">বাতিল</button>
+      <button class="btn btn-gold" id="adminSaveBtn" onclick="saveAdmin()"><i class="fa fa-save"></i> সেভ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Committee Modal -->
+<div class="modal-bg" id="comModal">
+  <div class="modal">
+    <div class="mh"><h3 id="comModalTitle"><i class="fa fa-person" style="color:var(--gm)"></i> কমিটি সদস্য</h3><button class="mclose" onclick="closeModal('comModal')">✕</button></div>
+    <div class="mb">
+      <div class="fg2"><label>নাম <span style="color:red">*</span></label><input id="cm-name" placeholder="সম্পূর্ণ নাম"></div>
+      <div class="fg2"><label>পদবী <span style="color:red">*</span></label><input id="cm-pos" placeholder="যেমন: সভাপতি"></div>
+      <div class="grid2">
+        <div class="fg2"><label>মোবাইল</label><input id="cm-mobile" placeholder="01XXXXXXXXX"></div>
+        <div class="fg2"><label>ইমেইল</label><input id="cm-email" placeholder="email@example.com"></div>
+      </div>
+      <div class="fg2"><label>ছবির URL (Google Drive বা Imgur)</label><input id="cm-photo" placeholder="https://..."></div>
+      <div class="fg2"><label>ক্রম নম্বর</label><input id="cm-order" type="number" placeholder="1"></div>
+    </div>
+    <div class="mf">
+      <button class="btn-outline" onclick="closeModal('comModal')">বাতিল</button>
+      <button class="btn btn-g" id="comSaveBtn" onclick="saveCom()"><i class="fa fa-save"></i> সেভ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+
+/* ===== AUTH CHECK ===== */
+if(localStorage.getItem("adminLoggedIn")!=="true") window.location.href="admin-login.html";
+const ADMIN_NAME = localStorage.getItem("adminName")||"Admin";
+const ADMIN_ROLE = localStorage.getItem("adminRole")||"Admin";
+const ADMIN_USER = localStorage.getItem("adminUsername")||"admin";
+const IS_SUPER = ADMIN_ROLE==="Super Admin";
+let PERMS = [];
+try{ PERMS = JSON.parse(localStorage.getItem("adminPermissions")||"[]"); }catch(e){}
+
+function can(p){ return IS_SUPER || PERMS.includes(p); }
+
+document.getElementById("aAvatar").textContent = ADMIN_NAME.charAt(0);
+document.getElementById("aName").textContent = ADMIN_NAME;
+document.getElementById("aRole").textContent = ADMIN_ROLE;
+
+/* Show/hide restricted nav items */
+if(!can("addPayment")){ ["navAddPay","navAllPay"].forEach(id=>{ const el=document.getElementById(id); if(el)el.style.display="none"; }); }
+if(!can("manageNotice")){ const el=document.getElementById("navNotice"); if(el)el.style.display="none"; }
+if(!IS_SUPER){ const el=document.getElementById("navAdmins"); if(el)el.style.display="none"; }
+
+/* ===== SIDEBAR ===== */
+function toggleSidebar(){document.getElementById("sidebar").classList.toggle("open");document.getElementById("mobOverlay").classList.toggle("show");}
+function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("mobOverlay").classList.remove("show");}
+
+/* ===== NAV ===== */
+function nav(section, el){
+  event.preventDefault(); closeSidebar();
+  document.querySelectorAll(".nav-i").forEach(n=>n.classList.remove("active"));
+  el.classList.add("active");
+  const m = document.getElementById("mainArea");
+  m.innerHTML = '<div class="pg-loader"><div class="pg-sp"></div><p>লোড হচ্ছে...</p></div>';
+  if(section==="overview") renderOverview();
+  else if(section==="members") renderMembers();
+  else if(section==="pending") renderPending();
+  else if(section==="addpay") renderAddPay();
+  else if(section==="allpay") renderAllPay();
+  else if(section==="notice") renderNotice();
+  else if(section==="committee") renderCommittee();
+  else if(section==="admins") renderAdmins();
+  return false;
+}
+
+function setMain(html){ document.getElementById("mainArea").innerHTML=html; }
+
+/* ===== TOAST ===== */
+function showToast(msg,error=false){
+  const t=document.getElementById("toast");
+  document.getElementById("toastMsg").textContent=msg;
+  t.className="toast"+(error?" error":"")+" show";
+  t.querySelector("i").className=error?"fa fa-times-circle":"fa fa-check-circle";
+  setTimeout(()=>t.classList.remove("show"),3000);
+}
+
+/* ===== MODAL ===== */
+function openModal(id){document.getElementById(id).classList.add("open");}
+function closeModal(id){document.getElementById(id).classList.remove("open");}
+document.querySelectorAll(".modal-bg").forEach(bg=>{bg.addEventListener("click",e=>{if(e.target===bg)bg.classList.remove("open");});});
+
+/* ===== API HELPER ===== */
+async function api(payload){
+  payload.actorName = ADMIN_NAME;
+  const r = await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
+  return r.json();
+}
+
+/* ===== BADGES ===== */
+function stBadge(s){
+  if(!s)return'';
+  const l=s.toLowerCase();
+  if(l.includes("approved")||l.includes("অনুমোদিত")) return `<span class="badge b-ok"><i class="fa fa-check"></i>${s}</span>`;
+  if(l.includes("reject")) return `<span class="badge b-no"><i class="fa fa-times"></i>${s}</span>`;
+  return `<span class="badge b-wait"><i class="fa fa-clock"></i>${s}</span>`;
+}
+function memberAvatarHTML(m){
+  if(m.photo&&m.photo.startsWith("data:"))
+    return `<div class="m-avatar"><img src="${m.photo}"></div>`;
+  return `<div class="m-avatar" style="font-size:14px;font-weight:800;">${(m.name||"?").charAt(0)}</div>`;
+}
+
+/* ===== OVERVIEW ===== */
+async function renderOverview(){
+  try{
+    const d = await api({action:"dashboardStats"});
+    const pc = d.pending||0;
+    const pcEl = document.getElementById("pendingCount");
+    if(pcEl){ pcEl.textContent=pc; pcEl.style.display=pc>0?"inline":"none"; }
+    setMain(`
+      <div class="stat-row">
+        <div class="sc sc-g"><div class="sc-ico"><i class="fa fa-users"></i></div><div class="sc-val">${d.totalMembers||0}</div><div class="sc-lbl">মোট সদস্য</div></div>
+        <div class="sc sc-b"><div class="sc-ico"><i class="fa fa-user-check"></i></div><div class="sc-val">${d.approved||0}</div><div class="sc-lbl">অনুমোদিত</div></div>
+        <div class="sc sc-o"><div class="sc-ico"><i class="fa fa-user-clock"></i></div><div class="sc-val">${d.pending||0}</div><div class="sc-lbl">অপেক্ষমাণ</div></div>
+        <div class="sc sc-r"><div class="sc-ico"><i class="fa fa-money-bill-wave"></i></div><div class="sc-val">৳${d.totalCollection||0}</div><div class="sc-lbl">মোট চাঁদা</div></div>
+      </div>
+      <div class="fc">
+        <h3><i class="fa fa-bolt"></i> দ্রুত কার্যক্রম</h3>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          ${can("approveMembers")?`<button class="btn btn-g" onclick="document.querySelector('[onclick*=pending]').click()"><i class="fa fa-user-clock"></i> অপেক্ষমাণ দেখুন (${d.pending||0})</button>`:''}
+          ${can("addPayment")?`<button class="btn btn-gold" onclick="openModal('payModal')"><i class="fa fa-plus"></i> পেমেন্ট যোগ</button>`:''}
+          ${can("manageNotice")?`<button class="btn btn-g" onclick="openModal('noticeModal')"><i class="fa fa-bell"></i> নোটিশ প্রকাশ</button>`:''}
+        </div>
+      </div>
+    `);
+  }catch(e){setMain(`<p style="padding:24px;color:red;">তথ্য লোড করা যায়নি। Google Sheet সংযোগ পরীক্ষা করুন।</p>`);}
+}
+
+/* ===== ALL MEMBERS ===== */
+let allMembersCache=[];
+async function renderMembers(){
+  setMain('<div class="pg-loader"><div class="pg-sp"></div><p>সদস্য লোড হচ্ছে...</p></div>');
+  const d = await api({action:"getAllMembers"});
+  allMembersCache = d.members||[];
+  buildMemberTable(allMembersCache,"সকল সদস্য",false);
+}
+
+async function renderPending(){
+  setMain('<div class="pg-loader"><div class="pg-sp"></div><p>লোড হচ্ছে...</p></div>');
+  const d = await api({action:"getAllMembers"});
+  allMembersCache = d.members||[];
+  buildMemberTable(allMembersCache,"অপেক্ষমাণ আবেদন",true);
+}
+
+function buildMemberTable(list, title, pendingOnly){
+  const rows = (pendingOnly ? list.filter(m=>String(m.status||"").toLowerCase().includes("pending")) : list);
+  const tbody = rows.length ? rows.map(m=>`
+    <tr>
+      <td>
+        <div class="member-cell">
+          ${memberAvatarHTML(m)}
+          <div class="mc-info">
+            <div class="mc-name">${m.name||"—"}</div>
+            <div class="mc-phone"><i class="fa fa-phone" style="font-size:10px;color:var(--gm)"></i> ${m.mobile||"—"}</div>
+          </div>
+        </div>
+      </td>
+      <td><b>${m.memberId||"—"}</b></td>
+      <td>${m.mobile||"—"}</td>
+      <td>${m.blood||"—"}</td>
+      <td>${m.date||"—"}</td>
+      <td>${stBadge(m.status||"Pending")}</td>
+      <td>
+        <div class="act-btns">
+          ${can("approveMembers")?`
+            <button class="ab ab-green" onclick="changeStatus('${m.memberId}','Approved')"><i class="fa fa-check"></i> অনুমোদন</button>
+            <button class="ab ab-red" onclick="changeStatus('${m.memberId}','Rejected')"><i class="fa fa-times"></i> বাতিল</button>
+          `:'<span style="font-size:11px;color:#aaa;">অনুমতি নেই</span>'}
+        </div>
+      </td>
+    </tr>`).join("") :
+    `<tr><td colspan="7" class="empty-td"><i class="fa fa-inbox"></i>কোনো সদস্য পাওয়া যায়নি</td></tr>`;
+
+  setMain(`
+    <div class="pg-head">
+      <div class="pg-title"><i class="fa fa-users"></i>${title} (${rows.length})</div>
+      <div class="pg-actions">
+        <div class="search-box">
+          <input type="text" placeholder="নাম / ID / মোবাইল" id="mSearch" oninput="filterMembers(this.value)">
+        </div>
+      </div>
+    </div>
+    <div class="tc">
+      <div class="tw">
+        <table>
+          <thead><tr><th>সদস্য</th><th>ID</th><th>মোবাইল</th><th>রক্ত</th><th>আবেদন</th><th>স্ট্যাটাস</th><th>কার্যক্রম</th></tr></thead>
+          <tbody id="mTbody">${tbody}</tbody>
+        </table>
+      </div>
+    </div>
+  `);
+}
+
+function filterMembers(q){
+  const f = allMembersCache.filter(m=>
+    (m.name||"").toLowerCase().includes(q.toLowerCase())||
+    (m.memberId||"").toLowerCase().includes(q.toLowerCase())||
+    (m.mobile||"").includes(q)
+  );
+  const rows = f.length ? f.map(m=>`
+    <tr>
+      <td><div class="member-cell">${memberAvatarHTML(m)}<div class="mc-info"><div class="mc-name">${m.name||"—"}</div><div class="mc-phone"><i class="fa fa-phone" style="font-size:10px;color:var(--gm)"></i> ${m.mobile||"—"}</div></div></div></td>
+      <td><b>${m.memberId||"—"}</b></td><td>${m.mobile||"—"}</td><td>${m.blood||"—"}</td><td>${m.date||"—"}</td>
+      <td>${stBadge(m.status||"Pending")}</td>
+      <td><div class="act-btns">
+        ${can("approveMembers")?`<button class="ab ab-green" onclick="changeStatus('${m.memberId}','Approved')"><i class="fa fa-check"></i> অনুমোদন</button><button class="ab ab-red" onclick="changeStatus('${m.memberId}','Rejected')"><i class="fa fa-times"></i> বাতিল</button>`:'<span style="font-size:11px;color:#aaa;">অনুমতি নেই</span>'}
+      </div></td>
+    </tr>`).join("") :
+    `<tr><td colspan="7" class="empty-td">কোনো ফলাফল পাওয়া যায়নি</td></tr>`;
+  const tb = document.getElementById("mTbody");
+  if(tb) tb.innerHTML = rows;
+}
+
+async function changeStatus(memberId, status){
+  if(!can("approveMembers")){showToast("আপনার এই permission নেই",true);return;}
+  if(!confirm(`"${memberId}" — স্ট্যাটাস "${status}" করবেন?`)) return;
+  const d = await api({action:"updateMemberStatus",memberId,status});
+  if(d.success){
+    showToast("স্ট্যাটাস আপডেট হয়েছে!");
+    // refresh
+    const isP = document.querySelector(".nav-i.active")?.textContent?.includes("অপেক্ষমাণ");
+    isP ? renderPending() : renderMembers();
+    // update badge count
+    renderOverview();
+  } else showToast(d.message||"ব্যর্থ হয়েছে",true);
+}
+
+/* ===== ADD PAYMENT ===== */
+function renderAddPay(){
+  if(!can("addPayment")){setMain(`<div style="padding:40px;text-align:center;color:#e74c3c;"><i class="fa fa-lock fa-3x"></i><br><br>এই পেজ দেখার অনুমতি নেই</div>`);return;}
+  setMain(`
+    <div class="pg-title" style="margin-bottom:20px;"><i class="fa fa-money-bill-wave"></i> পেমেন্ট যোগ করুন</div>
+    <div class="fc">
+      <h3><i class="fa fa-plus-circle"></i> নতুন পেমেন্ট এন্ট্রি</h3>
+      <div id="payToast" style="display:none;background:var(--gl);color:var(--gd);padding:12px 16px;border-radius:9px;margin-bottom:16px;font-weight:700;"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="fg2"><label>Member ID *</label><input id="f-mid" placeholder="ADS-0001"></div>
+        <div class="fg2"><label>মাস *</label><input id="f-month" placeholder="জানুয়ারি ২০২৬"></div>
+        <div class="fg2"><label>পরিমাণ (৳) *</label><input id="f-amount" type="number" value="50"></div>
+        <div class="fg2"><label>মাধ্যম</label><select id="f-method"><option>নগদ</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option></select></div>
+        <div class="fg2" style="grid-column:1/-1;"><label>Transaction ID</label><input id="f-trx" placeholder="ঐচ্ছিক"></div>
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn btn-g" style="font-size:15px;padding:13px 28px;" onclick="addPayDirect()"><i class="fa fa-save"></i> পেমেন্ট সেভ করুন</button>
+      </div>
+    </div>
+  `);
+}
+
+async function addPayDirect(){
+  const mid=document.getElementById("f-mid")?.value.trim();
+  const month=document.getElementById("f-month")?.value.trim();
+  const amount=document.getElementById("f-amount")?.value.trim();
+  const method=document.getElementById("f-method")?.value;
+  const trxId=document.getElementById("f-trx")?.value.trim();
+  if(!mid||!month||!amount){showToast("Member ID, মাস ও পরিমাণ দিন",true);return;}
+  const d=await api({action:"addPayment",memberId:mid,month,amount,method,trxId});
+  if(d.success){
+    const t=document.getElementById("payToast");
+    if(t){t.textContent="✅ পেমেন্ট সফলভাবে যোগ হয়েছে!";t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
+    ["f-mid","f-month","f-trx"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+    const amEl=document.getElementById("f-amount");if(amEl)amEl.value="50";
+  } else showToast(d.message||"ব্যর্থ",true);
+}
+
+/* ===== ALL PAYMENTS ===== */
+async function renderAllPay(){
+  if(!can("viewAccounts")&&!can("addPayment")){setMain(`<div style="padding:40px;text-align:center;color:#e74c3c;"><i class="fa fa-lock fa-3x"></i><br><br>এই পেজ দেখার অনুমতি নেই</div>`);return;}
+  const d=await api({action:"getAllPayments"});
+  const pays=d.payments||[];
+  const total=pays.reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const rows=pays.length?pays.map(p=>`
+    <tr>
+      <td><b>${p.memberId||"—"}</b></td>
+      <td>${p.memberName||"—"}</td>
+      <td>${p.month||"—"}</td>
+      <td><b>৳${p.amount||0}</b></td>
+      <td>${p.method||"—"}</td>
+      <td><code style="font-size:12px;">${p.trxId||"—"}</code></td>
+      <td>${p.date||"—"}</td>
+      <td><span class="badge b-ok">Paid</span></td>
+    </tr>`).join(""):
+    `<tr><td colspan="8" class="empty-td"><i class="fa fa-inbox"></i>কোনো পেমেন্ট নেই</td></tr>`;
+  setMain(`
+    <div class="pg-head">
+      <div class="pg-title"><i class="fa fa-receipt"></i> সকল পেমেন্ট</div>
+      <div class="pg-actions">
+        ${can("addPayment")?`<button class="btn btn-gold" onclick="openModal('payModal')"><i class="fa fa-plus"></i> নতুন পেমেন্ট</button>`:''}
+      </div>
+    </div>
+    <div class="stat-row" style="grid-template-columns:repeat(2,1fr);">
+      <div class="sc sc-g"><div class="sc-ico"><i class="fa fa-money-bill-wave"></i></div><div class="sc-val">৳${total}</div><div class="sc-lbl">মোট সংগ্রহ</div></div>
+      <div class="sc sc-b"><div class="sc-ico"><i class="fa fa-receipt"></i></div><div class="sc-val">${pays.length}</div><div class="sc-lbl">মোট পেমেন্ট</div></div>
+    </div>
+    <div class="tc">
+      <div class="tc-head"><h3>পেমেন্ট তালিকা (${pays.length})</h3></div>
+      <div class="tw"><table><thead><tr><th>Member ID</th><th>নাম</th><th>মাস</th><th>টাকা</th><th>মাধ্যম</th><th>Trx ID</th><th>তারিখ</th><th>Status</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    </div>
+  `);
+}
+
+/* ===== NOTICE ===== */
+async function renderNotice(){
+  if(!can("manageNotice")){setMain(`<div style="padding:40px;text-align:center;color:#e74c3c;"><i class="fa fa-lock fa-3x"></i><br><br>এই পেজ দেখার অনুমতি নেই</div>`);return;}
+  const d=await api({action:"getNotice"});
+  const notices=d.notices||[];
+  const items=notices.length?notices.map(n=>`
+    <div class="notice-card">
+      <div class="nc-body">
+        <h4>${n.title||""}</h4>
+        <p>${n.notice||""}</p>
+        <div class="nc-date"><i class="fa fa-calendar"></i> ${n.date||""}</div>
+      </div>
+      <button class="ab ab-red" onclick="delNotice('${n.id}')"><i class="fa fa-trash"></i> মুছুন</button>
+    </div>`).join(""):
+    `<div style="text-align:center;padding:40px;color:#bbb;"><i class="fa fa-bell-slash fa-2x"></i><br><br>কোনো নোটিশ নেই</div>`;
+  setMain(`
+    <div class="pg-head">
+      <div class="pg-title"><i class="fa fa-bell"></i> নোটিশ ব্যবস্থাপনা</div>
+      <button class="btn btn-g" onclick="openModal('noticeModal')"><i class="fa fa-plus"></i> নতুন নোটিশ</button>
+    </div>
+    <div class="fc">${items}</div>
+  `);
+}
+
+async function delNotice(id){
+  if(!confirm("এই নোটিশটি মুছে ফেলবেন?"))return;
+  const d=await api({action:"deleteNotice",noticeId:id});
+  if(d.success){showToast("নোটিশ মুছে ফেলা হয়েছে");renderNotice();}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+
+/* ===== COMMITTEE ===== */
+async function renderCommittee(){
+  const d=await api({action:"getCommittee"});
+  const list=d.committee||[];
+  const cards=list.length?list.map(c=>`
+    <div class="com-card">
+      <div class="com-img">
+        ${c.photo?`<img src="${c.photo}" onerror="this.parentElement.innerHTML='<i class=\\'fa fa-user\\'></i>'">`:'<i class="fa fa-user"></i>'}
+      </div>
+      <div class="com-pos">${c.position||"—"}</div>
+      <div class="com-name">${c.name||"—"}</div>
+      <div class="com-phone"><i class="fa fa-phone" style="font-size:10px;color:var(--gm)"></i> ${c.mobile||"—"}</div>
+      <div class="com-email"><i class="fa fa-envelope" style="font-size:10px"></i> ${c.email||"—"}</div>
+      ${can("manageCommittee")?`
+      <div class="com-actions">
+        <button class="ab ab-blue" onclick="editCom(${JSON.stringify(c).replace(/"/g,'&quot;')})"><i class="fa fa-edit"></i> সম্পাদনা</button>
+        <button class="ab ab-red" onclick="delCom('${c.id}')"><i class="fa fa-trash"></i></button>
+      </div>`:''}
+    </div>`).join(""):
+    `<div style="text-align:center;padding:40px;color:#bbb;">কোনো কমিটি সদস্য নেই</div>`;
+
+  setMain(`
+    <div class="pg-head">
+      <div class="pg-title"><i class="fa fa-people-group"></i> কার্যনির্বাহী কমিটি</div>
+      ${can("manageCommittee")?`<button class="btn btn-g" onclick="openAddCom()"><i class="fa fa-plus"></i> নতুন সদস্য</button>`:''}
+    </div>
+    <div class="com-grid">${cards}</div>
+  `);
+}
+
+let comEditId=null;
+function openAddCom(){
+  comEditId=null;
+  document.getElementById("comModalTitle").innerHTML='<i class="fa fa-person" style="color:var(--gm)"></i> নতুন কমিটি সদস্য';
+  ["cm-name","cm-pos","cm-mobile","cm-email","cm-photo","cm-order"].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.value="";
+  });
+  openModal("comModal");
+}
+function editCom(c){
+  comEditId=c.id;
+  document.getElementById("comModalTitle").innerHTML='<i class="fa fa-edit" style="color:var(--gm)"></i> কমিটি সদস্য সম্পাদনা';
+  document.getElementById("cm-name").value=c.name||"";
+  document.getElementById("cm-pos").value=c.position||"";
+  document.getElementById("cm-mobile").value=c.mobile||"";
+  document.getElementById("cm-email").value=c.email||"";
+  document.getElementById("cm-photo").value=c.photo||"";
+  document.getElementById("cm-order").value=c.order||"";
+  openModal("comModal");
+}
+async function saveCom(){
+  const name=document.getElementById("cm-name").value.trim();
+  const pos=document.getElementById("cm-pos").value.trim();
+  if(!name||!pos){showToast("নাম ও পদবী দিন",true);return;}
+  const payload={
+    name,position:pos,
+    mobile:document.getElementById("cm-mobile").value.trim(),
+    email:document.getElementById("cm-email").value.trim(),
+    photo:document.getElementById("cm-photo").value.trim(),
+    order:document.getElementById("cm-order").value.trim()
+  };
+  let d;
+  if(comEditId){d=await api({...payload,action:"updateCommitteeMember",id:comEditId});}
+  else{d=await api({...payload,action:"addCommitteeMember"});}
+  if(d.success){showToast("কমিটি সদস্য সেভ হয়েছে");closeModal("comModal");renderCommittee();}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+async function delCom(id){
+  if(!confirm("এই কমিটি সদস্যকে মুছে ফেলবেন?"))return;
+  const d=await api({action:"deleteCommitteeMember",id});
+  if(d.success){showToast("মুছে ফেলা হয়েছে");renderCommittee();}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+
+/* ===== ADMIN MANAGEMENT ===== */
+const ALL_PERMS=[
+  {key:"approveMembers",label:"সদস্য অনুমোদন/বাতিল করতে পারবে"},
+  {key:"viewAccounts",label:"আর্থিক হিসাব দেখতে পারবে"},
+  {key:"addPayment",label:"পেমেন্ট এন্ট্রি যোগ করতে পারবে"},
+  {key:"manageNotice",label:"নোটিশ প্রকাশ/মুছতে পারবে"},
+  {key:"manageCommittee",label:"কমিটি তথ্য পরিবর্তন করতে পারবে"},
+  {key:"manageAdmins",label:"Admin যোগ/মুছতে পারবে (Super Admin only)"}
+];
+
+async function renderAdmins(){
+  if(!IS_SUPER){setMain(`<div style="padding:40px;text-align:center;color:#e74c3c;"><i class="fa fa-lock fa-3x"></i><br><br>শুধুমাত্র Super Admin দেখতে পারবে</div>`);return;}
+  const d=await api({action:"getAllAdmins"});
+  const admins=d.admins||[];
+  const rows=admins.map(a=>`
+    <tr>
+      <td><div class="member-cell"><div class="m-avatar">${(a.name||"?").charAt(0)}</div><div class="mc-info"><div class="mc-name">${a.name||"—"}</div><div class="mc-phone">@${a.username||"—"}</div></div></div></td>
+      <td>${a.role==="Super Admin"?`<span class="badge b-super"><i class="fa fa-crown"></i> Super Admin</span>`:`<span class="badge b-blue">${a.role||"Admin"}</span>`}</td>
+      <td><div class="perm-tags">${(a.permissions||[]).slice(0,3).map(p=>`<span class="ptag">${p}</span>`).join("")}${(a.permissions||[]).length>3?`<span class="ptag">+${(a.permissions||[]).length-3}</span>`:""}</div></td>
+      <td>${a.date||"—"}</td>
+      <td><span class="badge ${a.status==="Active"?"b-ok":"b-no"}">${a.status||"—"}</span></td>
+      <td>
+        <div class="act-btns">
+          ${a.username!==ADMIN_USER?`
+            <button class="ab ab-blue" onclick='editAdmin(${JSON.stringify(a).replace(/"/g,"&quot;")})'><i class="fa fa-edit"></i> সম্পাদনা</button>
+            <button class="ab ab-red" onclick="delAdmin('${a.adminId}','${a.username}')"><i class="fa fa-trash"></i> মুছুন</button>
+          `:`<span class="badge b-ok">আপনি</span>`}
+        </div>
+      </td>
+    </tr>`).join("");
+
+  setMain(`
+    <div class="pg-head">
+      <div class="pg-title"><i class="fa fa-user-shield"></i> Admin ব্যবস্থাপনা</div>
+      <button class="btn btn-gold" onclick="openAddAdmin()"><i class="fa fa-plus"></i> নতুন Admin</button>
+    </div>
+    <div class="tc">
+      <div class="tc-head"><h3>Admin তালিকা (${admins.length})</h3></div>
+      <div class="tw"><table>
+        <thead><tr><th>Admin</th><th>Role</th><th>Permissions</th><th>যোগের তারিখ</th><th>Status</th><th>কার্যক্রম</th></tr></thead>
+        <tbody>${rows||'<tr><td colspan="6" class="empty-td"><i class="fa fa-inbox"></i>কোনো Admin নেই</td></tr>'}</tbody>
+      </table></div>
+    </div>
+  `);
+}
+
+let adminEditId=null;
+function buildPermGrid(selectedPerms=[]){
+  const grid=document.getElementById("permGrid");
+  if(!grid)return;
+  grid.innerHTML=ALL_PERMS.map(p=>`
+    <label class="perm-item${p.key==="manageAdmins"?" disabled-perm":""}">
+      <input type="checkbox" name="perm" value="${p.key}"
+        ${selectedPerms.includes(p.key)?"checked":""}
+        ${p.key==="manageAdmins"?"disabled":""}>
+      ${p.label}
+    </label>`).join("");
+}
+
+function openAddAdmin(){
+  adminEditId=null;
+  document.getElementById("adminModalTitle").innerHTML='<i class="fa fa-user-plus" style="color:var(--gold)"></i> নতুন Admin যোগ';
+  ["adm-user","adm-pw","adm-name","adm-role"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+  buildPermGrid([]);
+  openModal("adminModal");
+}
+function editAdmin(a){
+  adminEditId=a.adminId;
+  document.getElementById("adminModalTitle").innerHTML='<i class="fa fa-edit" style="color:var(--gold)"></i> Admin সম্পাদনা';
+  document.getElementById("adm-user").value=a.username||"";
+  document.getElementById("adm-pw").value="";
+  document.getElementById("adm-name").value=a.name||"";
+  document.getElementById("adm-role").value=a.role||"";
+  buildPermGrid(a.permissions||[]);
+  openModal("adminModal");
+}
+
+async function saveAdmin(){
+  const user=document.getElementById("adm-user").value.trim();
+  const pw=document.getElementById("adm-pw").value.trim();
+  const name=document.getElementById("adm-name").value.trim();
+  const role=document.getElementById("adm-role").value.trim()||"Admin";
+  const perms=[...document.querySelectorAll("#permGrid input[name=perm]:checked")].map(c=>c.value);
+  if(!user||!name){showToast("Username ও নাম দিন",true);return;}
+  if(!adminEditId&&!pw){showToast("পাসওয়ার্ড দিন",true);return;}
+  let d;
+  if(adminEditId){
+    const payload={action:"updateAdmin",adminId:adminEditId,name,role,permissions:perms};
+    if(pw)payload.password=pw;
+    d=await api(payload);
+  } else {
+    d=await api({action:"addAdmin",username:user,password:pw,name,role,permissions:perms});
+  }
+  if(d.success){showToast("Admin সেভ হয়েছে!");closeModal("adminModal");renderAdmins();}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+
+async function delAdmin(adminId, username){
+  if(!confirm(`"${username}" কে Admin থেকে মুছে ফেলবেন?`))return;
+  const d=await api({action:"deleteAdmin",adminId});
+  if(d.success){showToast("Admin মুছে ফেলা হয়েছে");renderAdmins();}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+
+/* ===== PAYMENT MODAL SUBMIT ===== */
+async function submitPayment(){
+  const mid=document.getElementById("pm-mid").value.trim();
+  const month=document.getElementById("pm-month").value.trim();
+  const amount=document.getElementById("pm-amount").value.trim();
+  const method=document.getElementById("pm-method").value;
+  const trxId=document.getElementById("pm-trx").value.trim();
+  if(!mid||!month||!amount){showToast("সব তারকা(*) ঘর পূরণ করুন",true);return;}
+  const d=await api({action:"addPayment",memberId:mid,month,amount,method,trxId});
+  if(d.success){showToast("পেমেন্ট যোগ সফল!");closeModal("payModal");}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+
+/* ===== NOTICE MODAL SUBMIT ===== */
+async function submitNotice(){
+  const title=document.getElementById("nt-title").value.trim();
+  const notice=document.getElementById("nt-body").value.trim();
+  if(!title||!notice){showToast("শিরোনাম ও বিষয়বস্তু দিন",true);return;}
+  const d=await api({action:"addNotice",title,notice});
+  if(d.success){showToast("নোটিশ প্রকাশিত হয়েছে!");closeModal("noticeModal");if(document.getElementById("mainArea").querySelector(".fc"))renderNotice();}
+  else showToast(d.message||"ব্যর্থ",true);
+}
+
+/* ===== LOGOUT ===== */
+function doLogout(){
+  if(confirm("লগআউট করবেন?")){
+    ["adminLoggedIn","adminName","adminRole","adminUsername","adminPermissions"].forEach(k=>localStorage.removeItem(k));
+    window.location.href="admin-login.html";
+  }
+}
+
+/* ===== INIT ===== */
+renderOverview();
+</script>
+</body>
+</html>

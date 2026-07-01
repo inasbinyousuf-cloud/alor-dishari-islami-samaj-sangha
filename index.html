@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>আলোর দিশারী ইসলামি সমাজ সংঘ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root {
+  --green-dark: #065f30;
+  --green-main: #0b8b44;
+  --green-mid: #0d9e4e;
+  --green-light: #e8f7ee;
+  --green-pale: #f0faf4;
+  --gold: #c9a84c;
+  --gold-light: #f5e6c0;
+  --text-dark: #1a2e1e;
+  --text-mid: #3d5a45;
+  --text-light: #6b8b74;
+  --white: #ffffff;
+  --bg: #f4f8f5;
+  --shadow: 0 8px 32px rgba(6,95,48,0.12);
+  --radius: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:'Noto Sans Bengali',sans-serif; background:var(--bg); color:var(--text-dark); }
+
+/* ===== HEADER ===== */
+header {
+  background:var(--green-dark);
+  position:sticky; top:0; z-index:1000;
+  box-shadow:0 2px 20px rgba(0,0,0,0.25);
+}
+.nav-inner {
+  max-width:1200px; margin:auto;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 24px;
+}
+.logo-row { display:flex; align-items:center; gap:14px; }
+.logo-img {
+  width:52px; height:52px; border-radius:50%;
+  background:white; padding:3px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.2);
+  object-fit:cover;
+}
+.logo-text h1 { font-size:18px; font-weight:700; color:white; line-height:1.2; }
+.logo-text p { font-size:11px; color:rgba(255,255,255,0.75); margin-top:2px; letter-spacing:0.5px; }
+nav { display:flex; align-items:center; gap:6px; }
+nav a {
+  color:rgba(255,255,255,0.85); text-decoration:none;
+  font-size:14px; font-weight:500;
+  padding:8px 14px; border-radius:8px;
+  transition:all 0.25s;
+}
+nav a:hover { background:rgba(255,255,255,0.15); color:white; }
+.nav-btns { display:flex; gap:10px; }
+.btn-nav-login {
+  padding:9px 20px; border-radius:8px;
+  font-size:14px; font-weight:600;
+  text-decoration:none; cursor:pointer;
+  border:none; transition:all 0.25s; font-family:inherit;
+}
+.btn-member { background:rgba(255,255,255,0.15); color:white; border:1.5px solid rgba(255,255,255,0.4); }
+.btn-member:hover { background:white; color:var(--green-dark); }
+.btn-admin { background:var(--gold); color:var(--green-dark); }
+.btn-admin:hover { background:#b8922e; color:white; }
+.hamburger { display:none; background:none; border:none; color:white; font-size:22px; cursor:pointer; }
+
+/* ===== HERO ===== */
+.hero {
+  background:linear-gradient(160deg, var(--green-dark) 0%, var(--green-main) 60%, #1a6e3c 100%);
+  min-height:90vh; display:flex; align-items:center;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.hero-inner {
+  max-width:1200px; margin:auto; padding:60px 24px;
+  display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+  position:relative; z-index:1;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(201,168,76,0.2); border:1px solid rgba(201,168,76,0.4);
+  color:var(--gold); padding:6px 16px; border-radius:100px;
+  font-size:13px; font-weight:600; margin-bottom:20px;
+}
+.hero h2 {
+  font-size:42px; font-weight:800; color:white;
+  line-height:1.3; margin-bottom:20px;
+}
+.hero h2 span { color:var(--gold); }
+.hero p { font-size:17px; color:rgba(255,255,255,0.8); line-height:1.9; margin-bottom:36px; }
+.hero-actions { display:flex; gap:14px; flex-wrap:wrap; }
+.btn-hero-main {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:15px 30px; border-radius:10px; font-size:16px; font-weight:700;
+  text-decoration:none; transition:all 0.3s; font-family:inherit;
+  cursor:pointer; border:none;
+}
+.btn-filled { background:var(--gold); color:var(--green-dark); }
+.btn-filled:hover { background:#b8922e; transform:translateY(-2px); box-shadow:0 8px 24px rgba(201,168,76,0.4); }
+.btn-outline { background:transparent; color:white; border:2px solid rgba(255,255,255,0.5); }
+.btn-outline:hover { background:white; color:var(--green-dark); transform:translateY(-2px); }
+.hero-card-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:16px;
+}
+.hero-stat {
+  background:rgba(255,255,255,0.1); backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.2);
+  border-radius:14px; padding:20px;
+  text-align:center;
+}
+.hero-stat .num { font-size:32px; font-weight:800; color:var(--gold); }
+.hero-stat .lbl { font-size:13px; color:rgba(255,255,255,0.75); margin-top:4px; }
+
+/* ===== SECTIONS ===== */
+.section { padding:80px 24px; }
+.section-inner { max-width:1200px; margin:auto; }
+.sec-header { text-align:center; margin-bottom:50px; }
+.sec-eyebrow {
+  display:inline-block; font-size:13px; font-weight:600;
+  color:var(--green-main); letter-spacing:1.5px; text-transform:uppercase;
+  background:var(--green-light); padding:5px 16px; border-radius:100px;
+  margin-bottom:14px;
+}
+.sec-title { font-size:34px; font-weight:800; color:var(--text-dark); margin-bottom:12px; }
+.sec-sub { font-size:16px; color:var(--text-light); max-width:580px; margin:auto; line-height:1.8; }
+
+/* ===== QUICK ACCESS CARDS ===== */
+.portal-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+}
+.portal-card {
+  background:white; border-radius:var(--radius); padding:36px 28px;
+  box-shadow:var(--shadow); transition:all 0.3s;
+  border:2px solid transparent; text-align:center; position:relative; overflow:hidden;
+}
+.portal-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:4px;
+  background:linear-gradient(90deg, var(--green-main), var(--gold));
+}
+.portal-card:hover { transform:translateY(-8px); border-color:var(--green-light); box-shadow:0 20px 50px rgba(6,95,48,0.15); }
+.portal-icon {
+  width:72px; height:72px; border-radius:50%;
+  background:var(--green-light); display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px; font-size:28px; color:var(--green-main);
+}
+.portal-card h3 { font-size:20px; font-weight:700; margin-bottom:10px; color:var(--text-dark); }
+.portal-card p { font-size:14px; color:var(--text-light); line-height:1.8; margin-bottom:24px; }
+.btn-portal {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:12px 26px; background:var(--green-main); color:white;
+  text-decoration:none; border-radius:8px; font-size:14px; font-weight:600;
+  transition:all 0.25s;
+}
+.btn-portal:hover { background:var(--green-dark); }
+.btn-portal-gold { background:var(--gold); color:var(--green-dark); }
+.btn-portal-gold:hover { background:#b8922e; color:white; }
+
+/* ===== STATS ===== */
+.stats-section { background:var(--green-dark); padding:70px 24px; }
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:30px; max-width:1200px; margin:auto; }
+.stat-box { text-align:center; }
+.stat-box .n { font-size:48px; font-weight:800; color:var(--gold); }
+.stat-box .l { font-size:15px; color:rgba(255,255,255,0.7); margin-top:6px; }
+.stat-divider { border:none; border-right:1px solid rgba(255,255,255,0.15); }
+
+/* ===== ACTIVITIES ===== */
+.activity-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
+.activity-card {
+  background:white; border-radius:var(--radius); padding:28px;
+  box-shadow:var(--shadow); display:flex; gap:20px; align-items:flex-start;
+  transition:transform 0.25s;
+}
+.activity-card:hover { transform:translateY(-4px); }
+.act-icon {
+  width:56px; height:56px; flex-shrink:0; border-radius:12px;
+  background:var(--green-light); display:flex; align-items:center; justify-content:center;
+  font-size:22px; color:var(--green-main);
+}
+.act-body h4 { font-size:17px; font-weight:700; color:var(--text-dark); margin-bottom:8px; }
+.act-body p { font-size:14px; color:var(--text-light); line-height:1.8; }
+
+/* ===== NOTICE ===== */
+.notice-bg { background:var(--green-pale); }
+.notice-list { display:grid; gap:16px; }
+.notice-item {
+  background:white; border-radius:12px; padding:22px 24px;
+  border-left:5px solid var(--green-main); box-shadow:0 4px 16px rgba(0,0,0,0.06);
+  display:flex; justify-content:space-between; align-items:flex-start; gap:20px;
+}
+.notice-content h4 { font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:6px; }
+.notice-content p { font-size:14px; color:var(--text-light); line-height:1.7; }
+.notice-date {
+  flex-shrink:0; font-size:12px; color:var(--green-main);
+  background:var(--green-light); padding:4px 12px; border-radius:100px; font-weight:600; white-space:nowrap;
+}
+.no-notice { text-align:center; padding:40px; color:var(--text-light); }
+
+/* ===== COMMITTEE ===== */
+.committee-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:24px; }
+.com-card {
+  background:white; border-radius:var(--radius); padding:28px 20px;
+  box-shadow:var(--shadow); text-align:center; transition:transform 0.25s;
+}
+.com-card:hover { transform:translateY(-6px); }
+.com-img {
+  width:90px; height:90px; border-radius:50%; margin:0 auto 16px;
+  background:var(--green-light); display:flex; align-items:center; justify-content:center;
+  font-size:32px; color:var(--green-main);
+  border:3px solid var(--green-light);
+}
+.com-card h4 { font-size:16px; font-weight:700; color:var(--text-dark); margin-bottom:4px; }
+.com-card .pos {
+  font-size:12px; color:var(--green-main); font-weight:600;
+  background:var(--green-light); padding:3px 12px; border-radius:100px;
+  display:inline-block; margin-bottom:8px;
+}
+.com-card .phone { font-size:13px; color:var(--text-light); }
+
+/* ===== ABOUT ===== */
+.about-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+.about-text h2 { font-size:32px; font-weight:800; color:var(--text-dark); margin-bottom:20px; line-height:1.4; }
+.about-text p { font-size:16px; color:var(--text-light); line-height:2; margin-bottom:16px; }
+.about-text .tagline {
+  font-size:18px; font-weight:700; color:var(--green-main);
+  border-left:4px solid var(--gold); padding-left:16px; margin-top:24px;
+}
+.about-visual {
+  background:linear-gradient(135deg, var(--green-dark), var(--green-main));
+  border-radius:24px; padding:40px; position:relative; overflow:hidden;
+}
+.about-visual::after {
+  content:'🌿';
+  position:absolute; bottom:-20px; right:-20px;
+  font-size:120px; opacity:0.08;
+}
+.info-list { list-style:none; }
+.info-list li {
+  display:flex; align-items:center; gap:14px;
+  color:rgba(255,255,255,0.9); font-size:15px; padding:12px 0;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.info-list li:last-child { border-bottom:none; }
+.info-list li i { color:var(--gold); width:20px; }
+
+/* ===== CONTACT ===== */
+.contact-bg { background:var(--green-dark); }
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center; max-width:1200px; margin:auto; }
+.contact-left h2 { font-size:32px; font-weight:800; color:white; margin-bottom:12px; }
+.contact-left p { font-size:16px; color:rgba(255,255,255,0.7); line-height:1.9; margin-bottom:30px; }
+.contact-detail { display:flex; align-items:center; gap:14px; color:rgba(255,255,255,0.85); font-size:15px; margin-bottom:16px; }
+.contact-detail i { color:var(--gold); width:20px; }
+.contact-right {
+  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+  border-radius:20px; padding:36px;
+}
+.contact-right h3 { color:white; font-size:20px; margin-bottom:24px; }
+.c-input {
+  width:100%; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+  color:white; padding:14px 16px; border-radius:10px; font-size:15px;
+  font-family:inherit; margin-bottom:14px; outline:none; transition:0.25s;
+}
+.c-input::placeholder { color:rgba(255,255,255,0.45); }
+.c-input:focus { border-color:var(--gold); background:rgba(255,255,255,0.15); }
+textarea.c-input { resize:vertical; min-height:100px; }
+.btn-send {
+  width:100%; padding:15px; background:var(--gold); color:var(--green-dark);
+  font-size:16px; font-weight:700; border:none; border-radius:10px;
+  cursor:pointer; font-family:inherit; transition:0.25s;
+}
+.btn-send:hover { background:#b8922e; color:white; }
+
+/* ===== FOOTER ===== */
+footer { background:#032b16; padding:40px 24px; text-align:center; }
+.footer-logo { font-size:20px; font-weight:800; color:white; margin-bottom:8px; }
+footer p { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:6px; }
+.footer-links { display:flex; gap:20px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+.footer-links a { color:rgba(255,255,255,0.5); text-decoration:none; font-size:14px; transition:0.2s; }
+.footer-links a:hover { color:var(--gold); }
+
+/* ===== MOBILE NAV ===== */
+.mobile-menu {
+  display:none; position:fixed; top:76px; left:0; right:0; bottom:0;
+  background:var(--green-dark); z-index:999; padding:24px; overflow-y:auto;
+}
+.mobile-menu.open { display:block; }
+.mobile-menu a {
+  display:block; color:white; text-decoration:none;
+  font-size:18px; font-weight:600; padding:16px 0;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.mobile-menu .m-btns { display:flex; flex-direction:column; gap:12px; margin-top:24px; }
+.mobile-menu .m-btns a {
+  border:none; border-bottom:none; text-align:center;
+  padding:16px; border-radius:10px;
+}
+
+/* ===== LOADER ===== */
+.loading-ph { 
+  background:linear-gradient(90deg,#e8f7ee 25%,#d4eedd 50%,#e8f7ee 75%); 
+  background-size:200% 100%; 
+  animation:shimmer 1.5s infinite; 
+  border-radius:8px; height:40px; 
+}
+@keyframes shimmer { to { background-position:-200% 0; } }
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:992px) {
+  .hero-inner { grid-template-columns:1fr; gap:40px; }
+  .hero h2 { font-size:32px; }
+  .hero-card-grid { grid-template-columns:repeat(4,1fr); }
+  .portal-grid { grid-template-columns:1fr 1fr; }
+  .activity-grid { grid-template-columns:1fr; }
+  .about-grid { grid-template-columns:1fr; }
+  .contact-grid { grid-template-columns:1fr; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:768px) {
+  nav, .nav-btns { display:none; }
+  .hamburger { display:block; }
+  .portal-grid { grid-template-columns:1fr; }
+  .hero h2 { font-size:26px; }
+  .hero-card-grid { grid-template-columns:1fr 1fr; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .committee-grid { grid-template-columns:repeat(2,1fr); }
+  .sec-title { font-size:26px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="nav-inner">
+    <div class="logo-row">
+      <img class="logo-img" src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/52x52/0b8b44/ffffff?text=আ'">
+      <div class="logo-text">
+        <h1>আলোর দিশারী ইসলামি সমাজ সংঘ</h1>
+        <p>মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম</p>
+      </div>
+    </div>
+    <nav>
+      <a href="#services">সেবাসমূহ</a>
+      <a href="#activities">কার্যক্রম</a>
+      <a href="#notice">নোটিশ</a>
+      <a href="#committee">কমিটি</a>
+      <a href="#about">আমাদের সম্পর্কে</a>
+      <a href="#contact">যোগাযোগ</a>
+    </nav>
+    <div class="nav-btns">
+      <a href="login.html" class="btn-nav-login btn-member">🔑 সদস্য লগইন</a>
+      <a href="member-form.html" class="btn-nav-login btn-admin">👤 সদস্য হন</a>
+    </div>
+    <button class="hamburger" onclick="toggleMenu()"><i class="fa fa-bars"></i></button>
+  </div>
+</header>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services" onclick="toggleMenu()">সেবাসমূহ</a>
+  <a href="#activities" onclick="toggleMenu()">কার্যক্রম</a>
+  <a href="#notice" onclick="toggleMenu()">নোটিশ</a>
+  <a href="#committee" onclick="toggleMenu()">কমিটি</a>
+  <a href="#about" onclick="toggleMenu()">আমাদের সম্পর্কে</a>
+  <a href="#contact" onclick="toggleMenu()">যোগাযোগ</a>
+  <div class="m-btns">
+    <a href="login.html" style="background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.4);">🔑 সদস্য লগইন</a>
+    <a href="admin-login.html" style="background:#c9a84c;color:#065f30;">🛡️ Admin Login</a>
+    <a href="member-form.html" style="background:#0b8b44;">👤 সদস্য নিবন্ধন</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-badge"><i class="fa-solid fa-star"></i> প্রতিষ্ঠাকাল ২০২১</div>
+      <h2>আলোর দিশারী<br><span>ইসলামি সমাজ সংঘ</span></h2>
+      <p>মানবকল্যাণ, সামাজিক উন্নয়ন এবং ইসলামী মূল্যবোধের আলো সমাজের সর্বস্তরে পৌঁছে দেওয়ার লক্ষ্যে নিরলসভাবে কাজ করে যাচ্ছে।</p>
+      <div class="hero-actions">
+        <a href="member-form.html" class="btn-hero-main btn-filled"><i class="fa-solid fa-user-plus"></i> সদস্য হন</a>
+        <a href="login.html" class="btn-hero-main btn-outline"><i class="fa-solid fa-right-to-bracket"></i> লগইন</a>
+      </div>
+    </div>
+    <div class="hero-card-grid">
+      <div class="hero-stat">
+        <div class="num" id="h-total">0</div>
+        <div class="lbl">মোট সদস্য</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" id="h-approved">0</div>
+        <div class="lbl">অনুমোদিত</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">৫+</div>
+        <div class="lbl">বছরের অভিজ্ঞতা</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">৩০০+</div>
+        <div class="lbl">পরিবার সহায়তা</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUICK ACCESS -->
+<section class="section" id="services">
+  <div class="section-inner">
+    <div class="sec-header">
+      <span class="sec-eyebrow">অনলাইন পোর্টাল</span>
+      <h2 class="sec-title">দ্রুত প্রবেশাধিকার</h2>
+      <p class="sec-sub">আমাদের সকল সেবা এখন অনলাইনে পাওয়া যাচ্ছে</p>
+    </div>
+    <div class="portal-grid">
+      <div class="portal-card">
+        <div class="portal-icon"><i class="fa-solid fa-user-plus"></i></div>
+        <h3>সদস্য নিবন্ধন</h3>
+        <p>অনলাইনে নতুন সদস্য আবেদন করুন। আবেদন প্রক্রিয়া সম্পূর্ণ বিনামূল্যে।</p>
+        <a href="member-form.html" class="btn-portal"><i class="fa-solid fa-arrow-right"></i> এখনই আবেদন</a>
+      </div>
+      <div class="portal-card">
+        <div class="portal-icon"><i class="fa-solid fa-gauge-high"></i></div>
+        <h3>সদস্য ড্যাশবোর্ড</h3>
+        <p>আপনার প্রোফাইল, চাঁদার ইতিহাস ও সংগঠনের তথ্য দেখুন।</p>
+        <a href="login.html" class="btn-portal"><i class="fa-solid fa-right-to-bracket"></i> লগইন করুন</a>
+      </div>
+      <div class="portal-card">
+        <div class="portal-icon" style="background:var(--gold-light);color:var(--gold);"><i class="fa-solid fa-user-shield"></i></div>
+        <h3>Admin Panel</h3>
+        <p>সদস্য অনুমোদন, চাঁদা ব্যবস্থাপনা ও নোটিশ প্রকাশ — শুধুমাত্র প্রশাসকদের জন্য।</p>
+        <a href="admin-login.html" class="btn-portal btn-portal-gold"><i class="fa-solid fa-lock"></i> Admin Login</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-box">
+      <div class="n" id="st-total">—</div>
+      <div class="l">মোট সদস্য</div>
+    </div>
+    <div class="stat-box">
+      <div class="n" id="st-approved">—</div>
+      <div class="l">অনুমোদিত সদস্য</div>
+    </div>
+    <div class="stat-box">
+      <div class="n" id="st-pending">—</div>
+      <div class="l">অপেক্ষমাণ আবেদন</div>
+    </div>
+    <div class="stat-box">
+      <div class="n" id="st-collection">৳—</div>
+      <div class="l">মোট চাঁদা সংগ্রহ</div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIVITIES -->
+<section class="section" id="activities">
+  <div class="section-inner">
+    <div class="sec-header">
+      <span class="sec-eyebrow">আমাদের কার্যক্রম</span>
+      <h2 class="sec-title">যা আমরা করেছি</h2>
+      <p class="sec-sub">করোনাকাল থেকে শুরু করে আজ পর্যন্ত আমাদের সামাজিক কার্যক্রমের সংক্ষিপ্ত বিবরণ</p>
+    </div>
+    <div class="activity-grid">
+      <div class="activity-card">
+        <div class="act-icon"><i class="fa-solid fa-syringe"></i></div>
+        <div class="act-body">
+          <h4>করোনা সচেতনতা ও টিকা সহায়তা</h4>
+          <p>ইলশা গ্রামের ৩০০ পরিবারকে সচেতন ও উদ্বুদ্ধ করা হয়। প্রায় ৪০০ জনকে করোনার টিকা নিবন্ধন করে সনদ প্রিন্ট করে দেওয়া হয়েছে।</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="act-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+        <div class="act-body">
+          <h4>ঈদুল ফিতর সহায়তা ২০২১</h4>
+          <p>পবিত্র ঈদুল ফিতরে ৩৫টি অসচ্ছল পরিবারকে নগদ অর্থ প্রদান করা হয়। এতে অনেক পরিবার ঈদ আনন্দে অংশ নিতে পেরেছে।</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="act-icon"><i class="fa-solid fa-bowl-food"></i></div>
+        <div class="act-body">
+          <h4>রমজান মাসে ইফতার বিতরণ</h4>
+          <p>পবিত্র রমজান মাসে ৩০টি পরিবারকে ইফতার সামগ্রী ও নগদ অর্থ সহায়তা প্রদান করা হয়েছে।</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="act-icon"><i class="fa-solid fa-tree"></i></div>
+        <div class="act-body">
+          <h4>৫০০ ফলজ বৃক্ষরোপণ ২০২২</h4>
+          <p>বৈশ্বিক উষ্ণায়ন মোকাবেলায় বিদ্যাবাড়ির সহায়তায় ৩০০টি ফলজ চারা রোপণ করা হয়। কিছু গাছ অলি চৌধুরী জামে মসজিদে দৃশ্যমান।</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="act-icon"><i class="fa-solid fa-futbol"></i></div>
+        <div class="act-body">
+          <h4>ক্রীড়া প্রতিযোগিতা আয়োজন</h4>
+          <p>কিশোরদের মাদক থেকে দূরে রাখতে ক্রিকেট, ফুটবল, সাঁতার ও গোলক নিক্ষেপসহ বিভিন্ন ক্রীড়া প্রতিযোগিতার আয়োজন করা হয়।</p>
+        </div>
+      </div>
+      <div class="activity-card">
+        <div class="act-icon"><i class="fa-solid fa-hands-helping"></i></div>
+        <div class="act-body">
+          <h4>চলমান সমাজসেবা কার্যক্রম</h4>
+          <p>ঐক্য, সততা ও পারস্পরিক সহযোগিতার মাধ্যমে একটি আদর্শ, মানবিক ও কল্যাণমুখী সমাজ গঠনে কাজ অব্যাহত রয়েছে।</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NOTICE -->
+<section class="section notice-bg" id="notice">
+  <div class="section-inner">
+    <div class="sec-header">
+      <span class="sec-eyebrow">নোটিশ বোর্ড</span>
+      <h2 class="sec-title">📢 সর্বশেষ নোটিশ</h2>
+    </div>
+    <div class="notice-list" id="noticeList">
+      <div class="no-notice"><i class="fa fa-spinner fa-spin fa-2x" style="color:var(--green-main)"></i><br><br>লোড হচ্ছে...</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMITTEE -->
+<section class="section" id="committee">
+  <div class="section-inner">
+    <div class="sec-header">
+      <span class="sec-eyebrow">কার্যনির্বাহী পরিষদ</span>
+      <h2 class="sec-title">👥 কমিটি সদস্যবৃন্দ</h2>
+      <p class="sec-sub">সংগঠনের দায়িত্বশীল সদস্যবৃন্দ</p>
+    </div>
+    <div class="committee-grid" id="committeeList">
+      <!-- Hardcoded fallback committee from provided info -->
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">সভাপতি</span>
+        <h4>ইফতেখার বিন নুর</h4>
+      </div>
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">সাধারণ সম্পাদক</span>
+        <h4>হাসান শাহরিয়ার</h4>
+      </div>
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">অর্থ সম্পাদক</span>
+        <h4>আব্দুল জব্বার</h4>
+      </div>
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">সাংগঠনিক সম্পাদক</span>
+        <h4>মোঃ মিজান</h4>
+      </div>
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">সাংগঠনিক সম্পাদক</span>
+        <h4>জোবায়ের সালেহীন (সম্রাট)</h4>
+      </div>
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">তথ্য ও যোগাযোগ সম্পাদক</span>
+        <h4>ইনাজ বিন ইউসুফ</h4>
+      </div>
+      <div class="com-card">
+        <div class="com-img"><i class="fa-solid fa-user"></i></div>
+        <span class="pos">ক্রীড়া সম্পাদক</span>
+        <h4>এ.কে. খান আবেদীন</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about" style="background:white;">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-text">
+        <span class="sec-eyebrow">আমাদের সম্পর্কে</span>
+        <h2>মানবতার সেবায় একটি পরিবার</h2>
+        <p>আলোর দিশারী ইসলামি সমাজ সংঘ একটি অরাজনৈতিক, অলাভজনক ও সামাজিক সংগঠন। ২০২১ সালে করোনাকালীন দুর্বিষহ সময়ে প্রতিষ্ঠিত হয়ে আমরা ধারাবাহিকভাবে বিভিন্ন উন্নয়নমূলক কার্যক্রম পরিচালনা করি।</p>
+        <p>আমরা বিশ্বাস করি পূর্বের ধারাবাহিকতায় ঐক্য, সততা ও পারস্পরিক সহযোগিতার মাধ্যমে একটি আদর্শ, মানবিক ও কল্যাণমুখী সমাজ গঠন সম্ভব।</p>
+        <div class="tagline">"চলবো মোরা এক সাথে, জয় করব মানবতাকে"</div>
+      </div>
+      <div class="about-visual">
+        <ul class="info-list">
+          <li><i class="fa-solid fa-calendar-check"></i> প্রতিষ্ঠাকাল: ২০২১ সাল</li>
+          <li><i class="fa-solid fa-location-dot"></i> মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম</li>
+          <li><i class="fa-solid fa-flag"></i> অরাজনৈতিক ও অলাভজনক সংগঠন</li>
+          <li><i class="fa-solid fa-mosque"></i> ইসলামী মূল্যবোধ ভিত্তিক</li>
+          <li><i class="fa-solid fa-people-group"></i> সদস্য নিবন্ধন: ADS-XXXX ফরম্যাট</li>
+          <li><i class="fa-solid fa-coins"></i> মাসিক চাঁদা: ৳৫০/মাস</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact-bg" id="contact">
+  <div class="contact-grid" style="padding:0 24px;">
+    <div class="contact-left">
+      <span class="sec-eyebrow" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);">যোগাযোগ</span>
+      <h2>আমাদের সাথে যোগাযোগ করুন</h2>
+      <p>যেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের সাথে যোগাযোগ করুন।</p>
+      <div class="contact-detail"><i class="fa-solid fa-location-dot"></i> মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম</div>
+      <div class="contact-detail"><i class="fa-solid fa-phone"></i> 01870932446</div>
+      <div class="contact-detail"><i class="fa-solid fa-envelope"></i> inasbinyousuf@gmail.com</div>
+      <div class="contact-detail"><i class="fa-brands fa-facebook"></i> facebook.com/alordishari</div>
+    </div>
+    <div class="contact-right">
+      <h3>বার্তা পাঠান</h3>
+      <input class="c-input" type="text" placeholder="আপনার নাম">
+      <input class="c-input" type="tel" placeholder="মোবাইল নম্বর">
+      <textarea class="c-input" placeholder="আপনার বার্তা লিখুন..."></textarea>
+      <button class="btn-send"><i class="fa-solid fa-paper-plane"></i> বার্তা পাঠান</button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">🌿 আলোর দিশারী ইসলামি সমাজ সংঘ</div>
+  <p>মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম</p>
+  <p>© ২০২৬ সকল স্বত্ব সংরক্ষিত</p>
+  <div class="footer-links">
+    <a href="member-form.html">সদস্য নিবন্ধন</a>
+    <a href="login.html">সদস্য লগইন</a>
+    <a href="admin-login.html">Admin Login</a>
+    <a href="#notice">নোটিশ</a>
+    <a href="#committee">কমিটি</a>
+  </div>
+</footer>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// Counter animation
+function animateCount(el, target, prefix='', suffix='') {
+  let start = 0;
+  const duration = 1500;
+  const step = (timestamp) => {
+    if(!start) start = timestamp;
+    const progress = Math.min((timestamp - start) / duration, 1);
+    el.textContent = prefix + Math.floor(progress * target) + suffix;
+    if(progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+async function loadStats() {
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"dashboardStats"})
+    });
+    const data = await res.json();
+    if(data.success) {
+      animateCount(document.getElementById('h-total'), parseInt(data.totalMembers)||0);
+      animateCount(document.getElementById('h-approved'), parseInt(data.approved)||0);
+      animateCount(document.getElementById('st-total'), parseInt(data.totalMembers)||0);
+      animateCount(document.getElementById('st-approved'), parseInt(data.approved)||0);
+      animateCount(document.getElementById('st-pending'), parseInt(data.pending)||0);
+      document.getElementById('st-collection').textContent = '৳' + (data.totalCollection || '০');
+    }
+  } catch(e) {
+    ['st-total','st-approved','st-pending'].forEach(id=>{document.getElementById(id).textContent='0';});
+  }
+}
+
+async function loadNotice() {
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"getNotice"})
+    });
+    const data = await res.json();
+    const container = document.getElementById('noticeList');
+    if(data.success && data.notices && data.notices.length) {
+      container.innerHTML = data.notices.map(n => `
+        <div class="notice-item">
+          <div class="notice-content">
+            <h4>${n.title || ''}</h4>
+            <p>${n.notice || ''}</p>
+          </div>
+          <span class="notice-date">${n.date || ''}</span>
+        </div>
+      `).join('');
+    } else {
+      container.innerHTML = '<div class="no-notice"><i class="fa fa-bell-slash fa-2x" style="color:#ccc"></i><br><br>এখন কোনো নোটিশ নেই।</div>';
+    }
+  } catch(e) {
+    document.getElementById('noticeList').innerHTML = '<div class="no-notice">নোটিশ লোড করা যায়নি।</div>';
+  }
+}
+
+async function loadCommittee() {
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"getCommittee"})
+    });
+    const data = await res.json();
+    if(data.success && data.committee && data.committee.length) {
+      const container = document.getElementById('committeeList');
+      container.innerHTML = data.committee.map(c => `
+        <div class="com-card">
+          <div class="com-img">
+            ${c.photo ? `<img src="${c.photo}" style="width:84px;height:84px;border-radius:50%;object-fit:cover;" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-user\'></i>'">` : '<i class="fa-solid fa-user"></i>'}
+          </div>
+          <span class="pos">${c.position || ''}</span>
+          <h4>${c.name || ''}</h4>
+          <div class="phone">${c.mobile || ''}</div>
+        </div>
+      `).join('');
+    }
+  } catch(e) { /* keep fallback committee */ }
+}
+
+loadStats();
+loadNotice();
+loadCommittee();
+</script>
+</body>
+</html>

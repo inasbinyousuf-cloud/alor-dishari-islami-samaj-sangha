@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>সদস্য লগইন — আলোর দিশারী</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root {
+  --green-dark:#065f30; --green-main:#0b8b44; --green-light:#e8f7ee;
+  --gold:#c9a84c; --white:#ffffff; --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Bengali',sans-serif;}
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--green-dark) 0%,var(--green-main) 50%,#1a6e3c 100%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px;
+  position:relative; overflow:hidden;
+}
+body::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.back-link{
+  position:absolute;top:20px;left:20px;
+  color:rgba(255,255,255,0.7);text-decoration:none;font-size:14px;font-weight:600;
+  display:flex;align-items:center;gap:8px;transition:0.2s;
+}
+.back-link:hover{color:white;}
+.card{
+  background:white;border-radius:24px;padding:44px 40px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.25);
+  width:100%;max-width:440px;
+  position:relative;z-index:1;
+  animation:slideUp 0.4s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.card-top{text-align:center;margin-bottom:32px;}
+.logo-wrap{
+  width:90px;height:90px;border-radius:50%;
+  background:var(--green-light);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+  border:4px solid var(--green-main);
+  overflow:hidden;
+}
+.logo-wrap img{width:100%;height:100%;object-fit:cover;}
+.logo-icon{font-size:36px;color:var(--green-main);}
+.card-top h2{font-size:24px;font-weight:800;color:var(--green-dark);margin-bottom:6px;}
+.card-top p{font-size:14px;color:#888;}
+.form-label{display:block;font-size:14px;font-weight:600;color:#444;margin-bottom:8px;}
+.input-wrap{position:relative;margin-bottom:18px;}
+.input-wrap i.lead{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:var(--green-main);font-size:15px;}
+.input-wrap input{
+  width:100%;padding:14px 45px;
+  border:1.5px solid #e0e0e0;border-radius:11px;
+  font-size:15px;font-family:inherit;
+  transition:0.25s;outline:none;
+  background:#fafafa;
+}
+.input-wrap input:focus{border-color:var(--green-main);background:white;box-shadow:0 0 0 3px rgba(11,139,68,0.08);}
+.toggle-pw{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#aaa;font-size:15px;transition:0.2s;}
+.toggle-pw:hover{color:var(--green-main);}
+.options-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;font-size:13px;}
+.options-row label{display:flex;align-items:center;gap:6px;cursor:pointer;color:#555;}
+.options-row a{color:var(--green-main);text-decoration:none;font-weight:600;}
+.btn-login{
+  width:100%;padding:15px;background:var(--green-main);color:white;
+  font-size:16px;font-weight:700;border:none;border-radius:11px;
+  cursor:pointer;font-family:inherit;transition:0.25s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn-login:hover{background:var(--green-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(11,139,68,0.3);}
+.btn-login:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+.loading-row{display:none;align-items:center;justify-content:center;gap:8px;margin-top:14px;color:var(--green-main);font-weight:600;font-size:14px;}
+.spinner{width:16px;height:16px;border:2.5px solid var(--green-light);border-top-color:var(--green-main);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.error-box{
+  margin-top:14px;padding:12px 16px;background:#fff0f0;border:1px solid #ffc5c5;
+  border-radius:10px;color:#c0392b;font-size:14px;font-weight:600;text-align:center;
+  display:none;
+}
+.divider{border:none;border-top:1px solid #eee;margin:24px 0;}
+.card-footer{text-align:center;font-size:14px;color:#888;}
+.card-footer a{color:var(--green-main);text-decoration:none;font-weight:700;}
+.success-box{
+  display:none;text-align:center;padding:20px;
+}
+.success-box i{font-size:48px;color:var(--green-main);}
+.success-box p{margin-top:12px;font-size:16px;font-weight:600;color:var(--green-dark);}
+.badge-demo{
+  background:var(--green-light);border-radius:8px;padding:10px 14px;
+  font-size:13px;color:var(--green-dark);text-align:center;margin-bottom:20px;
+  border:1px dashed var(--green-main);
+}
+@media(max-width:500px){.card{padding:32px 24px;}}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-link"><i class="fa fa-arrow-left"></i> হোমে ফিরুন</a>
+
+<div class="card">
+  <div class="card-top">
+    <div class="logo-wrap">
+      <img src="logo.png" alt="Logo" onerror="this.parentElement.innerHTML='<i class=\'fa-solid fa-mosque logo-icon\'></i>'">
+    </div>
+    <h2>সদস্য লগইন</h2>
+    <p>আলোর দিশারী ইসলামি সমাজ সংঘ</p>
+  </div>
+
+  <div class="badge-demo">
+    <i class="fa fa-id-card" style="color:var(--green-main)"></i>
+    Member ID ফরম্যাট: <b>ADS-0001</b>
+  </div>
+
+  <div id="loginSection">
+    <div>
+      <label class="form-label">সদস্য আইডি</label>
+      <div class="input-wrap">
+        <i class="fa-solid fa-id-card lead"></i>
+        <input type="text" id="memberId" placeholder="ADS-0001" autocomplete="username">
+      </div>
+    </div>
+    <div>
+      <label class="form-label">পাসওয়ার্ড</label>
+      <div class="input-wrap">
+        <i class="fa-solid fa-lock lead"></i>
+        <input type="password" id="password" placeholder="আপনার পাসওয়ার্ড">
+        <i class="fa-solid fa-eye toggle-pw" id="togglePw"></i>
+      </div>
+    </div>
+    <div class="options-row">
+      <label><input type="checkbox" id="remember"> আইডি মনে রাখুন</label>
+      <a href="#">পাসওয়ার্ড ভুলে গেছি?</a>
+    </div>
+    <button class="btn-login" onclick="doLogin()">
+      <i class="fa-solid fa-right-to-bracket"></i> লগইন করুন
+    </button>
+    <div class="loading-row" id="loading"><div class="spinner"></div> যাচাই করা হচ্ছে...</div>
+    <div class="error-box" id="errorBox"></div>
+  </div>
+
+  <div class="success-box" id="successBox">
+    <i class="fa-solid fa-circle-check"></i>
+    <p>লগইন সফল! ড্যাশবোর্ডে যাচ্ছি...</p>
+  </div>
+
+  <hr class="divider">
+  <div class="card-footer">
+    নতুন সদস্য? <a href="member-form.html">নিবন্ধন করুন</a><br><br>
+    <a href="admin-login.html">🛡️ Admin লগইন</a>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+
+// Redirect if already logged in
+if(localStorage.getItem("memberLoggedIn") === "true") {
+  window.location.href = "dashboard.html";
+}
+
+// Load remembered ID
+const savedId = localStorage.getItem("rememberMemberId");
+if(savedId) {
+  document.getElementById("memberId").value = savedId;
+  document.getElementById("remember").checked = true;
+}
+
+// Toggle password
+document.getElementById("togglePw").onclick = function() {
+  const pw = document.getElementById("password");
+  if(pw.type === "password") { pw.type = "text"; this.className = "fa-solid fa-eye-slash toggle-pw"; }
+  else { pw.type = "password"; this.className = "fa-solid fa-eye toggle-pw"; }
+};
+
+function showError(msg) {
+  const box = document.getElementById("errorBox");
+  box.textContent = "⚠️ " + msg;
+  box.style.display = "block";
+}
+function hideError() { document.getElementById("errorBox").style.display = "none"; }
+function setLoading(on) {
+  document.getElementById("loading").style.display = on ? "flex" : "none";
+  document.querySelector(".btn-login").disabled = on;
+}
+
+async function doLogin() {
+  hideError();
+  const memberId = document.getElementById("memberId").value.trim();
+  const password = document.getElementById("password").value.trim();
+  if(!memberId || !password) { showError("সদস্য আইডি ও পাসওয়ার্ড দিন"); return; }
+  setLoading(true);
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"login", memberId, password})
+    });
+    const data = await res.json();
+    setLoading(false);
+    if(data.success) {
+      if(document.getElementById("remember").checked) {
+        localStorage.setItem("rememberMemberId", memberId);
+      } else {
+        localStorage.removeItem("rememberMemberId");
+      }
+      localStorage.setItem("memberLoggedIn","true");
+      localStorage.setItem("memberId", memberId);
+      localStorage.setItem("memberName", data.name || memberId);
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("successBox").style.display = "block";
+      setTimeout(() => window.location.href = "dashboard.html", 1200);
+    } else {
+      showError(data.message || "ভুল আইডি অথবা পাসওয়ার্ড");
+    }
+  } catch(e) {
+    setLoading(false);
+    showError("সার্ভার সংযোগ ব্যর্থ হয়েছে");
+  }
+}
+
+// Enter key support
+["memberId","password"].forEach(id => {
+  document.getElementById(id).addEventListener("keydown", e => { if(e.key==="Enter") doLogin(); });
+});
+
+// Online/offline
+window.addEventListener("offline", () => showError("ইন্টারনেট সংযোগ নেই"));
+window.addEventListener("online", hideError);
+
+document.getElementById("memberId").focus();
+</script>
+</body>
+</html>

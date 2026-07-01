@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login — আলোর দিশারী</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{--green-main:#0b8b44;--gold:#c9a84c;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Bengali',sans-serif;}
+html,body{height:100%;}
+body{
+  background:linear-gradient(135deg,#0a1628 0%,#0f2a1a 50%,#1a3a22 100%);
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:70px 20px 40px;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background:radial-gradient(ellipse at top right,rgba(201,168,76,0.1),transparent 60%),
+             radial-gradient(ellipse at bottom left,rgba(11,139,68,0.15),transparent 60%);
+  pointer-events:none;z-index:0;
+}
+.back-link{
+  position:fixed;top:16px;left:18px;z-index:100;
+  color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.08);padding:8px 14px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.15);transition:0.2s;
+}
+.back-link:hover{background:rgba(255,255,255,0.18);color:white;}
+.card{
+  position:relative;z-index:1;
+  background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.13);
+  border-radius:24px;padding:44px 40px 36px;
+  width:100%;max-width:440px;
+  animation:su 0.4s ease;
+}
+@keyframes su{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:24px 24px 0 0;
+  background:linear-gradient(90deg,var(--green-main),var(--gold),var(--green-main));
+}
+.top{text-align:center;margin-bottom:28px;}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(201,168,76,0.18);border:1px solid rgba(201,168,76,0.35);
+  color:var(--gold);padding:5px 16px;border-radius:100px;font-size:12px;font-weight:700;
+  margin-bottom:16px;letter-spacing:0.5px;
+}
+.shield{
+  width:76px;height:76px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),#7a5a10);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;font-size:30px;color:white;
+  box-shadow:0 8px 28px rgba(201,168,76,0.35);
+}
+.top h2{font-size:24px;font-weight:800;color:white;margin-bottom:5px;}
+.top p{font-size:13px;color:rgba(255,255,255,0.5);}
+.sec-note{
+  background:rgba(201,168,76,0.09);border:1px solid rgba(201,168,76,0.22);
+  border-radius:10px;padding:11px 16px;margin-bottom:22px;
+  font-size:13px;color:rgba(255,255,255,0.6);text-align:center;
+}
+.lbl{display:block;font-size:13px;font-weight:600;color:rgba(255,255,255,0.72);margin-bottom:7px;}
+.iw{position:relative;margin-bottom:16px;}
+.iw i.ic{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--gold);font-size:14px;}
+.iw input{
+  width:100%;padding:13px 46px;
+  background:rgba(255,255,255,0.09);border:1.5px solid rgba(255,255,255,0.16);
+  border-radius:11px;font-size:15px;color:white;font-family:inherit;
+  transition:0.25s;outline:none;
+}
+.iw input::placeholder{color:rgba(255,255,255,0.32);}
+.iw input:focus{border-color:var(--gold);background:rgba(255,255,255,0.13);box-shadow:0 0 0 3px rgba(201,168,76,0.13);}
+.eye{position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:rgba(255,255,255,0.38);font-size:14px;transition:0.2s;}
+.eye:hover{color:var(--gold);}
+.btn{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--gold),#8b6b1f);
+  color:white;font-size:16px;font-weight:700;
+  border:none;border-radius:11px;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:0.25s;box-shadow:0 6px 22px rgba(201,168,76,0.3);
+}
+.btn:hover{background:linear-gradient(135deg,#b8922e,#6b4e10);transform:translateY(-1px);}
+.btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.ld{display:none;align-items:center;justify-content:center;gap:8px;margin-top:13px;color:var(--gold);font-weight:600;font-size:14px;}
+.sp{width:16px;height:16px;border:2.5px solid rgba(201,168,76,0.3);border-top-color:var(--gold);border-radius:50%;animation:sp 0.7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.err{margin-top:13px;padding:11px 16px;background:rgba(192,57,43,0.2);border:1px solid rgba(192,57,43,0.4);border-radius:10px;color:#ff9090;font-size:14px;font-weight:600;text-align:center;display:none;}
+.div{border:none;border-top:1px solid rgba(255,255,255,0.1);margin:22px 0;}
+.foot{text-align:center;font-size:14px;color:rgba(255,255,255,0.42);}
+.foot a{color:#4caf7a;text-decoration:none;font-weight:600;}
+.foot a:hover{color:#6fcf97;}
+.suc{display:none;text-align:center;padding:18px;}
+.suc i{font-size:46px;color:var(--gold);}
+.suc p{margin-top:11px;font-size:16px;font-weight:600;color:white;}
+@media(max-width:480px){
+  .card{padding:32px 20px 28px;}
+  body{padding:60px 14px 30px;}
+}
+</style>
+</head>
+<body>
+
+<a href="index.html" class="back-link"><i class="fa fa-arrow-left"></i> হোমে ফিরুন</a>
+
+<div class="card">
+  <div class="top">
+    <div class="badge"><i class="fa fa-shield-halved"></i> RESTRICTED AREA</div>
+    <div class="shield"><i class="fa-solid fa-user-shield"></i></div>
+    <h2>Admin Login</h2>
+    <p>আলোর দিশারী ইসলামি সমাজ সংঘ — প্রশাসন প্যানেল</p>
+  </div>
+
+  <div class="sec-note">
+    <i class="fa fa-lock" style="color:var(--gold);margin-right:6px;"></i>
+    এই পেজটি শুধুমাত্র অনুমোদিত প্রশাসকদের জন্য
+  </div>
+
+  <div id="loginSec">
+    <label class="lbl">Admin ID / Username</label>
+    <div class="iw">
+      <i class="fa-solid fa-user-shield ic"></i>
+      <input type="text" id="adminId" placeholder="Admin ID লিখুন" autocomplete="username">
+    </div>
+    <label class="lbl">পাসওয়ার্ড</label>
+    <div class="iw">
+      <i class="fa-solid fa-lock ic"></i>
+      <input type="password" id="adminPw" placeholder="Password">
+      <i class="fa-solid fa-eye eye" id="eyeBtn"></i>
+    </div>
+    <button class="btn" onclick="doLogin()">
+      <i class="fa-solid fa-right-to-bracket"></i> Admin Login
+    </button>
+    <div class="ld" id="ld"><div class="sp"></div> যাচাই করা হচ্ছে...</div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="suc" id="suc">
+    <i class="fa-solid fa-circle-check"></i>
+    <p>Admin লগইন সফল! ড্যাশবোর্ডে যাচ্ছি...</p>
+  </div>
+
+  <hr class="div">
+  <div class="foot">
+    <a href="login.html">🔑 সদস্য লগইন</a> &nbsp;|&nbsp; <a href="index.html">🏠 হোম</a>
+  </div>
+</div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+if(localStorage.getItem("adminLoggedIn")==="true")window.location.href="admin-dashboard.html";
+
+document.getElementById("eyeBtn").onclick=function(){
+  const pw=document.getElementById("adminPw");
+  if(pw.type==="password"){pw.type="text";this.className="fa-solid fa-eye-slash eye";}
+  else{pw.type="password";this.className="fa-solid fa-eye eye";}
+};
+
+function showErr(m){const b=document.getElementById("err");b.textContent="⚠️ "+m;b.style.display="block";}
+function hideErr(){document.getElementById("err").style.display="none";}
+function setLd(on){document.getElementById("ld").style.display=on?"flex":"none";document.querySelector(".btn").disabled=on;}
+
+async function doLogin(){
+  hideErr();
+  const id=document.getElementById("adminId").value.trim();
+  const pw=document.getElementById("adminPw").value.trim();
+  if(!id||!pw){showErr("Admin ID ও পাসওয়ার্ড দিন");return;}
+  setLd(true);
+  try{
+    const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"adminLogin",username:id,password:pw})});
+    const d=await res.json();
+    setLd(false);
+    if(d.success){
+      localStorage.setItem("adminLoggedIn","true");
+      localStorage.setItem("adminName",d.name||id);
+      localStorage.setItem("adminRole",d.role||"Admin");
+      localStorage.setItem("adminUsername",id);
+      localStorage.setItem("adminPermissions",JSON.stringify(d.permissions||[]));
+      document.getElementById("loginSec").style.display="none";
+      document.getElementById("suc").style.display="block";
+      setTimeout(()=>window.location.href="admin-dashboard.html",1200);
+    } else showErr(d.message||"ভুল Admin ID অথবা পাসওয়ার্ড");
+  }catch(e){setLd(false);showErr("সার্ভার সংযোগ ব্যর্থ হয়েছে");}
+}
+["adminId","adminPw"].forEach(id=>document.getElementById(id).addEventListener("keydown",e=>{if(e.key==="Enter")doLogin();}));
+window.addEventListener("offline",()=>showErr("ইন্টারনেট সংযোগ নেই"));
+window.addEventListener("online",hideErr);
+document.getElementById("adminId").focus();
+</script>
+</body>
+</html>

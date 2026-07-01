@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>সদস্য নিবন্ধন — আলোর দিশারী</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+:root{
+  --gd:#065f30;--gm:#0b8b44;--gl:#e8f7ee;--gp:#f0faf4;
+  --gold:#c9a84c;--bg:#f2f6f3;--white:#fff;
+  --shadow:0 4px 24px rgba(6,95,48,0.10);--radius:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Bengali',sans-serif;}
+body{background:var(--bg);color:#1a2e1e;padding:0 0 60px;}
+
+/* TOP HEADER */
+.form-header{
+  background:linear-gradient(120deg,var(--gd) 0%,var(--gm) 100%);
+  color:white;padding:20px 32px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
+  box-shadow:0 3px 16px rgba(0,0,0,0.2);
+}
+.org-row{display:flex;align-items:center;gap:16px;}
+.org-logo{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.3);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.org-logo img{width:100%;height:100%;object-fit:cover;}
+.org-text h2{font-size:20px;font-weight:800;line-height:1.3;}
+.org-text p{font-size:13px;opacity:0.8;margin-top:2px;}
+.header-right{text-align:right;font-size:13px;font-weight:600;}
+.header-right .mid-tag{background:rgba(201,168,76,0.25);border:1px solid rgba(201,168,76,0.4);color:var(--gold);padding:4px 14px;border-radius:100px;font-size:12px;display:inline-block;margin-bottom:6px;}
+.header-right span{display:block;font-size:12px;opacity:0.75;margin-top:2px;}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{background:white;border-bottom:1px solid #e8ede9;padding:0 32px;display:flex;align-items:center;gap:0;overflow-x:auto;}
+.step-item{display:flex;align-items:center;gap:0;flex-shrink:0;}
+.step-dot{
+  width:36px;height:36px;border-radius:50%;border:2.5px solid #d0e6d6;
+  background:white;color:#aaa;font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:0.3s;margin:12px 0;
+}
+.step-dot.active{border-color:var(--gm);background:var(--gm);color:white;}
+.step-dot.done{border-color:var(--gm);background:var(--gl);color:var(--gm);}
+.step-label{font-size:12px;font-weight:600;color:#aaa;margin:0 10px;white-space:nowrap;}
+.step-label.active{color:var(--gm);}
+.step-line{width:40px;height:2px;background:#e0e0e0;flex-shrink:0;}
+.step-line.done{background:var(--gm);}
+
+/* MAIN WRAPPER */
+.wrapper{max-width:900px;margin:28px auto;padding:0 16px;}
+
+/* SECTION CARDS */
+.sec-card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:22px;overflow:hidden;display:none;}
+.sec-card.active{display:block;}
+.sec-head{padding:18px 24px;border-bottom:2px solid var(--gl);display:flex;align-items:center;gap:12px;}
+.sec-head .step-num{width:32px;height:32px;border-radius:50%;background:var(--gm);color:white;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sec-head h3{font-size:16px;font-weight:700;color:var(--gd);}
+.sec-body{padding:24px;}
+
+/* PHOTO UPLOAD */
+.photo-upload-area{
+  display:flex;align-items:center;gap:24px;padding:20px;
+  background:var(--gp);border-radius:12px;border:2px dashed #b8d9c4;margin-bottom:22px;
+  cursor:pointer;transition:0.25s;
+}
+.photo-upload-area:hover{border-color:var(--gm);background:var(--gl);}
+.photo-preview{
+  width:110px;height:130px;border-radius:10px;background:var(--gl);
+  border:2px dashed #b8d9c4;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;
+  font-size:12px;color:var(--gm);font-weight:600;text-align:center;gap:6px;
+}
+.photo-preview img{width:100%;height:100%;object-fit:cover;}
+.photo-preview i{font-size:28px;}
+.photo-info h4{font-size:15px;font-weight:700;color:var(--gd);margin-bottom:6px;}
+.photo-info p{font-size:13px;color:#777;line-height:1.7;}
+.photo-info .ph-btn{display:inline-flex;align-items:center;gap:6px;background:var(--gm);color:white;padding:9px 20px;border-radius:8px;font-size:13px;font-weight:600;margin-top:10px;}
+input[type=file]#photoInput{display:none;}
+
+/* FORM GRID */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-grid .full{grid-column:1/-1;}
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fg label{font-size:13px;font-weight:600;color:#444;}
+.fg label .req{color:#e74c3c;margin-left:2px;}
+.fg input,.fg select,.fg textarea{
+  padding:12px 14px;border:1.5px solid #dde8e0;border-radius:10px;
+  font-size:14px;font-family:inherit;outline:none;transition:0.22s;
+  background:#fafcfa;color:#1a2e1e;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gm);background:white;box-shadow:0 0 0 3px rgba(11,139,68,0.08);}
+.fg input[readonly],.fg input[disabled]{background:#f5f5f5;color:#999;cursor:not-allowed;}
+.fg select{cursor:pointer;}
+.fg textarea{resize:vertical;min-height:80px;}
+
+/* FILE UPLOAD FIELD */
+.file-field{
+  display:flex;align-items:center;gap:10px;
+  border:1.5px dashed #c5dac9;border-radius:10px;padding:12px 14px;
+  background:var(--gp);cursor:pointer;transition:0.22s;
+}
+.file-field:hover{border-color:var(--gm);background:var(--gl);}
+.file-field i{color:var(--gm);font-size:16px;}
+.file-field span{font-size:13px;color:#666;flex:1;}
+.file-field .file-name{font-size:12px;color:var(--gm);font-weight:600;}
+input[type=file].hidden-file{display:none;}
+
+/* TERMS */
+.terms-box{background:var(--gp);border-radius:10px;padding:20px;font-size:14px;line-height:1.9;color:#444;border:1px solid #d4e8d8;margin-bottom:16px;}
+.check-row{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;color:var(--gd);}
+.check-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--gm);cursor:pointer;}
+
+/* INFO BOX */
+.info-box{background:#fff8e6;border-left:4px solid var(--gold);border-radius:8px;padding:14px 18px;font-size:13px;line-height:1.8;color:#555;margin-top:14px;}
+
+/* STATUS FIELDS */
+.status-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.status-field{background:var(--gp);border-radius:10px;padding:14px 16px;border:1px solid #d4e8d8;}
+.status-field .sk{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gm);margin-bottom:4px;}
+.status-field .sv{font-size:14px;font-weight:600;color:var(--gd);}
+.badge-pending{background:#fff3cd;color:#856404;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:700;}
+.badge-done{background:#d4edda;color:#155724;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:700;}
+
+/* NAV BUTTONS */
+.nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:24px;gap:12px;}
+.btn-prev,.btn-next,.btn-submit{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 28px;border:none;border-radius:10px;
+  font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:0.25s;
+}
+.btn-prev{background:#f0f4f1;color:#555;}
+.btn-prev:hover{background:#e0e8e2;}
+.btn-next{background:var(--gm);color:white;}
+.btn-next:hover{background:var(--gd);transform:translateY(-1px);}
+.btn-submit{background:linear-gradient(135deg,var(--gm),var(--gd));color:white;box-shadow:0 6px 20px rgba(11,139,68,0.3);}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(11,139,68,0.35);}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;color:var(--gm);border:2px solid var(--gm);padding:11px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:0.25s;}
+.btn-outline:hover{background:var(--gl);}
+
+/* SUCCESS SCREEN */
+.success-screen{
+  display:none;background:white;border-radius:20px;box-shadow:var(--shadow);
+  padding:50px 40px;text-align:center;margin:28px auto;max-width:560px;
+}
+.success-screen .s-icon{width:88px;height:88px;border-radius:50%;background:var(--gl);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:40px;color:var(--gm);}
+.success-screen h2{font-size:24px;font-weight:800;color:var(--gd);margin-bottom:12px;}
+.success-screen p{font-size:15px;color:#666;line-height:1.8;margin-bottom:24px;}
+.s-info{background:var(--gp);border-radius:12px;padding:20px;text-align:left;border:1px solid #d4e8d8;margin-bottom:24px;}
+.s-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #e8ede9;font-size:14px;}
+.s-row:last-child{border-bottom:none;}
+.s-row .sk{color:#888;font-weight:600;}
+.s-row .sv{color:var(--gd);font-weight:700;}
+.s-mid-badge{background:var(--gm);color:white;font-size:22px;font-weight:800;padding:12px 24px;border-radius:12px;display:inline-block;margin-bottom:8px;letter-spacing:1px;}
+
+/* LOADING OVERLAY */
+.overlay-loading{
+  display:none;position:fixed;inset:0;background:rgba(6,95,48,0.85);
+  z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:20px;
+}
+.overlay-loading.show{display:flex;}
+.big-spinner{width:60px;height:60px;border:5px solid rgba(255,255,255,0.2);border-top-color:white;border-radius:50%;animation:sp 0.8s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.overlay-loading p{color:white;font-size:18px;font-weight:700;}
+
+/* RESPONSIVE */
+@media(max-width:640px){
+  .form-grid{grid-template-columns:1fr;}
+  .form-grid .full{grid-column:1;}
+  .status-grid{grid-template-columns:1fr;}
+  .photo-upload-area{flex-direction:column;text-align:center;}
+  .header-right{text-align:left;}
+  .form-header{padding:16px 18px;}
+  .sec-body{padding:18px 16px;}
+  .wrapper{padding:0 10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="overlay-loading" id="loadingOverlay">
+  <div class="big-spinner"></div>
+  <p>আবেদন জমা হচ্ছে...</p>
+</div>
+
+<!-- HEADER -->
+<div class="form-header">
+  <div class="org-row">
+    <div class="org-logo">
+      <img src="logo.png" alt="Logo" onerror="this.parentElement.innerHTML='🌿'">
+    </div>
+    <div class="org-text">
+      <h2>আলোর দিশারী ইসলামি সমাজ সংঘ</h2>
+      <p>মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম • সামাজিক উন্নয়ন ও মানবকল্যাণে নিবেদিত</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="mid-tag"><i class="fa fa-id-card"></i> সদস্য নিবন্ধন ফরম</div>
+    <span>তারিখ: <b id="todayDate"></b></span>
+    <span>Member ID: <b id="memberIdDisplay">ADS-XXXX</b></span>
+  </div>
+</div>
+
+<!-- PROGRESS STEPS -->
+<div class="progress-bar-wrap" id="progressBar">
+  <div class="step-item">
+    <div class="step-dot active" id="s1dot">১</div>
+    <span class="step-label active" id="s1lbl">ব্যক্তিগত তথ্য</span>
+    <div class="step-line" id="l1"></div>
+  </div>
+  <div class="step-item">
+    <div class="step-dot" id="s2dot">২</div>
+    <span class="step-label" id="s2lbl">ঠিকানা ও শিক্ষা</span>
+    <div class="step-line" id="l2"></div>
+  </div>
+  <div class="step-item">
+    <div class="step-dot" id="s3dot">৩</div>
+    <span class="step-label" id="s3lbl">ডকুমেন্ট</span>
+    <div class="step-line" id="l3"></div>
+  </div>
+  <div class="step-item">
+    <div class="step-dot" id="s4dot">৪</div>
+    <span class="step-label" id="s4lbl">পর্যালোচনা</span>
+  </div>
+</div>
+
+<div class="wrapper">
+
+  <!-- SUCCESS -->
+  <div class="success-screen" id="successScreen">
+    <div class="s-icon"><i class="fa fa-circle-check"></i></div>
+    <h2>আবেদন সফলভাবে জমা হয়েছে!</h2>
+    <p>আপনার সদস্যপদ আবেদন গ্রহণ করা হয়েছে। Admin অনুমোদন করলে আপনি লগইন করতে পারবেন।</p>
+    <div class="s-info">
+      <div class="s-row"><span class="sk">Member ID</span><span class="sv s-mid-badge" id="s-mid">—</span></div>
+      <div class="s-row"><span class="sk">নাম</span><span class="sv" id="s-name">—</span></div>
+      <div class="s-row"><span class="sk">স্ট্যাটাস</span><span class="sv"><span class="badge-pending">⏳ Pending (অপেক্ষমাণ)</span></span></div>
+      <div class="s-row"><span class="sk">আবেদনের তারিখ</span><span class="sv" id="s-date">—</span></div>
+      <div class="s-row"><span class="sk">সংগঠন</span><span class="sv">আলোর দিশারী ইসলামি সমাজ সংঘ</span></div>
+    </div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <a href="login.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--gm);color:white;padding:13px 24px;border-radius:10px;text-decoration:none;font-weight:700;font-size:15px;"><i class="fa fa-right-to-bracket"></i> লগইন পেজ</a>
+      <button onclick="window.print()" class="btn-outline" style="display:inline-flex;align-items:center;gap:8px;"><i class="fa fa-print"></i> প্রিন্ট</button>
+      <a href="index.html" class="btn-outline" style="display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--gm);border:2px solid var(--gm);padding:11px 22px;border-radius:10px;font-size:14px;font-weight:600;"><i class="fa fa-house"></i> হোম</a>
+    </div>
+  </div>
+
+  <!-- ===== STEP 1: Personal Info ===== -->
+  <div class="sec-card active" id="step1">
+    <div class="sec-head">
+      <div class="step-num">১</div>
+      <h3>ব্যক্তিগত তথ্য</h3>
+    </div>
+    <div class="sec-body">
+
+      <!-- Photo Upload -->
+      <label class="photo-upload-area" for="photoInput">
+        <div class="photo-preview" id="photoPreview">
+          <i class="fa fa-camera"></i>
+          <span>ছবি<br>আপলোড</span>
+        </div>
+        <div class="photo-info">
+          <h4>সদস্যের ছবি আপলোড করুন</h4>
+          <p>JPG / PNG ফরম্যাটে পাসপোর্ট সাইজের ছবি দিন।<br>সর্বোচ্চ ফাইল সাইজ ২ MB।</p>
+          <div class="ph-btn"><i class="fa fa-upload"></i> ছবি বেছে নিন</div>
+        </div>
+      </label>
+      <input type="file" id="photoInput" accept="image/*" onchange="previewPhoto(this)">
+
+      <div class="form-grid">
+        <div class="fg full">
+          <label>সদস্যের নাম (বাংলায়) <span class="req">*</span></label>
+          <input type="text" id="name" placeholder="সম্পূর্ণ নাম লিখুন">
+        </div>
+        <div class="fg">
+          <label>পিতার নাম <span class="req">*</span></label>
+          <input type="text" id="father" placeholder="পিতার নাম">
+        </div>
+        <div class="fg">
+          <label>মাতার নাম <span class="req">*</span></label>
+          <input type="text" id="mother" placeholder="মাতার নাম">
+        </div>
+        <div class="fg">
+          <label>মোবাইল নম্বর <span class="req">*</span></label>
+          <input type="tel" id="mobile" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="fg">
+          <label>ইমেইল ঠিকানা</label>
+          <input type="email" id="email" placeholder="example@gmail.com">
+        </div>
+        <div class="fg">
+          <label>জন্ম তারিখ <span class="req">*</span></label>
+          <input type="date" id="dob">
+        </div>
+        <div class="fg">
+          <label>রক্তের গ্রুপ <span class="req">*</span></label>
+          <select id="blood">
+            <option value="">-- বেছে নিন --</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>ধর্ম <span class="req">*</span></label>
+          <select id="religion">
+            <option>ইসলাম</option><option>হিন্দু</option>
+            <option>বৌদ্ধ</option><option>খ্রিস্টান</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>জাতীয়তা <span class="req">*</span></label>
+          <input type="text" id="nationality" value="বাংলাদেশী">
+        </div>
+        <div class="fg">
+          <label>পেশা <span class="req">*</span></label>
+          <input type="text" id="occupation" placeholder="আপনার পেশা">
+        </div>
+        <div class="fg full">
+          <label>পাসওয়ার্ড (লগইনের জন্য) <span class="req">*</span></label>
+          <input type="password" id="password" placeholder="কমপক্ষে ৬ অক্ষর">
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <a href="index.html" class="btn-outline"><i class="fa fa-arrow-left"></i> হোমে ফিরুন</a>
+        <button class="btn-next" onclick="goStep(2)">পরবর্তী <i class="fa fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: Address & Education ===== -->
+  <div class="sec-card" id="step2">
+    <div class="sec-head">
+      <div class="step-num">২</div>
+      <h3>বর্তমান / স্থায়ী ঠিকানা এবং শিক্ষাগত তথ্য</h3>
+    </div>
+    <div class="sec-body">
+      <div class="form-grid">
+        <div class="fg full">
+          <label>পূর্ণ ঠিকানা <span class="req">*</span></label>
+          <input type="text" id="address" placeholder="গ্রাম/বাড়ি নম্বর, ওয়ার্ড, এলাকা">
+        </div>
+        <div class="fg">
+          <label>ওয়ার্ড নং</label>
+          <input type="text" id="ward" placeholder="ওয়ার্ড নম্বর">
+        </div>
+        <div class="fg">
+          <label>ইউনিয়ন</label>
+          <input type="text" id="union" placeholder="ইউনিয়নের নাম">
+        </div>
+        <div class="fg">
+          <label>উপজেলা <span class="req">*</span></label>
+          <input type="text" id="upazila" placeholder="বাঁশখালী" value="বাঁশখালী">
+        </div>
+        <div class="fg">
+          <label>জেলা <span class="req">*</span></label>
+          <input type="text" id="district" placeholder="চট্টগ্রাম" value="চট্টগ্রাম">
+        </div>
+      </div>
+
+      <div style="height:1px;background:#eef3ef;margin:24px 0;"></div>
+      <h4 style="font-size:15px;font-weight:700;color:var(--gd);margin-bottom:18px;"><i class="fa fa-graduation-cap" style="color:var(--gm);margin-right:8px;"></i>শিক্ষাগত তথ্য</h4>
+
+      <div class="form-grid">
+        <div class="fg">
+          <label>শিক্ষাগত যোগ্যতা</label>
+          <input type="text" id="education" placeholder="SSC / HSC / Degree">
+        </div>
+        <div class="fg">
+          <label>শিক্ষাপ্রতিষ্ঠান</label>
+          <input type="text" id="institution" placeholder="স্কুল/কলেজ/বিশ্ববিদ্যালয়">
+        </div>
+        <div class="fg">
+          <label>শিক্ষাবর্ষ</label>
+          <input type="text" id="session" placeholder="যেমন: ২০২০-২০২১">
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goStep(1)"><i class="fa fa-arrow-left"></i> পূর্ববর্তী</button>
+        <button class="btn-next" onclick="goStep(3)">পরবর্তী <i class="fa fa-arrow-right"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 3: Documents ===== -->
+  <div class="sec-card" id="step3">
+    <div class="sec-head">
+      <div class="step-num">৩</div>
+      <h3>ডকুমেন্ট সংযুক্তি</h3>
+    </div>
+    <div class="sec-body">
+      <div class="form-grid">
+        <div class="fg">
+          <label>নাগরিক সনদ <span class="req">*</span></label>
+          <label class="file-field" for="citizenFile">
+            <i class="fa fa-file-alt"></i>
+            <span id="citizenFileName">ফাইল বেছে নিন (PDF/JPG/PNG)</span>
+          </label>
+          <input type="file" id="citizenFile" class="hidden-file" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName(this,'citizenFileName')">
+        </div>
+        <div class="fg">
+          <label>জাতীয় পরিচয়পত্র (NID) <span style="color:#e67e22;font-size:11px;">(NID অথবা জন্ম সনদ একটি লাগবে)</span></label>
+          <label class="file-field" for="nidFile">
+            <i class="fa fa-id-card"></i>
+            <span id="nidFileName">ফাইল বেছে নিন</span>
+          </label>
+          <input type="file" id="nidFile" class="hidden-file" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName(this,'nidFileName')">
+        </div>
+        <div class="fg">
+          <label>জন্ম নিবন্ধন সনদ</label>
+          <label class="file-field" for="birthFile">
+            <i class="fa fa-baby"></i>
+            <span id="birthFileName">ফাইল বেছে নিন</span>
+          </label>
+          <input type="file" id="birthFile" class="hidden-file" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName(this,'birthFileName')">
+        </div>
+        <div class="fg">
+          <label>স্বাক্ষর (ছবি)</label>
+          <label class="file-field" for="signatureFile">
+            <i class="fa fa-pen-nib"></i>
+            <span id="signatureFileName">ফাইল বেছে নিন</span>
+          </label>
+          <input type="file" id="signatureFile" class="hidden-file" accept=".jpg,.jpeg,.png" onchange="updateFileName(this,'signatureFileName')">
+        </div>
+        <div class="fg">
+          <label>অন্যান্য ডকুমেন্ট</label>
+          <label class="file-field" for="otherFile">
+            <i class="fa fa-paperclip"></i>
+            <span id="otherFileName">ফাইল বেছে নিন</span>
+          </label>
+          <input type="file" id="otherFile" class="hidden-file" accept=".pdf,.jpg,.jpeg,.png" onchange="updateFileName(this,'otherFileName')">
+        </div>
+      </div>
+
+      <div class="info-box">
+        <i class="fa fa-circle-info" style="color:var(--gold);margin-right:6px;"></i>
+        <b>NID অথবা জন্ম নিবন্ধন সনদ</b> — যেকোনো একটি আপলোড করলেই আবেদন সম্পন্ন হবে।
+        দুটি আপলোড করলে উভয় ডকুমেন্ট সংরক্ষণ করা হবে।<br><br>
+        ⚠️ নাগরিক সনদ (<b>বাধ্যতামূলক</b>) অবশ্যই আপলোড করতে হবে।
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goStep(2)"><i class="fa fa-arrow-left"></i> পূর্ববর্তী</button>
+        <button class="btn-next" onclick="goStep(4)">পর্যালোচনা করুন <i class="fa fa-eye"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 4: Review & Submit ===== -->
+  <div class="sec-card" id="step4">
+    <div class="sec-head">
+      <div class="step-num">৪</div>
+      <h3>পর্যালোচনা ও চূড়ান্ত জমা</h3>
+    </div>
+    <div class="sec-body">
+
+      <!-- Application Status Info -->
+      <div class="status-grid" style="margin-bottom:22px;">
+        <div class="status-field"><div class="sk">আবেদনের তারিখ</div><div class="sv" id="appDate">—</div></div>
+        <div class="status-field"><div class="sk">আবেদন স্ট্যাটাস</div><div class="sv"><span class="badge-pending">⏳ Pending</span></div></div>
+        <div class="status-field"><div class="sk">অনুমোদনের তারিখ</div><div class="sv" style="color:#aaa;">Pending</div></div>
+        <div class="status-field"><div class="sk">অনুমোদনকারী</div><div class="sv" style="color:#aaa;">Pending</div></div>
+      </div>
+
+      <!-- Review Summary -->
+      <div style="background:var(--gp);border-radius:12px;padding:20px;border:1px solid #d4e8d8;margin-bottom:22px;" id="reviewBox">
+        <h4 style="font-size:14px;font-weight:700;color:var(--gd);margin-bottom:16px;"><i class="fa fa-list-check" style="color:var(--gm);margin-right:6px;"></i>তথ্য সারসংক্ষেপ</h4>
+        <div id="reviewContent" style="font-size:14px;line-height:2;color:#444;"></div>
+      </div>
+
+      <!-- Terms -->
+      <div class="terms-box">
+        আমি ঘোষণা করছি যে এই ফরমে প্রদত্ত সকল তথ্য আমার জানা মতে সঠিক ও সত্য।
+        সংগঠনের নীতিমালা ও শর্তাবলী মেনে চলতে আমি সম্মত আছি।
+        ভুল তথ্য প্রদান করলে সংগঠন প্রয়োজনীয় ব্যবস্থা গ্রহণ করতে পারবে।
+      </div>
+      <label class="check-row" style="margin-bottom:22px;">
+        <input type="checkbox" id="agreeCheck">
+        আমি উপরের সকল শর্তাবলী মেনে নিচ্ছি এবং সঠিক তথ্য প্রদান করেছি
+      </label>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goStep(3)"><i class="fa fa-arrow-left"></i> পূর্ববর্তী</button>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <button class="btn-outline" onclick="window.print()"><i class="fa fa-print"></i> প্রিন্ট</button>
+          <button class="btn-submit" id="submitBtn" onclick="submitForm()">
+            <i class="fa fa-paper-plane"></i> আবেদন জমা দিন
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+
+// Set today's date
+const today = new Date();
+document.getElementById("todayDate").textContent = today.toLocaleDateString("bn-BD");
+document.getElementById("appDate").textContent = today.toLocaleDateString("bn-BD");
+
+let currentStep = 1;
+const totalSteps = 4;
+
+function updateProgress(step) {
+  for(let i=1;i<=totalSteps;i++){
+    const dot = document.getElementById("s"+i+"dot");
+    const lbl = document.getElementById("s"+i+"lbl");
+    const line = document.getElementById("l"+i);
+    dot.classList.remove("active","done");
+    if(lbl) lbl.classList.remove("active");
+    if(i < step){ dot.classList.add("done"); dot.innerHTML='<i class="fa fa-check" style="font-size:12px;"></i>'; }
+    else if(i === step){ dot.classList.add("active"); dot.textContent=i; }
+    else { dot.textContent=i; }
+    if(lbl && i===step) lbl.classList.add("active");
+    if(line && i < step) line.classList.add("done");
+    else if(line) line.classList.remove("done");
+  }
+}
+
+function goStep(step) {
+  // Validate current step before moving forward
+  if(step > currentStep) {
+    if(!validateStep(currentStep)) return;
+  }
+  currentStep = step;
+  for(let i=1;i<=totalSteps;i++) {
+    document.getElementById("step"+i).classList.remove("active");
+  }
+  const target = document.getElementById("step"+step);
+  if(target) { target.classList.add("active"); window.scrollTo({top:0,behavior:"smooth"}); }
+  updateProgress(step);
+  if(step === 4) buildReview();
+}
+
+function validateStep(step) {
+  if(step === 1) {
+    const name = document.getElementById("name").value.trim();
+    const father = document.getElementById("father").value.trim();
+    const mother = document.getElementById("mother").value.trim();
+    const mobile = document.getElementById("mobile").value.trim();
+    const blood = document.getElementById("blood").value;
+    const password = document.getElementById("password").value.trim();
+    if(!name){alert("সদস্যের নাম দিন");return false;}
+    if(!father){alert("পিতার নাম দিন");return false;}
+    if(!mother){alert("মাতার নাম দিন");return false;}
+    if(!mobile){alert("মোবাইল নম্বর দিন");return false;}
+    if(!blood){alert("রক্তের গ্রুপ বেছে নিন");return false;}
+    if(!password || password.length<6){alert("কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন");return false;}
+  }
+  if(step === 2) {
+    const address = document.getElementById("address").value.trim();
+    if(!address){alert("পূর্ণ ঠিকানা দিন");return false;}
+  }
+  if(step === 3) {
+    const citizen = document.getElementById("citizenFile").files.length;
+    const nid = document.getElementById("nidFile").files.length;
+    const birth = document.getElementById("birthFile").files.length;
+    if(!citizen){alert("নাগরিক সনদ আপলোড করুন (বাধ্যতামূলক)");return false;}
+    if(!nid && !birth){alert("NID অথবা জন্ম নিবন্ধন সনদ — যেকোনো একটি আপলোড করুন");return false;}
+  }
+  return true;
+}
+
+function buildReview() {
+  const get = id => document.getElementById(id)?.value?.trim() || "—";
+  const sel = id => { const el = document.getElementById(id); return el ? el.options[el.selectedIndex]?.text : "—"; };
+  const fields = [
+    ["নাম",get("name")],["পিতার নাম",get("father")],["মাতার নাম",get("mother")],
+    ["মোবাইল",get("mobile")],["ইমেইল",get("email")||"—"],["জন্ম তারিখ",get("dob")],
+    ["রক্তের গ্রুপ",get("blood")],["ধর্ম",sel("religion")],["জাতীয়তা",get("nationality")],
+    ["পেশা",get("occupation")],["ঠিকানা",get("address")],
+    ["উপজেলা",get("upazila")],["জেলা",get("district")],
+    ["শিক্ষাগত যোগ্যতা",get("education")||"—"],["প্রতিষ্ঠান",get("institution")||"—"],
+  ];
+  let html = fields.map(([k,v])=>
+    `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e8ede9;"><span style="color:#888;font-weight:600;">${k}</span><span style="color:var(--gd);font-weight:600;">${v}</span></div>`
+  ).join("");
+  document.getElementById("reviewContent").innerHTML = html;
+}
+
+function previewPhoto(input) {
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById("photoPreview");
+    preview.innerHTML = `<img src="${e.target.result}" alt="Photo">`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateFileName(input, spanId) {
+  const span = document.getElementById(spanId);
+  if(span) span.textContent = input.files[0]?.name || "ফাইল বেছে নিন";
+}
+
+// Convert file to base64
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(",")[1]);
+    r.onerror = () => rej("");
+    r.readAsDataURL(file);
+  });
+}
+
+async function submitForm() {
+  if(!document.getElementById("agreeCheck").checked) {
+    alert("শর্তাবলীতে সম্মতি দিন");return;
+  }
+
+  document.getElementById("loadingOverlay").classList.add("show");
+  document.getElementById("submitBtn").disabled = true;
+
+  // Build base64 for photo (optional - large files might fail, so keep small)
+  let photoBase64 = "";
+  const photoFile = document.getElementById("photoInput").files[0];
+  if(photoFile && photoFile.size < 500000) { // only if < 500KB
+    photoBase64 = await fileToBase64(photoFile).catch(()=>"");
+  }
+
+  const payload = {
+    action: "register",
+    name: document.getElementById("name").value.trim(),
+    father: document.getElementById("father").value.trim(),
+    mother: document.getElementById("mother").value.trim(),
+    mobile: document.getElementById("mobile").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    dob: document.getElementById("dob").value,
+    blood: document.getElementById("blood").value,
+    religion: document.getElementById("religion").value,
+    nationality: document.getElementById("nationality").value,
+    occupation: document.getElementById("occupation").value.trim(),
+    address: document.getElementById("address").value.trim(),
+    ward: document.getElementById("ward").value.trim(),
+    union: document.getElementById("union").value.trim(),
+    upazila: document.getElementById("upazila").value.trim(),
+    district: document.getElementById("district").value.trim(),
+    education: document.getElementById("education").value.trim(),
+    institution: document.getElementById("institution").value.trim(),
+    session: document.getElementById("session").value.trim(),
+    password: document.getElementById("password").value,
+    photo: photoBase64 ? "data:image/jpeg;base64,"+photoBase64 : ""
+  };
+
+  try {
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    document.getElementById("loadingOverlay").classList.remove("show");
+
+    if(data.success) {
+      document.getElementById("memberIdDisplay").textContent = data.memberId;
+      document.getElementById("s-mid").textContent = data.memberId;
+      document.getElementById("s-name").textContent = payload.name;
+      document.getElementById("s-date").textContent = today.toLocaleDateString("bn-BD");
+      // Hide steps, show success
+      document.getElementById("progressBar").style.display="none";
+      for(let i=1;i<=4;i++) document.getElementById("step"+i).classList.remove("active");
+      document.getElementById("successScreen").style.display="block";
+      window.scrollTo({top:0,behavior:"smooth"});
+    } else {
+      alert("ত্রুটি: " + (data.message || "আবেদন জমা হয়নি"));
+      document.getElementById("submitBtn").disabled = false;
+    }
+  } catch(e) {
+    document.getElementById("loadingOverlay").classList.remove("show");
+    document.getElementById("submitBtn").disabled = false;
+    alert("সার্ভার সংযোগ ব্যর্থ। আবার চেষ্টা করুন।");
+  }
+}
+
+updateProgress(1);
+</script>
+</body>
+</html>
