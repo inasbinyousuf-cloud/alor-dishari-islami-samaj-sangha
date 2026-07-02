@@ -270,6 +270,7 @@ tbody tr:hover td{background:#fafffe;}
   <div class="sec-lbl">আর্থিক</div>
   <a class="nav-i" href="#" onclick="return nav('addpay',this)" id="navAddPay"><i class="fa fa-plus-circle"></i> পেমেন্ট যোগ</a>
   <a class="nav-i" href="#" onclick="return nav('allpay',this)" id="navAllPay"><i class="fa fa-receipt"></i> সকল পেমেন্ট</a>
+  <a class="nav-i" href="payment.html" target="_blank"><i class="fa fa-hand-holding-dollar"></i> পাবলিক পেমেন্ট পেজ</a>
 
   <div class="sec-lbl">কন্টেন্ট</div>
   <a class="nav-i" href="#" onclick="return nav('notice',this)" id="navNotice"><i class="fa fa-bell"></i> নোটিশ ব্যবস্থাপনা</a>
@@ -296,8 +297,18 @@ tbody tr:hover td{background:#fafffe;}
   <div class="modal">
     <div class="mh"><h3><i class="fa fa-money-bill-wave" style="color:var(--gm)"></i> পেমেন্ট যোগ</h3><button class="mclose" onclick="closeModal('payModal')">✕</button></div>
     <div class="mb">
+      <div class="fg2"><label>পেমেন্টের ধরন <span style="color:red">*</span></label>
+        <select id="pm-type">
+          <option value="মাসিক চাঁদা">মাসিক চাঁদা</option>
+          <option value="অসহায়কে সহযোগিতা">অসহায়কে সহযোগিতা</option>
+          <option value="বিশেষ তহবিল">বিশেষ তহবিল</option>
+          <option value="মসজিদ/মাদ্রাসা সহায়তা">মসজিদ/মাদ্রাসা সহায়তা</option>
+          <option value="ঈদ/রমজান সহায়তা">ঈদ/রমজান সহায়তা</option>
+          <option value="অন্যান্য">অন্যান্য</option>
+        </select>
+      </div>
       <div class="grid2">
-        <div class="fg2"><label>Member ID <span style="color:red">*</span></label><input id="pm-mid" placeholder="ADS-0001"></div>
+        <div class="fg2"><label>Member ID / প্রেরকের নাম <span style="color:red">*</span></label><input id="pm-mid" placeholder="ADS-0001 বা নাম"></div>
         <div class="fg2"><label>মাস <span style="color:red">*</span></label><input id="pm-month" placeholder="জানুয়ারি ২০২৬"></div>
         <div class="fg2"><label>পরিমাণ (৳) <span style="color:red">*</span></label><input id="pm-amount" type="number" value="50"></div>
         <div class="fg2"><label>মাধ্যম</label>
@@ -588,8 +599,18 @@ function renderAddPay(){
       <h3><i class="fa fa-plus-circle"></i> নতুন পেমেন্ট এন্ট্রি</h3>
       <div id="payToast" style="display:none;background:var(--gl);color:var(--gd);padding:12px 16px;border-radius:9px;margin-bottom:16px;font-weight:700;"></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-        <div class="fg2"><label>Member ID *</label><input id="f-mid" placeholder="ADS-0001"></div>
-        <div class="fg2"><label>মাস *</label><input id="f-month" placeholder="জানুয়ারি ২০২৬"></div>
+        <div class="fg2" style="grid-column:1/-1;"><label>পেমেন্টের ধরন *</label>
+          <select id="f-type">
+            <option value="মাসিক চাঁদা">মাসিক চাঁদা</option>
+            <option value="অসহায়কে সহযোগিতা">অসহায়কে সহযোগিতা</option>
+            <option value="বিশেষ তহবিল">বিশেষ তহবিল</option>
+            <option value="মসজিদ/মাদ্রাসা সহায়তা">মসজিদ/মাদ্রাসা সহায়তা</option>
+            <option value="ঈদ/রমজান সহায়তা">ঈদ/রমজান সহায়তা</option>
+            <option value="অন্যান্য">অন্যান্য</option>
+          </select>
+        </div>
+        <div class="fg2"><label>Member ID / প্রেরকের নাম *</label><input id="f-mid" placeholder="ADS-0001 বা নাম"></div>
+        <div class="fg2"><label>মাস</label><input id="f-month" placeholder="জানুয়ারি ২০২৬ (ঐচ্ছিক)"></div>
         <div class="fg2"><label>পরিমাণ (৳) *</label><input id="f-amount" type="number" value="50"></div>
         <div class="fg2"><label>মাধ্যম</label><select id="f-method"><option>নগদ</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option></select></div>
         <div class="fg2" style="grid-column:1/-1;"><label>Transaction ID</label><input id="f-trx" placeholder="ঐচ্ছিক"></div>
@@ -602,13 +623,14 @@ function renderAddPay(){
 }
 
 async function addPayDirect(){
+  const ftype=document.getElementById("f-type")?.value||"মাসিক চাঁদা";
   const mid=document.getElementById("f-mid")?.value.trim();
   const month=document.getElementById("f-month")?.value.trim();
   const amount=document.getElementById("f-amount")?.value.trim();
   const method=document.getElementById("f-method")?.value;
   const trxId=document.getElementById("f-trx")?.value.trim();
-  if(!mid||!month||!amount){showToast("Member ID, মাস ও পরিমাণ দিন",true);return;}
-  const d=await api({action:"addPayment",memberId:mid,month,amount,method,trxId});
+  if(!mid||!amount){showToast("Member ID / নাম ও পরিমাণ দিন",true);return;}
+  const d=await api({action:"addPayment",paymentType:ftype,memberId:mid,month:month||"—",amount,method,trxId});
   if(d.success){
     const t=document.getElementById("payToast");
     if(t){t.textContent="✅ পেমেন্ট সফলভাবে যোগ হয়েছে!";t.style.display="block";setTimeout(()=>t.style.display="none",3000);}
@@ -623,18 +645,21 @@ async function renderAllPay(){
   const d=await api({action:"getAllPayments"});
   const pays=d.payments||[];
   const total=pays.reduce((s,p)=>s+(Number(p.amount)||0),0);
-  const rows=pays.length?pays.map(p=>`
+  const rows=pays.length?pays.map((p,idx)=>`
     <tr>
+      <td><span class="badge b-blue" style="font-size:11px;">${p.paymentType||"মাসিক চাঁদা"}</span></td>
       <td><b>${p.memberId||"—"}</b></td>
-      <td>${p.memberName||"—"}</td>
+      <td>${p.memberName||p.senderName||"—"}</td>
       <td>${p.month||"—"}</td>
       <td><b>৳${p.amount||0}</b></td>
       <td>${p.method||"—"}</td>
       <td><code style="font-size:12px;">${p.trxId||"—"}</code></td>
       <td>${p.date||"—"}</td>
-      <td><span class="badge b-ok">Paid</span></td>
+      <td>
+        ${can("addPayment")?`<button class="ab ab-gold" onclick='editPayment(${JSON.stringify(p).replace(/"/g,"&quot;")},${idx})'><i class="fa fa-edit"></i> সম্পাদনা</button>`:""}
+      </td>
     </tr>`).join(""):
-    `<tr><td colspan="8" class="empty-td"><i class="fa fa-inbox"></i>কোনো পেমেন্ট নেই</td></tr>`;
+    `<tr><td colspan="9" class="empty-td"><i class="fa fa-inbox"></i>কোনো পেমেন্ট নেই</td></tr>`;
   setMain(`
     <div class="pg-head">
       <div class="pg-title"><i class="fa fa-receipt"></i> সকল পেমেন্ট</div>
@@ -865,13 +890,14 @@ async function delAdmin(adminId, username){
 
 /* ===== PAYMENT MODAL SUBMIT ===== */
 async function submitPayment(){
+  const ptype=document.getElementById("pm-type").value;
   const mid=document.getElementById("pm-mid").value.trim();
   const month=document.getElementById("pm-month").value.trim();
   const amount=document.getElementById("pm-amount").value.trim();
   const method=document.getElementById("pm-method").value;
   const trxId=document.getElementById("pm-trx").value.trim();
-  if(!mid||!month||!amount){showToast("সব তারকা(*) ঘর পূরণ করুন",true);return;}
-  const d=await api({action:"addPayment",memberId:mid,month,amount,method,trxId});
+  if(!mid||!amount){showToast("সব তারকা(*) ঘর পূরণ করুন",true);return;}
+  const d=await api({action:"addPayment",paymentType:ptype,memberId:mid,month:month||"—",amount,method,trxId});
   if(d.success){showToast("পেমেন্ট যোগ সফল!");closeModal("payModal");}
   else showToast(d.message||"ব্যর্থ",true);
 }
@@ -886,6 +912,38 @@ async function submitNotice(){
   else showToast(d.message||"ব্যর্থ",true);
 }
 
+/* ===== EDIT PAYMENT ===== */
+function editPayment(p, idx){
+  if(!can("addPayment")){showToast("এই permission নেই",true);return;}
+  document.getElementById("ep-type").value = p.paymentType||"মাসিক চাঁদা";
+  document.getElementById("ep-mid").value = p.memberId||"";
+  document.getElementById("ep-month").value = p.month||"";
+  document.getElementById("ep-amount").value = p.amount||"";
+  document.getElementById("ep-method").value = p.method||"নগদ";
+  document.getElementById("ep-trx").value = p.trxId||"";
+  document.getElementById("ep-note").value = p.note||"";
+  document.getElementById("ep-row-id").value = p.paymentId||p.id||idx;
+  openModal("editPayModal");
+}
+
+async function updatePayment(){
+  const rowId = document.getElementById("ep-row-id").value;
+  const ptype = document.getElementById("ep-type").value;
+  const mid   = document.getElementById("ep-mid").value.trim();
+  const month = document.getElementById("ep-month").value.trim();
+  const amount= document.getElementById("ep-amount").value.trim();
+  const method= document.getElementById("ep-method").value;
+  const trxId = document.getElementById("ep-trx").value.trim();
+  const note  = document.getElementById("ep-note").value.trim();
+  if(!amount){showToast("পরিমাণ দিন",true);return;}
+  const d = await api({action:"updatePayment",paymentId:rowId,paymentType:ptype,memberId:mid,month:month||"—",amount,method,trxId:trxId||"—",note:note||"—"});
+  if(d.success){
+    showToast("পেমেন্ট আপডেট সফল!");
+    closeModal("editPayModal");
+    renderAllPay();
+  } else showToast(d.message||"আপডেট ব্যর্থ",true);
+}
+
 /* ===== LOGOUT ===== */
 function doLogout(){
   if(confirm("লগআউট করবেন?")){
@@ -897,5 +955,41 @@ function doLogout(){
 /* ===== INIT ===== */
 renderOverview();
 </script>
+<!-- Edit Payment Modal -->
+<div class="modal-bg" id="editPayModal">
+  <div class="modal">
+    <div class="mh"><h3><i class="fa fa-edit" style="color:var(--gold)"></i> পেমেন্ট সম্পাদনা</h3><button class="mclose" onclick="closeModal('editPayModal')">✕</button></div>
+    <div class="mb">
+      <div class="fg2"><label>পেমেন্টের ধরন *</label>
+        <select id="ep-type">
+          <option value="মাসিক চাঁদা">মাসিক চাঁদা</option>
+          <option value="অসহায়কে সহযোগিতা">অসহায়কে সহযোগিতা</option>
+          <option value="বিশেষ তহবিল">বিশেষ তহবিল</option>
+          <option value="মসজিদ/মাদ্রাসা সহায়তা">মসজিদ/মাদ্রাসা সহায়তা</option>
+          <option value="ঈদ/রমজান সহায়তা">ঈদ/রমজান সহায়তা</option>
+          <option value="অন্যান্য">অন্যান্য</option>
+        </select>
+      </div>
+      <div class="grid2">
+        <div class="fg2"><label>Member ID / নাম</label><input id="ep-mid" placeholder="ADS-0001 বা নাম"></div>
+        <div class="fg2"><label>মাস</label><input id="ep-month" placeholder="জানুয়ারি ২০২৬"></div>
+      </div>
+      <div class="grid2">
+        <div class="fg2"><label>পরিমাণ (৳) *</label><input id="ep-amount" type="number"></div>
+        <div class="fg2"><label>মাধ্যম</label>
+          <select id="ep-method"><option>নগদ</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank</option></select>
+        </div>
+      </div>
+      <div class="fg2"><label>Transaction ID</label><input id="ep-trx" placeholder="ঐচ্ছিক"></div>
+      <div class="fg2"><label>মন্তব্য</label><textarea id="ep-note" style="height:70px;" placeholder="ঐচ্ছিক"></textarea></div>
+      <input type="hidden" id="ep-row-id">
+    </div>
+    <div class="mf">
+      <button class="btn-outline" onclick="closeModal('editPayModal')">বাতিল</button>
+      <button class="btn btn-gold" onclick="updatePayment()"><i class="fa fa-save"></i> সেভ করুন</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

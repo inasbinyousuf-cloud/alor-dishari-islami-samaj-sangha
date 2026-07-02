@@ -158,7 +158,54 @@ tbody tr:hover td{background:var(--gp);}
 @media(max-width:480px){
   .stat-row{grid-template-columns:1fr 1fr;}
   .com-grid{grid-template-columns:repeat(2,1fr);}
+  .month-grid{grid-template-columns:repeat(3,1fr)!important;}
 }
+/* PAYMENT SUBMIT */
+.pay-form{background:var(--gp);border-radius:12px;padding:20px;border:1px solid #d4e8d8;margin-bottom:20px;}
+.pay-form h4{font-size:15px;font-weight:700;color:var(--gd);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.pfg{margin-bottom:14px;}
+.pfg label{display:block;font-size:12px;font-weight:700;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.pfg input,.pfg select,.pfg textarea{
+  width:100%;padding:10px 12px;border:1.5px solid #d4e8d8;border-radius:9px;
+  font-size:14px;font-family:inherit;outline:none;transition:.2s;background:white;
+}
+.pfg input:focus,.pfg select:focus{border-color:var(--gm);box-shadow:0 0 0 3px rgba(11,139,68,.1);}
+.pfg textarea{resize:vertical;min-height:60px;}
+.pgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.btn-pay-submit{
+  width:100%;padding:13px;background:var(--gm);color:white;
+  font-size:15px;font-weight:800;border:none;border-radius:10px;
+  cursor:pointer;font-family:inherit;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+}
+.btn-pay-submit:hover{background:var(--gd);}
+.btn-pay-submit:disabled{opacity:.6;cursor:not-allowed;}
+.pay-sp{display:none;align-items:center;justify-content:center;gap:7px;margin-top:10px;color:var(--gm);font-weight:600;font-size:13px;}
+.pay-sp-dot{width:14px;height:14px;border:2.5px solid var(--gl);border-top-color:var(--gm);border-radius:50%;animation:sp .7s linear infinite;}
+.pay-err{display:none;background:#fff0f0;border:1px solid #ffc5c5;border-radius:9px;padding:10px 14px;color:#c0392b;font-size:13px;font-weight:600;text-align:center;margin-top:10px;}
+.pay-ok{display:none;background:var(--gl);border:1px solid #a3d8a3;border-radius:9px;padding:10px 14px;color:var(--gd);font-size:13px;font-weight:700;text-align:center;margin-top:10px;}
+/* MONTH TRACKER */
+.month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;}
+.month-cell{border-radius:10px;padding:12px 8px;text-align:center;border:2px solid transparent;}
+.mc-paid{background:var(--gl);border-color:var(--gm);}
+.mc-due{background:#fff0f0;border-color:#ffc5c5;}
+.mc-future{background:#f5f5f5;border-color:#e0e0e0;}
+.mc-name{font-size:12px;font-weight:700;color:#444;margin-bottom:5px;}
+.mc-paid .mc-name{color:var(--gd);}
+.mc-status{font-size:11px;font-weight:800;}
+.mc-paid .mc-status{color:var(--gm);}
+.mc-due .mc-status{color:#e74c3c;}
+.mc-future .mc-status{color:#bbb;}
+.mc-amount{font-size:10px;color:#888;margin-top:2px;}
+.mc-paid .mc-amount{color:var(--gm);}
+.method-mini{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:6px;}
+.mm-btn{
+  border:1.5px solid #d4e8d8;border-radius:8px;padding:8px 4px;
+  background:#fafafa;cursor:pointer;text-align:center;
+  font-size:10px;font-weight:700;color:#666;font-family:inherit;transition:.2s;
+}
+.mm-btn i{display:block;font-size:14px;margin-bottom:3px;}
+.mm-btn.msel{border-color:var(--gm);background:var(--gl);color:var(--gd);}
 </style>
 </head>
 <body>
@@ -194,6 +241,7 @@ tbody tr:hover td{background:var(--gp);}
   <nav class="nav-menu">
     <button class="nitem active" onclick="showTab('profile',this)"><i class="fa fa-user"></i> আমার প্রোফাইল</button>
     <button class="nitem" onclick="showTab('payments',this)"><i class="fa fa-receipt"></i> পেমেন্ট ইতিহাস</button>
+    <button class="nitem" onclick="showTab('paynow',this)"><i class="fa fa-hand-holding-dollar"></i> চাঁদা জমা দিন</button>
     <button class="nitem" onclick="showTab('notice',this)"><i class="fa fa-bell"></i> নোটিশ</button>
     <button class="nitem" onclick="showTab('committee',this)"><i class="fa fa-people-group"></i> কমিটি</button>
     <hr class="nav-divider">
@@ -241,6 +289,7 @@ function showTab(tab, el){
   else if(tab==="payments") loadPayments();
   else if(tab==="notice") loadNotice();
   else if(tab==="committee") loadCommittee();
+  else if(tab==="paynow") loadPayNow();
 }
 
 function stBadge(s){
@@ -306,6 +355,201 @@ function renderProfile(){
   `);
 }
 
+/* ===== PAY NOW ===== */
+const BN_MONTHS=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+let payNowMethod="নগদ";
+
+function loadPayNow(){
+  loader();
+  const year=new Date().getFullYear();
+  const monthOpts=BN_MONTHS.map((m,i)=>{
+    const val=m+" "+year;
+    const sel=(i===new Date().getMonth())?"selected":"";
+    return `<option value="${val}" ${sel}>${val}</option>`;
+  }).join("");
+  const monthOptsPrev=BN_MONTHS.map(m=>{
+    return `<option value="${m+" "+(year-1)}">${m+" "+(year-1)}</option>`;
+  }).join("");
+
+  setContent(`
+    <div class="cc-head"><h3><i class="fa fa-hand-holding-dollar" style="color:var(--gm)"></i> চাঁদা জমা দিন</h3></div>
+    <div class="cc-body">
+      <div class="pay-form">
+        <h4><i class="fa fa-calendar-check" style="color:var(--gm)"></i> নতুন চাঁদা / সহায়তা জমা দিন</h4>
+        <div class="pgrid2">
+          <div class="pfg">
+            <label>পেমেন্টের ধরন *</label>
+            <select id="pn-type" onchange="handlePayTypeChange(this.value)">
+              <option value="মাসিক চাঁদা">মাসিক চাঁদা</option>
+              <option value="অসহায়কে সহযোগিতা">অসহায়কে সহযোগিতা</option>
+              <option value="বিশেষ তহবিল">বিশেষ তহবিল</option>
+              <option value="মসজিদ/মাদ্রাসা সহায়তা">মসজিদ/মাদ্রাসা সহায়তা</option>
+              <option value="ঈদ/রমজান সহায়তা">ঈদ/রমজান সহায়তা</option>
+              <option value="অন্যান্য">অন্যান্য</option>
+            </select>
+          </div>
+          <div class="pfg" id="pn-month-wrap">
+            <label>মাস *</label>
+            <select id="pn-month">${monthOpts}${monthOptsPrev}</select>
+          </div>
+        </div>
+        <div class="pgrid2" id="pn-other-row" style="display:none;">
+          <div class="pfg" style="grid-column:1/-1;">
+            <label>বিষয় লিখুন *</label>
+            <input type="text" id="pn-other-text" placeholder="পেমেন্টের উদ্দেশ্য">
+          </div>
+        </div>
+        <div class="pgrid2">
+          <div class="pfg">
+            <label>পরিমাণ (৳) *</label>
+            <input type="number" id="pn-amount" value="50" min="1">
+          </div>
+          <div class="pfg">
+            <label>ট্রানজেকশন ID <span style="font-weight:400;text-transform:none;">(ঐচ্ছিক)</span></label>
+            <input type="text" id="pn-trx" placeholder="bKash/Nagad রেফারেন্স">
+          </div>
+        </div>
+        <div class="pfg">
+          <label>পেমেন্ট মাধ্যম *</label>
+          <div class="method-mini">
+            <button class="mm-btn msel" data-m="নগদ" onclick="selPayMethod(this)"><i class="fa fa-money-bill-wave" style="color:#0b8b44"></i>নগদ</button>
+            <button class="mm-btn" data-m="bKash" onclick="selPayMethod(this)"><i class="fa fa-mobile-screen-button" style="color:#e2136e"></i>bKash</button>
+            <button class="mm-btn" data-m="Nagad" onclick="selPayMethod(this)"><i class="fa fa-mobile-screen-button" style="color:#f7931e"></i>Nagad</button>
+            <button class="mm-btn" data-m="Rocket" onclick="selPayMethod(this)"><i class="fa fa-mobile-screen-button" style="color:#8b5cf6"></i>Rocket</button>
+            <button class="mm-btn" data-m="Bank" onclick="selPayMethod(this)"><i class="fa fa-building-columns" style="color:#2980b9"></i>Bank</button>
+          </div>
+        </div>
+        <div class="pfg">
+          <label>বিশেষ মন্তব্য <span style="font-weight:400;text-transform:none;">(ঐচ্ছিক)</span></label>
+          <textarea id="pn-note" placeholder="কিছু জানাতে চাইলে লিখুন..."></textarea>
+        </div>
+        <button class="btn-pay-submit" id="pnSubmitBtn" onclick="submitMemberPayment()">
+          <i class="fa fa-paper-plane"></i> জমা দিন
+        </button>
+        <div class="pay-sp" id="pnSp"><div class="pay-sp-dot"></div> জমা হচ্ছে...</div>
+        <div class="pay-err" id="pnErr"></div>
+        <div class="pay-ok" id="pnOk"></div>
+      </div>
+
+      <div class="cc-head" style="padding:16px 0 10px;margin-top:4px;border-top:1px solid #f0f0f0;">
+        <h3 style="font-size:14px;"><i class="fa fa-calendar" style="color:var(--gm)"></i> মাসিক চাঁদা ট্র্যাকার — ${year}</h3>
+      </div>
+      <div class="month-grid" id="monthTracker">
+        ${BN_MONTHS.map(m=>`<div class="month-cell mc-future"><div class="mc-name">${m}</div><div class="mc-status">লোড হচ্ছে...</div></div>`).join("")}
+      </div>
+    </div>
+  `);
+  payNowMethod="নগদ";
+  loadMonthTracker();
+}
+
+function handlePayTypeChange(val){
+  const mw=document.getElementById("pn-month-wrap");
+  const or=document.getElementById("pn-other-row");
+  if(val==="মাসিক চাঁদা"){
+    if(mw)mw.style.display="";
+    if(or)or.style.display="none";
+    const am=document.getElementById("pn-amount");if(am)am.value="50";
+  } else if(val==="অন্যান্য"){
+    if(mw)mw.style.display="none";
+    if(or)or.style.display="";
+    const am=document.getElementById("pn-amount");if(am)am.value="";
+  } else {
+    if(mw)mw.style.display="none";
+    if(or)or.style.display="none";
+    const am=document.getElementById("pn-amount");if(am)am.value="";
+  }
+}
+
+function selPayMethod(btn){
+  document.querySelectorAll(".mm-btn").forEach(b=>b.classList.remove("msel"));
+  btn.classList.add("msel");
+  payNowMethod=btn.dataset.m;
+}
+
+async function loadMonthTracker(){
+  const year=new Date().getFullYear();
+  const curMonth=new Date().getMonth();
+  try{
+    const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"paymentHistory",memberId:MID})});
+    const d=await res.json();
+    const pays=d.payments||[];
+    // Build a map of paid months
+    const paidMap={};
+    pays.forEach(p=>{
+      if((p.paymentType||"").includes("মাসিক")||(p.month||"").includes(year)||(p.month||"").length>2){
+        const k=(p.month||"").trim();
+        if(k&&k!=="—") paidMap[k]={amount:p.amount,date:p.date};
+      }
+    });
+    const tracker=document.getElementById("monthTracker");
+    if(!tracker)return;
+    tracker.innerHTML=BN_MONTHS.map((m,i)=>{
+      const key=m+" "+year;
+      if(paidMap[key]){
+        return `<div class="month-cell mc-paid"><div class="mc-name">${m}</div><div class="mc-status"><i class="fa fa-check"></i> পরিশোধ</div><div class="mc-amount">৳${paidMap[key].amount}</div></div>`;
+      } else if(i<=curMonth){
+        return `<div class="month-cell mc-due"><div class="mc-name">${m}</div><div class="mc-status"><i class="fa fa-triangle-exclamation"></i> বাকি</div><div class="mc-amount">৳৫০</div></div>`;
+      } else {
+        return `<div class="month-cell mc-future"><div class="mc-name">${m}</div><div class="mc-status">—</div><div class="mc-amount">&nbsp;</div></div>`;
+      }
+    }).join("");
+  }catch(e){}
+}
+
+async function submitMemberPayment(){
+  const pnErr=document.getElementById("pnErr");
+  const pnOk=document.getElementById("pnOk");
+  const btn=document.getElementById("pnSubmitBtn");
+  const sp=document.getElementById("pnSp");
+  pnErr.style.display="none"; pnOk.style.display="none";
+
+  const type=(document.getElementById("pn-type")||{}).value||"মাসিক চাঁদা";
+  const month=(document.getElementById("pn-month")||{}).value||"—";
+  const otherText=(document.getElementById("pn-other-text")||{}).value||"";
+  const amount=(document.getElementById("pn-amount")||{}).value||"";
+  const trxId=(document.getElementById("pn-trx")||{}).value||"";
+  const note=(document.getElementById("pn-note")||{}).value||"";
+
+  if(!amount||Number(amount)<1){pnErr.textContent="⚠️ পরিমাণ দিন";pnErr.style.display="block";return;}
+  if(type==="মাসিক চাঁদা"&&(!month||month==="—")){pnErr.textContent="⚠️ মাস বাছাই করুন";pnErr.style.display="block";return;}
+  if(type==="অন্যান্য"&&!otherText){pnErr.textContent="⚠️ বিষয় লিখুন";pnErr.style.display="block";return;}
+
+  const finalType=type==="অন্যান্য"?otherText:type;
+  btn.disabled=true; sp.style.display="flex";
+
+  try{
+    const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({
+      action:"memberPayment",
+      memberId:MID,
+      memberName:localStorage.getItem("memberName")||MID,
+      paymentType:finalType,
+      month:type==="মাসিক চাঁদা"?month:"—",
+      amount,
+      method:payNowMethod,
+      trxId:trxId||"—",
+      note:note||"—"
+    })});
+    const data=await res.json();
+    sp.style.display="none"; btn.disabled=false;
+    if(data.success){
+      pnOk.textContent="✅ পেমেন্ট সফলভাবে জমা হয়েছে! Admin যাচাই করলে নিশ্চিত হবে।";
+      pnOk.style.display="block";
+      ["pn-trx","pn-note"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
+      const am=document.getElementById("pn-amount");if(am)am.value="50";
+      loadMonthTracker();
+      loadPayments(); // refresh stats
+    } else {
+      pnErr.textContent="⚠️ "+(data.message||"সমস্যা হয়েছে, আবার চেষ্টা করুন");
+      pnErr.style.display="block";
+    }
+  }catch(e){
+    sp.style.display="none"; btn.disabled=false;
+    pnErr.textContent="⚠️ সংযোগ ব্যর্থ হয়েছে";
+    pnErr.style.display="block";
+  }
+}
+
 /* ===== PAYMENTS ===== */
 async function loadPayments(){
   loader();
@@ -327,6 +571,7 @@ async function loadPayments(){
 
     const rows=pays.length?pays.map(p=>`
       <tr>
+        <td><span style="font-size:12px;font-weight:700;color:var(--gm);">${p.paymentType||"মাসিক চাঁদা"}</span></td>
         <td>${p.month||"—"}</td>
         <td><b>৳${p.amount||0}</b></td>
         <td>${p.method||"—"}</td>
@@ -334,14 +579,14 @@ async function loadPayments(){
         <td>${p.date||"—"}</td>
         <td><span class="badge b-ok"><i class="fa fa-check"></i> ${p.status||"Paid"}</span></td>
       </tr>`).join(""):
-      `<tr><td colspan="6" class="empty-row"><i class="fa fa-inbox"></i>কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি</td></tr>`;
+      `<tr><td colspan="7" class="empty-row"><i class="fa fa-inbox"></i>কোনো পেমেন্ট রেকর্ড পাওয়া যায়নি</td></tr>`;
 
     setContent(`
       <div class="cc-head"><h3><i class="fa fa-receipt" style="color:var(--gm)"></i> পেমেন্ট ইতিহাস</h3><span style="font-size:12px;color:#888;">মাসিক চাঁদা ৳৫০</span></div>
       <div class="cc-body">
         <div class="tw">
           <table>
-            <thead><tr><th>মাস</th><th>টাকা</th><th>মাধ্যম</th><th>Trx ID</th><th>তারিখ</th><th>Status</th></tr></thead>
+            <thead><tr><th>ধরন</th><th>মাস</th><th>টাকা</th><th>মাধ্যম</th><th>Trx ID</th><th>তারিখ</th><th>Status</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
         </div>

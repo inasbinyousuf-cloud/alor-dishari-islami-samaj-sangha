@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>চাঁদা ও সহায়তা — আলোর দিশারী</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --gd:#065f30;--gm:#0b8b44;--gl:#e8f7ee;--gp:#f0faf4;
+  --gold:#c9a84c;--goldl:#f5e6c0;
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Bengali',sans-serif;}
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--gd) 0%,var(--gm) 60%,#1a6e3c 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding:0 16px 40px;position:relative;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+/* TOP NAV */
+.topbar{
+  width:100%;max-width:680px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 0 0;
+}
+.back-link{
+  color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:7px;
+  background:rgba(255,255,255,0.1);padding:8px 14px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.15);transition:0.2s;
+}
+.back-link:hover{background:rgba(255,255,255,0.2);color:white;}
+.topbar-login{
+  color:rgba(255,255,255,0.75);text-decoration:none;font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,0.1);padding:8px 14px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.15);transition:0.2s;
+}
+.topbar-login:hover{background:rgba(255,255,255,0.2);color:white;}
+
+/* CARD */
+.card{
+  width:100%;max-width:680px;margin-top:20px;
+  background:white;border-radius:22px;
+  box-shadow:0 24px 60px rgba(0,0,0,0.22);
+  overflow:hidden;animation:su 0.4s ease;
+  position:relative;z-index:1;
+}
+@keyframes su{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.card-stripe{height:4px;background:linear-gradient(90deg,var(--gd),var(--gold),var(--gm));}
+
+/* HEADER */
+.card-head{
+  background:linear-gradient(135deg,var(--gd),var(--gm));
+  padding:26px 28px 22px;
+  display:flex;align-items:center;gap:16px;
+}
+.ch-icon{
+  width:58px;height:58px;border-radius:50%;
+  background:rgba(255,255,255,0.15);border:2px solid rgba(255,255,255,0.25);
+  display:flex;align-items:center;justify-content:center;font-size:24px;color:white;flex-shrink:0;
+}
+.ch-title{color:white;font-size:20px;font-weight:800;line-height:1.2;}
+.ch-sub{color:rgba(255,255,255,0.75);font-size:13px;margin-top:3px;}
+
+/* TYPE SELECTOR */
+.type-section{padding:22px 24px 0;}
+.type-label{font-size:13px;font-weight:700;color:#444;margin-bottom:12px;}
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.type-btn{
+  padding:12px 8px;border:2px solid #e8f0eb;border-radius:12px;
+  background:var(--gp);cursor:pointer;text-align:center;
+  font-size:12px;font-weight:700;color:#555;font-family:inherit;
+  transition:0.2s;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.type-btn i{font-size:20px;color:var(--gm);}
+.type-btn:hover{border-color:var(--gm);background:var(--gl);}
+.type-btn.selected{border-color:var(--gm);background:var(--gl);color:var(--gd);}
+.type-btn.selected i{color:var(--gd);}
+
+/* FORM */
+.form-body{padding:20px 24px 28px;}
+.fg{margin-bottom:16px;}
+.fg label{display:block;font-size:13px;font-weight:700;color:#444;margin-bottom:7px;}
+.fg input,.fg select,.fg textarea{
+  width:100%;padding:12px 14px;
+  border:1.5px solid #dde8e0;border-radius:10px;
+  font-size:14px;font-family:inherit;outline:none;transition:0.2s;
+  background:#fafafa;
+}
+.fg input:focus,.fg select:focus,.fg textarea:focus{
+  border-color:var(--gm);background:white;
+  box-shadow:0 0 0 3px rgba(11,139,68,0.1);
+}
+.fg textarea{resize:vertical;min-height:72px;}
+.fg .hint{font-size:11px;color:#aaa;margin-top:5px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.required-star{color:#e74c3c;}
+.amount-prefix{position:relative;}
+.amount-prefix .pfx{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  font-size:16px;font-weight:700;color:var(--gm);
+}
+.amount-prefix input{padding-left:28px;}
+
+/* METHOD CARDS */
+.method-row{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:8px;}
+.mth-btn{
+  border:2px solid #e8f0eb;border-radius:9px;padding:9px 5px;
+  background:#fafafa;cursor:pointer;text-align:center;
+  font-size:11px;font-weight:700;color:#666;font-family:inherit;
+  transition:0.2s;display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.mth-btn i{font-size:16px;}
+.mth-btn.sel{border-color:var(--gm);background:var(--gl);color:var(--gd);}
+
+/* SUBMIT */
+.submit-btn{
+  width:100%;padding:15px;
+  background:linear-gradient(135deg,var(--gm),var(--gd));
+  color:white;font-size:16px;font-weight:800;
+  border:none;border-radius:12px;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:0.25s;box-shadow:0 6px 20px rgba(6,95,48,0.3);margin-top:4px;
+}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(6,95,48,0.4);}
+.submit-btn:disabled{opacity:0.65;cursor:not-allowed;transform:none;}
+.ld-row{display:none;align-items:center;justify-content:center;gap:8px;margin-top:12px;color:var(--gm);font-weight:600;font-size:14px;}
+.sp{width:16px;height:16px;border:2.5px solid var(--gl);border-top-color:var(--gm);border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg);}}
+.err-box{
+  background:#fff0f0;border:1px solid #ffc5c5;border-radius:10px;
+  padding:12px 16px;color:#c0392b;font-size:14px;font-weight:600;
+  text-align:center;margin-top:12px;display:none;
+}
+.info-note{
+  background:var(--gp);border:1px solid #c5dfc5;border-radius:10px;
+  padding:12px 16px;font-size:12px;color:var(--gd);margin-bottom:18px;
+  display:flex;align-items:flex-start;gap:8px;
+}
+.info-note i{color:var(--gm);margin-top:2px;flex-shrink:0;}
+
+/* SUCCESS */
+.success-view{
+  display:none;text-align:center;padding:40px 30px;
+}
+.suc-icon{
+  width:80px;height:80px;border-radius:50%;
+  background:var(--gl);display:flex;align-items:center;justify-content:center;
+  font-size:36px;color:var(--gm);margin:0 auto 20px;
+  border:3px solid var(--gm);
+}
+.suc-title{font-size:22px;font-weight:800;color:var(--gd);margin-bottom:8px;}
+.suc-sub{font-size:14px;color:#666;line-height:1.7;}
+.suc-id{
+  background:var(--gp);border:1px solid #c5dfc5;border-radius:10px;
+  padding:14px 20px;margin:18px 0;font-size:14px;color:var(--gd);font-weight:700;
+}
+.suc-id span{display:block;font-size:11px;font-weight:600;color:var(--gm);margin-bottom:3px;}
+.suc-btns{display:flex;flex-direction:column;gap:10px;}
+.btn-suc-new{
+  padding:13px;border:2px solid var(--gm);border-radius:10px;
+  color:var(--gm);background:white;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:0.2s;
+}
+.btn-suc-new:hover{background:var(--gl);}
+.btn-suc-home{
+  padding:13px;background:var(--gm);border:none;border-radius:10px;
+  color:white;font-size:14px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:0.2s;text-decoration:none;
+  display:block;text-align:center;
+}
+.btn-suc-home:hover{background:var(--gd);}
+@media(max-width:500px){
+  .type-grid{grid-template-columns:repeat(2,1fr);}
+  .grid2{grid-template-columns:1fr;}
+  .method-row{grid-template-columns:repeat(3,1fr);}
+  .card-head{padding:20px 18px 16px;}
+  .type-section,.form-body{padding-left:16px;padding-right:16px;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" class="back-link"><i class="fa fa-arrow-left"></i> হোম</a>
+  <a href="login.html" class="topbar-login"><i class="fa fa-right-to-bracket"></i> সদস্য লগইন</a>
+</div>
+
+<div class="card">
+  <div class="card-stripe"></div>
+
+  <div class="card-head">
+    <div class="ch-icon"><i class="fa fa-hand-holding-dollar"></i></div>
+    <div>
+      <div class="ch-title">চাঁদা ও সহায়তা প্রদান</div>
+      <div class="ch-sub">আলোর দিশারী ইসলামি সমাজ সংঘ — যেকেউ প্রদান করতে পারবেন</div>
+    </div>
+  </div>
+
+  <!-- PAYMENT TYPE SELECTOR -->
+  <div class="type-section">
+    <div class="type-label">পেমেন্টের ধরন বাছাই করুন <span class="required-star">*</span></div>
+    <div class="type-grid" id="typeGrid">
+      <button class="type-btn selected" data-type="মাসিক চাঁদা" onclick="selectType(this)">
+        <i class="fa fa-calendar-check"></i>মাসিক চাঁদা
+      </button>
+      <button class="type-btn" data-type="অসহায়কে সহযোগিতা" onclick="selectType(this)">
+        <i class="fa fa-hands-holding-heart"></i>অসহায়কে সহযোগিতা
+      </button>
+      <button class="type-btn" data-type="বিশেষ তহবিল" onclick="selectType(this)">
+        <i class="fa fa-piggy-bank"></i>বিশেষ তহবিল
+      </button>
+      <button class="type-btn" data-type="মসজিদ/মাদ্রাসা সহায়তা" onclick="selectType(this)">
+        <i class="fa fa-mosque"></i>মসজিদ/মাদ্রাসা
+      </button>
+      <button class="type-btn" data-type="ঈদ/রমজান সহায়তা" onclick="selectType(this)">
+        <i class="fa fa-star-and-crescent"></i>ঈদ/রমজান
+      </button>
+      <button class="type-btn" data-type="অন্যান্য" onclick="selectType(this)">
+        <i class="fa fa-circle-plus"></i>অন্যান্য
+      </button>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-body" id="formView">
+    <div class="info-note">
+      <i class="fa fa-circle-info"></i>
+      <span>সদস্য আইডি না থাকলেও শুধু আপনার নাম দিয়ে পেমেন্ট করতে পারবেন। সদস্য হতে চাইলে <a href="member-form.html" style="color:var(--gm);font-weight:700;">এখানে আবেদন করুন</a>।</span>
+    </div>
+
+    <div class="grid2">
+      <div class="fg">
+        <label>প্রেরকের নাম <span class="required-star">*</span></label>
+        <input type="text" id="p-name" placeholder="আপনার পুরো নাম">
+      </div>
+      <div class="fg">
+        <label>সদস্য আইডি <span style="font-size:11px;color:#aaa;">(ঐচ্ছিক)</span></label>
+        <input type="text" id="p-mid" placeholder="ADS-0001">
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="fg">
+        <label>মোবাইল নম্বর <span class="required-star">*</span></label>
+        <input type="tel" id="p-mobile" placeholder="01XXXXXXXXX" maxlength="11">
+      </div>
+      <div class="fg" id="monthFieldWrap">
+        <label>কোন মাসের চাঁদা <span class="required-star">*</span></label>
+        <select id="p-month">
+          <option value="">মাস বাছাই করুন</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="fg">
+        <label>পরিমাণ (টাকা) <span class="required-star">*</span></label>
+        <div class="amount-prefix">
+          <span class="pfx">৳</span>
+          <input type="number" id="p-amount" value="50" min="1">
+        </div>
+      </div>
+      <div class="fg" id="otherTypeWrap" style="display:none;">
+        <label>পেমেন্টের বিষয় <span class="required-star">*</span></label>
+        <input type="text" id="p-otherType" placeholder="সংক্ষেপে লিখুন">
+      </div>
+    </div>
+
+    <div class="fg">
+      <label>পেমেন্ট মাধ্যম <span class="required-star">*</span></label>
+      <div class="method-row" id="methodRow">
+        <button class="mth-btn sel" data-m="নগদ" onclick="selectMethod(this)"><i class="fa fa-money-bill-wave" style="color:#0b8b44"></i>নগদ</button>
+        <button class="mth-btn" data-m="bKash" onclick="selectMethod(this)"><i class="fa fa-mobile-screen-button" style="color:#e2136e"></i>bKash</button>
+        <button class="mth-btn" data-m="Nagad" onclick="selectMethod(this)"><i class="fa fa-mobile-screen-button" style="color:#f7931e"></i>Nagad</button>
+        <button class="mth-btn" data-m="Rocket" onclick="selectMethod(this)"><i class="fa fa-mobile-screen-button" style="color:#8b5cf6"></i>Rocket</button>
+        <button class="mth-btn" data-m="Bank Transfer" onclick="selectMethod(this)"><i class="fa fa-building-columns" style="color:#2980b9"></i>Bank</button>
+      </div>
+    </div>
+
+    <div class="fg" id="trxWrap">
+      <label>ট্রানজেকশন ID / রেফারেন্স <span style="font-size:11px;color:#aaa;">(bKash/Nagad/Bank হলে দিন)</span></label>
+      <input type="text" id="p-trx" placeholder="TrxID / রেফারেন্স নম্বর">
+    </div>
+
+    <div class="fg">
+      <label>বিবরণ বা বার্তা <span style="font-size:11px;color:#aaa;">(ঐচ্ছিক)</span></label>
+      <textarea id="p-note" placeholder="বিশেষ কোনো তথ্য জানাতে চাইলে লিখুন..."></textarea>
+    </div>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitPayment()">
+      <i class="fa fa-paper-plane"></i> পেমেন্ট জমা দিন
+    </button>
+    <div class="ld-row" id="ldRow"><div class="sp"></div> প্রক্রিয়া চলছে...</div>
+    <div class="err-box" id="errBox"></div>
+  </div>
+
+  <!-- SUCCESS VIEW -->
+  <div class="success-view" id="successView">
+    <div class="suc-icon"><i class="fa fa-check"></i></div>
+    <div class="suc-title">পেমেন্ট সফলভাবে জমা হয়েছে!</div>
+    <div class="suc-sub">আপনার পেমেন্টের তথ্য সংগঠনের কাছে পৌঁছে গেছে।<br>যাচাইয়ের পর এটি নিশ্চিত করা হবে।</div>
+    <div class="suc-id">
+      <span>ট্র্যাকিং রেফারেন্স</span>
+      <span id="sucRef">—</span>
+    </div>
+    <div class="suc-btns">
+      <button class="btn-suc-new" onclick="resetForm()"><i class="fa fa-plus"></i> আরেকটি পেমেন্ট করুন</button>
+      <a href="index.html" class="btn-suc-home"><i class="fa fa-house"></i> হোম পেজে যান</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+
+const BN_MONTHS = ["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+let selectedType = "মাসিক চাঁদা";
+let selectedMethod = "নগদ";
+
+/* Build month dropdown - current year + previous year */
+function buildMonthDropdown(){
+  const sel = document.getElementById("p-month");
+  const year = new Date().getFullYear();
+  for(let y = year; y >= year - 1; y--){
+    BN_MONTHS.forEach((m, i) => {
+      const opt = document.createElement("option");
+      opt.value = m + " " + y;
+      opt.textContent = m + " " + y;
+      // Pre-select current month
+      if(y === year && i === new Date().getMonth()) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+}
+buildMonthDropdown();
+
+function selectType(btn){
+  document.querySelectorAll(".type-btn").forEach(b => b.classList.remove("selected"));
+  btn.classList.add("selected");
+  selectedType = btn.dataset.type;
+  // Show/hide month field
+  const mf = document.getElementById("monthFieldWrap");
+  const ot = document.getElementById("otherTypeWrap");
+  if(selectedType === "মাসিক চাঁদা"){
+    mf.style.display = "";
+    ot.style.display = "none";
+    document.getElementById("p-amount").value = 50;
+  } else if(selectedType === "অন্যান্য"){
+    mf.style.display = "none";
+    ot.style.display = "";
+    document.getElementById("p-amount").value = "";
+  } else {
+    mf.style.display = "none";
+    ot.style.display = "none";
+    document.getElementById("p-amount").value = "";
+  }
+}
+
+function selectMethod(btn){
+  document.querySelectorAll(".mth-btn").forEach(b => b.classList.remove("sel"));
+  btn.classList.add("sel");
+  selectedMethod = btn.dataset.m;
+  // Hide trx field for cash
+  document.getElementById("trxWrap").style.display = selectedMethod === "নগদ" ? "none" : "";
+}
+// Hide trx for cash by default
+document.getElementById("trxWrap").style.display = "none";
+
+function showErr(msg){ const b = document.getElementById("errBox"); b.textContent = "⚠️ " + msg; b.style.display = "block"; }
+function hideErr(){ document.getElementById("errBox").style.display = "none"; }
+function setLoading(on){
+  document.getElementById("ldRow").style.display = on ? "flex" : "none";
+  document.getElementById("submitBtn").disabled = on;
+}
+
+async function submitPayment(){
+  hideErr();
+  const name = document.getElementById("p-name").value.trim();
+  const mid  = document.getElementById("p-mid").value.trim();
+  const mobile = document.getElementById("p-mobile").value.trim();
+  const month = document.getElementById("p-month").value;
+  const amount = document.getElementById("p-amount").value.trim();
+  const trxId = document.getElementById("p-trx").value.trim();
+  const note = document.getElementById("p-note").value.trim();
+  const otherType = document.getElementById("p-otherType").value.trim();
+
+  if(!name){ showErr("প্রেরকের নাম দিন"); return; }
+  if(!mobile || !/^01[3-9]\d{8}$/.test(mobile)){ showErr("সঠিক মোবাইল নম্বর দিন (01XXXXXXXXX)"); return; }
+  if(selectedType === "মাসিক চাঁদা" && !month){ showErr("মাস বাছাই করুন"); return; }
+  if(selectedType === "অন্যান্য" && !otherType){ showErr("পেমেন্টের বিষয় লিখুন"); return; }
+  if(!amount || Number(amount) < 1){ showErr("পরিমাণ দিন"); return; }
+
+  const finalType = selectedType === "অন্যান্য" ? otherType : selectedType;
+  const ref = "PAY-" + Date.now().toString().slice(-8);
+
+  const payload = {
+    action: "publicPayment",
+    refId: ref,
+    senderName: name,
+    memberId: mid || "—",
+    mobile,
+    paymentType: finalType,
+    month: selectedType === "মাসিক চাঁদা" ? month : "—",
+    amount,
+    method: selectedMethod,
+    trxId: trxId || "—",
+    note: note || "—"
+  };
+
+  setLoading(true);
+  try{
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify(payload)
+    });
+    const d = await res.json();
+    setLoading(false);
+    if(d.success || d.result === "success"){
+      document.getElementById("sucRef").textContent = ref;
+      document.getElementById("formView").style.display = "none";
+      document.getElementById("successView").style.display = "block";
+      document.querySelector(".type-section").style.display = "none";
+      document.querySelector(".card-head").scrollIntoView({behavior:"smooth"});
+    } else {
+      showErr(d.message || "সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন");
+    }
+  } catch(e){
+    setLoading(false);
+    showErr("সংযোগ ব্যর্থ হয়েছে। ইন্টারনেট পরীক্ষা করুন।");
+  }
+}
+
+function resetForm(){
+  document.getElementById("formView").style.display = "";
+  document.getElementById("successView").style.display = "none";
+  document.querySelector(".type-section").style.display = "";
+  document.getElementById("p-name").value = "";
+  document.getElementById("p-mid").value = "";
+  document.getElementById("p-mobile").value = "";
+  document.getElementById("p-amount").value = "50";
+  document.getElementById("p-trx").value = "";
+  document.getElementById("p-note").value = "";
+  hideErr();
+  document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("selected"));
+  document.querySelector(".type-btn").classList.add("selected");
+  selectedType = "মাসিক চাঁদা";
+  document.getElementById("monthFieldWrap").style.display = "";
+  document.getElementById("otherTypeWrap").style.display = "none";
+  document.getElementById("trxWrap").style.display = "none";
+  document.querySelectorAll(".mth-btn").forEach(b=>b.classList.remove("sel"));
+  document.querySelector(".mth-btn").classList.add("sel");
+  selectedMethod = "নগদ";
+}
+
+window.addEventListener("offline", () => showErr("ইন্টারনেট সংযোগ নেই"));
+window.addEventListener("online", hideErr);
+</script>
+</body>
+</html>
