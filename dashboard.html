@@ -563,7 +563,19 @@ async function loadPayments(){
       count++;total+=Number(p.amount)||0;
       if(String(p.date||"").includes(year)) yearT+=Number(p.amount)||0;
     });
-    const due=Math.max(0,(12*50)-total);
+    // বকেয়া হিসাব: যোগদানের তারিখ থেকে এই মাস পর্যন্ত
+    let expectedMonths=1;
+    const joinStr=profileCache.joiningDate||"";
+    if(joinStr){
+      const jd=new Date(joinStr);
+      if(!isNaN(jd.getTime())){
+        const now=new Date();
+        const diff=(now.getFullYear()-jd.getFullYear())*12+(now.getMonth()-jd.getMonth())+1;
+        expectedMonths=Math.max(1,diff);
+      }
+    }
+    const monthlyPaid=pays.filter(p=>(p.paymentType||"").includes("মাসিক")||(p.month&&p.month!=="—")).reduce((s,p)=>s+(Number(p.amount)||0),0);
+    const due=Math.max(0,(expectedMonths*50)-monthlyPaid);
     document.getElementById("stTotal").textContent="৳"+total;
     document.getElementById("stYear").textContent="৳"+yearT;
     document.getElementById("stDue").textContent="৳"+due;
