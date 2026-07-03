@@ -271,6 +271,7 @@ tbody tr:hover td{background:#fafffe;}
   <a class="nav-i" href="#" onclick="return nav('addpay',this)" id="navAddPay"><i class="fa fa-plus-circle"></i> পেমেন্ট যোগ</a>
   <a class="nav-i" href="#" onclick="return nav('allpay',this)" id="navAllPay"><i class="fa fa-receipt"></i> সকল পেমেন্ট</a>
   <a class="nav-i" href="payment.html"><i class="fa fa-hand-holding-dollar"></i> পাবলিক পেমেন্ট পেজ</a>
+  <a class="nav-i" href="#" onclick="return nav('accounting',this)" id="navAccounting"><i class="fa fa-scale-balanced"></i> তহবিল হিসাব</a>
 
   <div class="sec-lbl">কন্টেন্ট</div>
   <a class="nav-i" href="#" onclick="return nav('notice',this)" id="navNotice"><i class="fa fa-bell"></i> নোটিশ ব্যবস্থাপনা</a>
@@ -942,6 +943,115 @@ async function updatePayment(){
     closeModal("editPayModal");
     renderAllPay();
   } else showToast(d.message||"আপডেট ব্যর্থ",true);
+}
+
+/* ===== ACCOUNTING / FUND LEDGER ===== */
+async function renderAccounting(){
+  loader();
+  const [payRes, expRes] = await Promise.all([
+    api({action:"getAllPayments"}),
+    api({action:"getExpenses"})
+  ]);
+
+  const pays = payRes.payments||[];
+  const exps = (expRes.expenses||[]).slice().reverse();
+
+  const income  = pays.filter(p=>p.status==="Paid").reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const pending = pays.filter(p=>(p.status||"").includes("Pending")).reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const expense = exps.reduce((s,e)=>s+(Number(e.amount)||0),0);
+  const balance = income - expense;
+
+  // মাসিক আয়
+  const monthly={};
+  pays.filter(p=>p.status==="Paid").forEach(p=>{
+    const k=(p.date||"").split("/").slice(1).join("/"); // MM/YYYY
+    if(k) monthly[k]=(monthly[k]||0)+(Number(p.amount)||0);
+  });
+
+  const today=new Date().toISOString().split("T")[0];
+
+  setContent(`
+    <div class="cc-head"><h3><i class="fa fa-scale-balanced" style="color:var(--gm)"></i> তহবিল হিসাব (Fund Ledger)</h3></div>
+    <div class="cc-body">
+
+      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-c"><div class="v" style="color:var(--gm)">৳${income.toLocaleString("bn-BD")}</div><div class="l">মোট আয় (যাচাইকৃত)</div></div>
+        <div class="stat-c"><div class="v" style="color:#f39c12">৳${pending.toLocaleString("bn-BD")}</div><div class="l">যাচাই বাকি</div></div>
+        <div class="stat-c"><div class="v" style="color:#e74c3c">৳${expense.toLocaleString("bn-BD")}</div><div class="l">মোট ব্যয়</div></div>
+        <div class="stat-c"><div class="v" style="color:${balance>=0?"var(--gm)":"#e74c3c"}">৳${Math.abs(balance).toLocaleString("bn-BD")}${balance<0?" (ঘাটতি)":""}</div><div class="l">বর্তমান স্থিতি</div></div>
+      </div>
+
+      <div class="fc" style="margin-top:18px;">
+        <h3><i class="fa fa-minus-circle" style="color:#e74c3c"></i> নতুন ব্যয় এন্ট্রি</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="fg2"><label>বিভাগ *</label>
+            <select id="exp-cat">
+              <option>সংগঠনিক ব্যয়</option>
+              <option>খাদ্য / ইফতার</option>
+              <option>শিক্ষা সহায়তা</option>
+              <option>অসহায় সহযোগিতা</option>
+              <option>মসজিদ / মাদ্রাসা</option>
+              <option>ক্রীড়া ও বিনোদন</option>
+              <option>অফিস ও স্টেশনারি</option>
+              <option>অন্যান্য</option>
+            </select>
+          </div>
+          <div class="fg2"><label>পরিমাণ (৳) *</label><input id="exp-amt" type="number" min="1" placeholder="0"></div>
+          <div class="fg2" style="grid-column:1/-1;"><label>বিবরণ</label><input id="exp-desc" placeholder="কিসের জন্য ব্যয় হয়েছে?"></div>
+          <div class="fg2"><label>তারিখ</label><input id="exp-date" type="date" value="${today}"></div>
+        </div>
+        <button class="ab ab-green" style="margin-top:12px;padding:11px 24px;font-size:14px;" onclick="addExpenseEntry()">
+          <i class="fa fa-plus"></i> ব্যয় যোগ করুন
+        </button>
+        <div id="expToast" style="display:none;margin-top:10px;background:var(--gl);color:var(--gd);padding:10px 14px;border-radius:8px;font-weight:700;font-size:13px;"></div>
+      </div>
+
+      <div class="tc" style="margin-top:18px;">
+        <div class="tc-head"><h3>ব্যয়ের তালিকা (${exps.length}টি মোট ৳${expense.toLocaleString("bn-BD")})</h3></div>
+        <div class="tw"><table>
+          <thead><tr><th>তারিখ</th><th>বিভাগ</th><th>বিবরণ</th><th>পরিমাণ</th><th>যোগকারী</th></tr></thead>
+          <tbody>
+            ${exps.length ? exps.map(e=>`
+              <tr>
+                <td>${e.date||"—"}</td>
+                <td><span class="badge b-blue" style="font-size:11px;">${e.category||"—"}</span></td>
+                <td>${e.description||"—"}</td>
+                <td><b style="color:#e74c3c;">৳${Number(e.amount||0).toLocaleString("bn-BD")}</b></td>
+                <td>${e.addedBy||"Admin"}</td>
+              </tr>`).join("") :
+              '<tr><td colspan="5" class="empty-td"><i class="fa fa-inbox"></i> কোনো ব্যয় রেকর্ড নেই</td></tr>'
+            }
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  `);
+}
+
+async function addExpenseEntry(){
+  const cat  = document.getElementById("exp-cat")?.value  || "সংগঠনিক ব্যয়";
+  const amt  = document.getElementById("exp-amt")?.value  || "";
+  const desc = document.getElementById("exp-desc")?.value || "";
+  const date = document.getElementById("exp-date")?.value || "";
+  const toast = document.getElementById("expToast");
+
+  if(!amt || Number(amt)<1){showToast("পরিমাণ দিন",true);return;}
+
+  const d = await api({
+    action:"addExpense",
+    category:cat,
+    amount:amt,
+    description:desc,
+    date:date,
+    addedBy: localStorage.getItem("adminName")||"Admin"
+  });
+
+  if(d.success){
+    if(toast){toast.textContent="✅ ব্যয় সফলভাবে যোগ হয়েছে";toast.style.display="block";}
+    setTimeout(()=>renderAccounting(),1200);
+  } else {
+    showToast(d.message||"ব্যয় যোগ ব্যর্থ",true);
+  }
 }
 
 /* ===== LOGOUT ===== */

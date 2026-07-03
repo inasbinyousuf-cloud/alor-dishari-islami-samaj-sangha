@@ -189,7 +189,7 @@ body::before{
 
 <div class="topbar">
   <a href="index.html" class="back-link"><i class="fa fa-arrow-left"></i> হোম</a>
-  <a href="login.html" class="topbar-login"><i class="fa fa-right-to-bracket"></i> সদস্য লগইন</a>
+  <a href="login.html" id="topLoginBtn" class="topbar-login"><i class="fa fa-right-to-bracket"></i> সদস্য লগইন</a>
 </div>
 
 <div class="card">
@@ -400,11 +400,18 @@ async function submitPayment(){
   const finalType = selectedType === "অন্যান্য" ? otherType : selectedType;
   const ref = "PAY-" + Date.now().toString().slice(-8);
 
+  // লগইন করা সদস্য হলে memberPayment, না হলে publicPayment
+  const isLoggedIn = localStorage.getItem("memberLoggedIn") === "true";
+  const resolvedMid = mid || (isLoggedIn ? localStorage.getItem("memberId") : "") || "—";
+  const resolvedName = name || (isLoggedIn ? localStorage.getItem("memberName") : "") || "—";
+  const action = (isLoggedIn && resolvedMid && resolvedMid !== "—") ? "memberPayment" : "publicPayment";
+
   const payload = {
-    action: "publicPayment",
+    action,
     refId: ref,
-    senderName: name,
-    memberId: mid || "—",
+    senderName: resolvedName,
+    memberName: resolvedName,
+    memberId: resolvedMid,
     mobile,
     paymentType: finalType,
     month: selectedType === "মাসিক চাঁদা" ? month : "—",
@@ -421,20 +428,24 @@ async function submitPayment(){
       headers:{"Content-Type":"text/plain;charset=utf-8"},
       body: JSON.stringify(payload)
     });
-    const d = await res.json();
+    // Google Apps Script কখনো redirect করে তাই text() দিয়ে নিরাপদে parse করি
+    const text = await res.text();
+    let d = {};
+    try { d = JSON.parse(text); } catch(_){ d = { success: res.ok }; }
+
     setLoading(false);
-    if(d.success || d.result === "success"){
+    if(d.success || d.result==="success" || d.status==="success"){
       document.getElementById("sucRef").textContent = ref;
       document.getElementById("formView").style.display = "none";
       document.getElementById("successView").style.display = "block";
       document.querySelector(".type-section").style.display = "none";
       document.querySelector(".card-head").scrollIntoView({behavior:"smooth"});
     } else {
-      showErr(d.message || "সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন");
+      showErr(d.message || "সার্ভারে সমস্যা হয়েছে। আবার চেষ্টা করুন অথবা Admin-এর সাথে যোগাযোগ করুন।");
     }
   } catch(e){
     setLoading(false);
-    showErr("সংযোগ ব্যর্থ হয়েছে। ইন্টারনেট পরীক্ষা করুন।");
+    showErr("সংযোগ ব্যর্থ হয়েছে। ইন্টারনেট সংযোগ পরীক্ষা করুন।");
   }
 }
 
@@ -462,6 +473,25 @@ function resetForm(){
 
 window.addEventListener("offline", () => showErr("ইন্টারনেট সংযোগ নেই"));
 window.addEventListener("online", hideErr);
+
+/* ── Auto-fill logged-in member's info ── */
+(function autoFill(){
+  const isLoggedIn = localStorage.getItem("memberLoggedIn") === "true";
+  const loggedName = localStorage.getItem("memberName") || "";
+  const loggedMid  = localStorage.getItem("memberId")   || "";
+  const btn = document.getElementById("topLoginBtn");
+
+  if(isLoggedIn && loggedName){
+    const nameEl = document.getElementById("p-name");
+    const midEl  = document.getElementById("p-mid");
+    if(nameEl && !nameEl.value) nameEl.value = loggedName;
+    if(midEl  && !midEl.value  && loggedMid) midEl.value = loggedMid;
+    if(btn){
+      btn.innerHTML = '<i class="fa fa-user-check"></i> ' + loggedName;
+      btn.href = "dashboard.html";
+    }
+  }
+})();
 </script>
 </body>
 </html>
