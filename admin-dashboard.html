@@ -660,6 +660,16 @@ async function renderAllPay(){
   const d=await api({action:"getAllPayments"});
   const pays=d.payments||[];
   const total=pays.reduce((s,p)=>s+(Number(p.amount)||0),0);
+  const pendingList=pays.filter(p=>(p.status||"Paid")!=="Paid"&&!(p.status||"").includes("Reject"));
+  const pendingAmt=pendingList.reduce((s,p)=>s+(Number(p.amount)||0),0);
+
+  const stBadgePay=(st)=>{
+    const s=st||"Paid";
+    if(s==="Paid") return `<span class="badge b-ok"><i class="fa fa-check"></i> Paid</span>`;
+    if(s.includes("Reject")) return `<span class="badge" style="background:#ffe0e0;color:#721c24;"><i class="fa fa-times"></i> ${s}</span>`;
+    return `<span class="badge b-wait"><i class="fa fa-clock"></i> ${s}</span>`;
+  };
+
   const rows=pays.length?pays.map((p,idx)=>`
     <tr>
       <td><span class="badge b-blue" style="font-size:11px;">${p.paymentType||"মাসিক চাঁদা"}</span></td>
@@ -670,11 +680,13 @@ async function renderAllPay(){
       <td>${p.method||"—"}</td>
       <td><code style="font-size:12px;">${p.trxId||"—"}</code></td>
       <td>${p.date||"—"}</td>
-      <td>
+      <td>${stBadgePay(p.status)}</td>
+      <td style="white-space:nowrap;">
+        ${(p.status||"Paid")!=="Paid"&&can("addPayment")?`<button class="ab ab-green" onclick="quickVerify('${p.paymentId||""}')"><i class="fa fa-check"></i> যাচাই করুন</button>`:""}
         ${can("addPayment")?`<button class="ab ab-gold" onclick='editPayment(${JSON.stringify(p).replace(/"/g,"&quot;")},${idx})'><i class="fa fa-edit"></i> সম্পাদনা</button>`:""}
       </td>
     </tr>`).join(""):
-    `<tr><td colspan="9" class="empty-td"><i class="fa fa-inbox"></i>কোনো পেমেন্ট নেই</td></tr>`;
+    `<tr><td colspan="10" class="empty-td"><i class="fa fa-inbox"></i>কোনো পেমেন্ট নেই</td></tr>`;
   setMain(`
     <div class="pg-head">
       <div class="pg-title"><i class="fa fa-receipt"></i> সকল পেমেন্ট</div>
@@ -686,12 +698,23 @@ async function renderAllPay(){
       <div class="sc sc-g"><div class="sc-ico"><i class="fa fa-money-bill-wave"></i></div><div class="sc-val">৳${total}</div><div class="sc-lbl">মোট সংগ্রহ</div></div>
       <div class="sc sc-b"><div class="sc-ico"><i class="fa fa-receipt"></i></div><div class="sc-val">${pays.length}</div><div class="sc-lbl">মোট পেমেন্ট</div></div>
     </div>
+    ${pendingList.length?`<div style="background:#fff8e6;border:1px solid #f0dca0;border-radius:10px;padding:12px 16px;margin-bottom:18px;font-size:13px;color:#7a5a10;font-weight:600;">
+      <i class="fa fa-triangle-exclamation" style="margin-right:6px;"></i>${pendingList.length}টি পেমেন্ট (৳${pendingAmt}) যাচাইয়ের অপেক্ষায় আছে — নিচের তালিকায় "যাচাই করুন" বাটনে ক্লিক করুন
+    </div>`:""}
     <div class="tc">
       <div class="tc-head"><h3>পেমেন্ট তালিকা (${pays.length})</h3></div>
-      <div class="tw"><table><thead><tr><th>Member ID</th><th>নাম</th><th>মাস</th><th>টাকা</th><th>মাধ্যম</th><th>Trx ID</th><th>তারিখ</th><th>Status</th></tr></thead>
+      <div class="tw"><table><thead><tr><th>ধরন</th><th>Member ID</th><th>নাম</th><th>মাস</th><th>টাকা</th><th>মাধ্যম</th><th>Trx ID</th><th>তারিখ</th><th>Status</th><th>Action</th></tr></thead>
       <tbody>${rows}</tbody></table></div>
     </div>
   `);
+}
+
+async function quickVerify(paymentId){
+  if(!paymentId){showToast("পেমেন্ট আইডি পাওয়া যায়নি",true);return;}
+  if(!confirm("এই পেমেন্টটি যাচাই করে 'Paid' হিসেবে নিশ্চিত করবেন?"))return;
+  const d=await api({action:"updatePayment",paymentId,status:"Paid"});
+  if(d.success){showToast("✅ পেমেন্ট যাচাই সম্পন্ন হয়েছে!");renderAllPay();}
+  else showToast(d.message||"যাচাই ব্যর্থ",true);
 }
 
 /* ===== NOTICE ===== */
@@ -961,11 +984,18 @@ async function updatePayment(){
 
 /* ===== ACCOUNTING / FUND LEDGER ===== */
 async function renderAccounting(){
-  loader();
-  const [payRes, expRes] = await Promise.all([
-    api({action:"getAllPayments"}),
-    api({action:"getExpenses"})
-  ]);
+  if(!can("viewAccounts")&&!can("addPayment")){setMain(`<div style="padding:40px;text-align:center;color:#e74c3c;"><i class="fa fa-lock fa-3x"></i><br><br>এই পেজ দেখার অনুমতি নেই</div>`);return;}
+  setMain('<div class="pg-loader"><div class="pg-sp"></div><p>তহবিল হিসাব লোড হচ্ছে...</p></div>');
+  let payRes, expRes;
+  try{
+    [payRes, expRes] = await Promise.all([
+      api({action:"getAllPayments"}),
+      api({action:"getExpenses"})
+    ]);
+  }catch(e){
+    setMain(`<p style="padding:24px;color:red;">তহবিল হিসাব লোড করা যায়নি। Google Sheet সংযোগ পরীক্ষা করুন।</p>`);
+    return;
+  }
 
   const pays = payRes.payments||[];
   const exps = (expRes.expenses||[]).slice().reverse();
@@ -984,9 +1014,10 @@ async function renderAccounting(){
 
   const today=new Date().toISOString().split("T")[0];
 
-  setContent(`
-    <div class="cc-head"><h3><i class="fa fa-scale-balanced" style="color:var(--gm)"></i> তহবিল হিসাব (Fund Ledger)</h3></div>
-    <div class="cc-body">
+  setMain(`
+    <div class="pg-head">
+      <div class="pg-title"><i class="fa fa-scale-balanced"></i> তহবিল হিসাব</div>
+    </div>
 
       <div class="stat-row">
         <div class="stat-c"><div class="v" style="color:var(--gm)">৳${income.toLocaleString("bn-BD")}</div><div class="l">মোট আয় (যাচাইকৃত)</div></div>
@@ -1038,7 +1069,6 @@ async function renderAccounting(){
           </tbody>
         </table></div>
       </div>
-    </div>
   `);
 }
 
