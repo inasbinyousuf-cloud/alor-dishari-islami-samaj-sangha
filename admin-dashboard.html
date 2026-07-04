@@ -65,6 +65,7 @@ body{background:var(--bg);color:#1a2e1e;overflow-x:hidden;}
 
 /* ===== STAT CARDS ===== */
 .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-row-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:24px;}
 .sc{background:white;border-radius:var(--r);padding:20px;box-shadow:var(--sh);position:relative;overflow:hidden;transition:0.25s;}
 .sc:hover{transform:translateY(-3px);}
 .sc::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
@@ -220,13 +221,25 @@ tbody tr:hover td{background:#fafffe;}
   .a-meta,.a-name,.a-role{display:none;}
   .main{padding:14px;}
   .stat-row{grid-template-columns:1fr 1fr;}
+  .stat-row-2{grid-template-columns:1fr 1fr;}
   .grid2{grid-template-columns:1fr;}
   .com-grid{grid-template-columns:repeat(2,1fr);}
+  .hdr{padding:0 14px;}
+  .hdr-brand{font-size:13px;}
+  .modal{max-width:94vw;}
+  .mh,.mb,.mf{padding:16px 18px;}
 }
 @media(max-width:480px){
   .stat-row{grid-template-columns:1fr;}
+  .stat-row-2{grid-template-columns:1fr;}
   .com-grid{grid-template-columns:1fr;}
   .search-box input{width:130px;}
+  .pg-title{font-size:17px;}
+  .btn-logout span.hide-sm{display:none;}
+  .fc{padding:16px;}
+  .tc-head{padding:14px 16px;}
+  .act-btns{flex-direction:column;align-items:stretch;}
+  .ab{justify-content:center;}
 }
 </style>
 </head>
@@ -423,6 +436,7 @@ function nav(section, el){
   else if(section==="pending") renderPending();
   else if(section==="addpay") renderAddPay();
   else if(section==="allpay") renderAllPay();
+  else if(section==="accounting") renderAccounting();
   else if(section==="notice") renderNotice();
   else if(section==="committee") renderCommittee();
   else if(section==="admins") renderAdmins();
@@ -668,7 +682,7 @@ async function renderAllPay(){
         ${can("addPayment")?`<button class="btn btn-gold" onclick="openModal('payModal')"><i class="fa fa-plus"></i> নতুন পেমেন্ট</button>`:''}
       </div>
     </div>
-    <div class="stat-row" style="grid-template-columns:repeat(2,1fr);">
+    <div class="stat-row stat-row-2">
       <div class="sc sc-g"><div class="sc-ico"><i class="fa fa-money-bill-wave"></i></div><div class="sc-val">৳${total}</div><div class="sc-lbl">মোট সংগ্রহ</div></div>
       <div class="sc sc-b"><div class="sc-ico"><i class="fa fa-receipt"></i></div><div class="sc-val">${pays.length}</div><div class="sc-lbl">মোট পেমেন্ট</div></div>
     </div>
@@ -974,7 +988,7 @@ async function renderAccounting(){
     <div class="cc-head"><h3><i class="fa fa-scale-balanced" style="color:var(--gm)"></i> তহবিল হিসাব (Fund Ledger)</h3></div>
     <div class="cc-body">
 
-      <div class="stat-row" style="grid-template-columns:repeat(4,1fr);">
+      <div class="stat-row">
         <div class="stat-c"><div class="v" style="color:var(--gm)">৳${income.toLocaleString("bn-BD")}</div><div class="l">মোট আয় (যাচাইকৃত)</div></div>
         <div class="stat-c"><div class="v" style="color:#f39c12">৳${pending.toLocaleString("bn-BD")}</div><div class="l">যাচাই বাকি</div></div>
         <div class="stat-c"><div class="v" style="color:#e74c3c">৳${expense.toLocaleString("bn-BD")}</div><div class="l">মোট ব্যয়</div></div>

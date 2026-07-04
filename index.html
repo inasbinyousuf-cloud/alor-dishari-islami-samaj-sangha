@@ -315,7 +315,6 @@ footer p { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:6px; }
 @media(max-width:992px) {
   .hero-inner { grid-template-columns:1fr; gap:40px; }
   .hero h2 { font-size:32px; }
-  .hero-card-grid { grid-template-columns:repeat(4,1fr); }
   .portal-grid { grid-template-columns:1fr 1fr; }
   .activity-grid { grid-template-columns:1fr; }
   .about-grid { grid-template-columns:1fr; }
@@ -331,6 +330,23 @@ footer p { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:6px; }
   .stats-grid { grid-template-columns:1fr 1fr; }
   .committee-grid { grid-template-columns:repeat(2,1fr); }
   .sec-title { font-size:26px; }
+}
+@media(max-width:420px) {
+  .nav-inner { padding:10px 16px; }
+  .logo-text h1 { font-size:15px; }
+  .logo-text p { font-size:10px; }
+  .hero-inner { padding:40px 16px; }
+  .hero h2 { font-size:22px; }
+  .hero p { font-size:15px; }
+  .hero-actions { flex-direction:column; align-items:stretch; }
+  .btn-hero-main { justify-content:center; }
+  .hero-card-grid { grid-template-columns:1fr 1fr; gap:10px; }
+  .hero-stat { padding:14px; }
+  .hero-stat .num { font-size:24px; }
+  .section { padding:56px 16px; }
+  .stats-grid { grid-template-columns:1fr 1fr; gap:16px; }
+  .stat-box .n { font-size:34px; }
+  .committee-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>

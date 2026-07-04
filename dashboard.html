@@ -160,6 +160,14 @@ tbody tr:hover td{background:var(--gp);}
   .com-grid{grid-template-columns:repeat(2,1fr);}
   .month-grid{grid-template-columns:repeat(3,1fr)!important;}
 }
+@media(max-width:380px){
+  .hdr{padding:0 12px;}
+  .hdr-brand{font-size:13px;}
+  .hdr-brand small{font-size:10px;}
+  .btn-logout{padding:6px 10px;font-size:12px;}
+  .pgrid2{grid-template-columns:1fr;}
+  .method-mini{grid-template-columns:repeat(3,1fr);}
+}
 /* PAYMENT SUBMIT */
 .pay-form{background:var(--gp);border-radius:12px;padding:20px;border:1px solid #d4e8d8;margin-bottom:20px;}
 .pay-form h4{font-size:15px;font-weight:700;color:var(--gd);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
@@ -206,6 +214,16 @@ tbody tr:hover td{background:var(--gp);}
 }
 .mm-btn i{display:block;font-size:14px;margin-bottom:3px;}
 .mm-btn.msel{border-color:var(--gm);background:var(--gl);color:var(--gd);}
+
+/* FUND LEDGER (view-only) */
+.ledger-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.ledger-c{background:var(--gp);border:1px solid #d4e8d8;border-radius:12px;padding:16px;text-align:center;}
+.ledger-c .v{font-size:19px;font-weight:800;}
+.ledger-c .l{font-size:11px;color:#888;font-weight:600;margin-top:4px;}
+.view-only-note{background:#fff8e6;border:1px solid #f0dca0;border-radius:9px;padding:10px 14px;font-size:12px;color:#7a5a10;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.badge-cat{background:#e8f0ff;color:#0c4a8a;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+@media(max-width:768px){.ledger-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:420px){.ledger-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -242,6 +260,7 @@ tbody tr:hover td{background:var(--gp);}
     <button class="nitem active" onclick="showTab('profile',this)"><i class="fa fa-user"></i> আমার প্রোফাইল</button>
     <button class="nitem" onclick="showTab('payments',this)"><i class="fa fa-receipt"></i> পেমেন্ট ইতিহাস</button>
     <button class="nitem" onclick="showTab('paynow',this)"><i class="fa fa-hand-holding-dollar"></i> চাঁদা জমা দিন</button>
+    <button class="nitem" onclick="showTab('fund',this)"><i class="fa fa-scale-balanced"></i> তহবিল হিসাব</button>
     <button class="nitem" onclick="showTab('notice',this)"><i class="fa fa-bell"></i> নোটিশ</button>
     <button class="nitem" onclick="showTab('committee',this)"><i class="fa fa-people-group"></i> কমিটি</button>
     <hr class="nav-divider">
@@ -290,6 +309,7 @@ function showTab(tab, el){
   else if(tab==="notice") loadNotice();
   else if(tab==="committee") loadCommittee();
   else if(tab==="paynow") loadPayNow();
+  else if(tab==="fund") loadFundView();
 }
 
 function stBadge(s){
@@ -606,6 +626,54 @@ async function loadPayments(){
       </div>
     `);
   }catch(e){setContent(`<div class="cc-body"><p style="color:#e74c3c;">পেমেন্ট তথ্য লোড করা যায়নি।</p></div>`);}
+}
+
+/* ===== FUND LEDGER (view-only) ===== */
+async function loadFundView(){
+  loader();
+  try{
+    const [payRes, expRes] = await Promise.all([
+      fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getAllPayments"})}).then(r=>r.json()),
+      fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getExpenses"})}).then(r=>r.json())
+    ]);
+    const pays = payRes.payments||[];
+    const exps = (expRes.expenses||[]).slice().reverse();
+
+    const income  = pays.filter(p=>(p.status||"Paid")==="Paid").reduce((s,p)=>s+(Number(p.amount)||0),0);
+    const pending = pays.filter(p=>(p.status||"").includes("Pending")).reduce((s,p)=>s+(Number(p.amount)||0),0);
+    const expense = exps.reduce((s,e)=>s+(Number(e.amount)||0),0);
+    const balance = income - expense;
+
+    const rows = exps.length ? exps.map(e=>`
+      <tr>
+        <td>${e.date||"—"}</td>
+        <td><span class="badge-cat">${e.category||"—"}</span></td>
+        <td>${e.description||"—"}</td>
+        <td><b style="color:#e74c3c;">৳${Number(e.amount||0).toLocaleString("bn-BD")}</b></td>
+      </tr>`).join("") :
+      `<tr><td colspan="4" class="empty-row"><i class="fa fa-inbox"></i>কোনো ব্যয় রেকর্ড নেই</td></tr>`;
+
+    setContent(`
+      <div class="cc-head"><h3><i class="fa fa-scale-balanced" style="color:var(--gm)"></i> তহবিল হিসাব</h3></div>
+      <div class="cc-body">
+        <div class="view-only-note"><i class="fa fa-eye"></i> এটি একটি দেখার-মাত্র (View Only) হিসাব — এখান থেকে কোনো তথ্য যোগ বা সম্পাদনা করা সম্ভব নয়। পরিবর্তনের জন্য Admin-এর সাথে যোগাযোগ করুন।</div>
+        <div class="ledger-grid">
+          <div class="ledger-c"><div class="v" style="color:var(--gm)">৳${income.toLocaleString("bn-BD")}</div><div class="l">মোট আয় (যাচাইকৃত)</div></div>
+          <div class="ledger-c"><div class="v" style="color:#f39c12">৳${pending.toLocaleString("bn-BD")}</div><div class="l">যাচাই বাকি</div></div>
+          <div class="ledger-c"><div class="v" style="color:#e74c3c">৳${expense.toLocaleString("bn-BD")}</div><div class="l">মোট ব্যয়</div></div>
+          <div class="ledger-c"><div class="v" style="color:${balance>=0?"var(--gm)":"#e74c3c"}">৳${Math.abs(balance).toLocaleString("bn-BD")}${balance<0?" (ঘাটতি)":""}</div><div class="l">বর্তমান স্থিতি</div></div>
+        </div>
+        <div class="tw">
+          <table>
+            <thead><tr><th>তারিখ</th><th>বিভাগ</th><th>বিবরণ</th><th>পরিমাণ</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>
+      </div>
+    `);
+  }catch(e){
+    setContent(`<div class="cc-body"><p style="color:#e74c3c;">তহবিল হিসাব লোড করা যায়নি।</p></div>`);
+  }
 }
 
 /* ===== NOTICE ===== */
