@@ -25,7 +25,8 @@
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
-body { font-family:'Noto Sans Bengali',sans-serif; background:var(--bg); color:var(--text-dark); }
+body { font-family:'Noto Sans Bengali',sans-serif; background:var(--bg); color:var(--text-dark); overflow-x:hidden; }
+html { overflow-x:hidden; }
 
 /* ===== HEADER ===== */
 header {
@@ -172,20 +173,44 @@ nav a:hover { background:rgba(255,255,255,0.15); color:white; }
 .stat-divider { border:none; border-right:1px solid rgba(255,255,255,0.15); }
 
 /* ===== ACTIVITIES ===== */
-.activity-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:28px; }
-.activity-card {
-  background:white; border-radius:var(--radius); padding:28px;
-  box-shadow:var(--shadow); display:flex; gap:20px; align-items:flex-start;
-  transition:transform 0.25s;
+.activity-slider { position:relative; max-width:920px; margin:0 auto; }
+.act-track-wrap { overflow:hidden; border-radius:22px; }
+.act-track { display:flex; transition:transform 0.6s cubic-bezier(.4,0,.2,1); }
+.act-slide { flex:0 0 100%; min-width:0; }
+.act-slide-card { display:flex; background:white; box-shadow:var(--shadow); border:1px solid #eef2ef; min-height:360px; }
+.act-media { position:relative; flex:0 0 42%; background:linear-gradient(135deg,var(--green-light),#dcf0e3); overflow:hidden; }
+.act-media img { width:100%; height:100%; object-fit:cover; display:block; position:absolute; inset:0; z-index:2; }
+.act-fallback {
+  position:absolute; inset:0; z-index:1; display:flex; align-items:center; justify-content:center;
+  font-size:56px; color:var(--green-main); background:linear-gradient(135deg,var(--green-light),#e3f3e8);
 }
-.activity-card:hover { transform:translateY(-4px); }
+.act-body { flex:1; padding:44px 46px; display:flex; flex-direction:column; justify-content:center; min-width:0; }
 .act-icon {
-  width:56px; height:56px; flex-shrink:0; border-radius:12px;
-  background:var(--green-light); display:flex; align-items:center; justify-content:center;
-  font-size:22px; color:var(--green-main);
+  width:56px; height:56px; border-radius:50%; flex-shrink:0;
+  background:var(--gold); color:white; display:flex; align-items:center; justify-content:center;
+  font-size:22px; box-shadow:0 6px 16px rgba(201,168,76,0.4); margin-bottom:20px;
 }
-.act-body h4 { font-size:17px; font-weight:700; color:var(--text-dark); margin-bottom:8px; }
-.act-body p { font-size:14px; color:var(--text-light); line-height:1.8; }
+.act-body h4 { font-size:21px; font-weight:800; color:var(--text-dark); margin-bottom:12px; }
+.act-body p { font-size:15px; color:var(--text-light); line-height:1.9; }
+.act-arrow {
+  position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:50%;
+  background:white; border:1px solid #e4ece6; box-shadow:0 6px 18px rgba(0,0,0,0.1);
+  display:flex; align-items:center; justify-content:center; color:var(--green-dark); font-size:16px;
+  cursor:pointer; z-index:5; transition:0.2s;
+}
+.act-arrow:hover { background:var(--gold); color:white; border-color:var(--gold); }
+.act-prev { left:-22px; }
+.act-next { right:-22px; }
+.act-dots { display:flex; justify-content:center; gap:9px; margin-top:22px; }
+.act-dot { width:9px; height:9px; border-radius:50%; background:#d7e4db; border:none; cursor:pointer; padding:0; transition:0.25s; }
+.act-dot.active { background:var(--gold); width:26px; border-radius:5px; }
+@media(max-width:768px) {
+  .act-slide-card { flex-direction:column; min-height:auto; }
+  .act-media { flex:0 0 220px; }
+  .act-body { padding:26px 22px; }
+  .act-arrow { width:38px; height:38px; }
+  .act-prev { left:4px; } .act-next { right:4px; }
+}
 
 /* ===== NOTICE ===== */
 .notice-bg { background:var(--green-pale); }
@@ -252,11 +277,44 @@ nav a:hover { background:rgba(255,255,255,0.15); color:white; }
 
 /* ===== CONTACT ===== */
 .contact-bg { background:var(--green-dark); }
-.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center; max-width:1200px; margin:auto; }
+.contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center; max-width:1200px; margin:auto; min-width:0; }
+.contact-left, .contact-right { min-width:0; }
 .contact-left h2 { font-size:32px; font-weight:800; color:white; margin-bottom:12px; }
 .contact-left p { font-size:16px; color:rgba(255,255,255,0.7); line-height:1.9; margin-bottom:30px; }
-.contact-detail { display:flex; align-items:center; gap:14px; color:rgba(255,255,255,0.85); font-size:15px; margin-bottom:16px; }
-.contact-detail i { color:var(--gold); width:20px; }
+.contact-detail {
+  display:flex; align-items:center; gap:16px; min-width:0;
+  color:rgba(255,255,255,0.9); font-size:15.5px; font-weight:500;
+  text-decoration:none; margin-bottom:10px;
+  padding:12px 14px; border-radius:14px;
+  transition:0.25s;
+}
+.contact-detail:hover { background:rgba(255,255,255,0.08); transform:translateX(4px); }
+.contact-detail .ci-ico {
+  width:42px; height:42px; flex-shrink:0; border-radius:50%;
+  background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.35);
+  display:flex; align-items:center; justify-content:center;
+  color:var(--gold); font-size:16px;
+}
+.contact-detail span.ct-text { min-width:0; overflow-wrap:anywhere; word-break:break-word; line-height:1.5; }
+.contact-detail:hover .ci-ico { background:var(--gold); color:var(--green-dark); }
+
+/* WHATSAPP FLOAT BUTTON */
+.wa-float{
+  position:fixed; bottom:22px; right:22px; z-index:999;
+  width:58px; height:58px; border-radius:50%;
+  background:#25D366; color:white; font-size:28px;
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  text-decoration:none; transition:0.25s;
+  animation:wa-pulse 2.4s infinite;
+}
+.wa-float:hover{ transform:scale(1.08); background:#1ebe5b; }
+@keyframes wa-pulse{
+  0%{box-shadow:0 6px 20px rgba(0,0,0,0.3),0 0 0 0 rgba(37,211,102,0.5);}
+  70%{box-shadow:0 6px 20px rgba(0,0,0,0.3),0 0 0 14px rgba(37,211,102,0);}
+  100%{box-shadow:0 6px 20px rgba(0,0,0,0.3),0 0 0 0 rgba(37,211,102,0);}
+}
+@media(max-width:480px){.wa-float{width:50px;height:50px;font-size:23px;bottom:16px;right:16px;}}
 .contact-right {
   background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
   border-radius:20px; padding:36px;
@@ -316,7 +374,7 @@ footer p { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:6px; }
   .hero-inner { grid-template-columns:1fr; gap:40px; }
   .hero h2 { font-size:32px; }
   .portal-grid { grid-template-columns:1fr 1fr; }
-  .activity-grid { grid-template-columns:1fr; }
+  .activity-slider { max-width:94%; }
   .about-grid { grid-template-columns:1fr; }
   .contact-grid { grid-template-columns:1fr; }
   .stats-grid { grid-template-columns:repeat(2,1fr); }
@@ -488,48 +546,111 @@ footer p { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:6px; }
       <h2 class="sec-title">যা আমরা করেছি</h2>
       <p class="sec-sub">করোনাকাল থেকে শুরু করে আজ পর্যন্ত আমাদের সামাজিক কার্যক্রমের সংক্ষিপ্ত বিবরণ</p>
     </div>
-    <div class="activity-grid">
-      <div class="activity-card">
-        <div class="act-icon"><i class="fa-solid fa-syringe"></i></div>
-        <div class="act-body">
-          <h4>করোনা সচেতনতা ও টিকা সহায়তা</h4>
-          <p>ইলশা গ্রামের ৩০০ পরিবারকে সচেতন ও উদ্বুদ্ধ করা হয়। প্রায় ৪০০ জনকে করোনার টিকা নিবন্ধন করে সনদ প্রিন্ট করে দেওয়া হয়েছে।</p>
+    <div class="activity-slider">
+      <div class="act-track-wrap">
+        <div class="act-track" id="actTrack">
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="Image/activity-corona.jpg" alt="করোনা সচেতনতা ও টিকা সহায়তা" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-syringe"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-syringe"></i></div>
+                <h4>করোনা সচেতনতা ও টিকা সহায়তা</h4>
+                <p>ইলশা গ্রামের ৩০০ পরিবারকে সচেতন ও উদ্বুদ্ধ করা হয়। প্রায় ৪০০ জনকে করোনার টিকা নিবন্ধন করে সনদ প্রিন্ট করে দেওয়া হয়েছে।</p>
+              </div>
+            </div>
+          </div>
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="Image/activity-eid.jpg" alt="ঈদুল ফিতর সহায়তা ২০২১" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                <h4>ঈদুল ফিতর সহায়তা ২০২১</h4>
+                <p>পবিত্র ঈদুল ফিতরে ৩৫টি অসচ্ছল পরিবারকে নগদ অর্থ প্রদান করা হয়। এতে অনেক পরিবার ঈদ আনন্দে অংশ নিতে পেরেছে।</p>
+              </div>
+            </div>
+          </div>
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="Image/activity-iftar.jpg" alt="রমজান মাসে ইফতার বিতরণ" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-bowl-food"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-bowl-food"></i></div>
+                <h4>রমজান মাসে ইফতার বিতরণ</h4>
+                <p>পবিত্র রমজান মাসে ৩০টি পরিবারকে ইফতার সামগ্রী ও নগদ অর্থ সহায়তা প্রদান করা হয়েছে।</p>
+              </div>
+            </div>
+          </div>
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="Image/activity-tree.jpg" alt="৫০০ ফলজ বৃক্ষরোপণ ২০২২" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-tree"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-tree"></i></div>
+                <h4>৫০০ ফলজ বৃক্ষরোপণ ২০২২</h4>
+                <p>বৈশ্বিক উষ্ণায়ন মোকাবেলায় বিদ্যাবাড়ির সহায়তায় ৩০০টি ফলজ চারা রোপণ করা হয়। কিছু গাছ অলি চৌধুরী জামে মসজিদে দৃশ্যমান।</p>
+              </div>
+            </div>
+          </div>
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="Image/activity-sports.jpg" alt="ক্রীড়া প্রতিযোগিতা আয়োজন" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-futbol"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-futbol"></i></div>
+                <h4>ক্রীড়া প্রতিযোগিতা আয়োজন</h4>
+                <p>কিশোরদের মাদক থেকে দূরে রাখতে ক্রিকেট, ফুটবল, সাঁতার ও গোলক নিক্ষেপসহ বিভিন্ন ক্রীড়া প্রতিযোগিতার আয়োজন করা হয়।</p>
+              </div>
+            </div>
+          </div>
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="Image/activity-mohiudin.jpg" alt="মানবতার সেবায়" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-futbol"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-hands-helping"></i></div>
+                <h4>মানবতার সেবায় </h4>
+                <p>মহিউদ্দিন ভাই-এর অসুস্থ সন্তানের চিকিৎসার জন্য আর্থিক সহায়তা প্রদান করা হয়েছে।</p>
+              </div>
+            </div>
+          </div>
+          <div class="act-slide">
+            <div class="act-slide-card">
+              <div class="act-media">
+                <img src="images/activity-social.jpg" alt="চলমান সমাজসেবা কার্যক্রম" onerror="this.style.display='none'">
+                <div class="act-fallback"><i class="fa-solid fa-hands-helping"></i></div>
+              </div>
+              <div class="act-body">
+                <div class="act-icon"><i class="fa-solid fa-hands-helping"></i></div>
+                <h4>চলমান সমাজসেবা কার্যক্রম</h4>
+                <p>ঐক্য, সততা ও পারস্পরিক সহযোগিতার মাধ্যমে একটি আদর্শ, মানবিক ও কল্যাণমুখী সমাজ গঠনে কাজ অব্যাহত রয়েছে।</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="activity-card">
-        <div class="act-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-        <div class="act-body">
-          <h4>ঈদুল ফিতর সহায়তা ২০২১</h4>
-          <p>পবিত্র ঈদুল ফিতরে ৩৫টি অসচ্ছল পরিবারকে নগদ অর্থ প্রদান করা হয়। এতে অনেক পরিবার ঈদ আনন্দে অংশ নিতে পেরেছে।</p>
-        </div>
-      </div>
-      <div class="activity-card">
-        <div class="act-icon"><i class="fa-solid fa-bowl-food"></i></div>
-        <div class="act-body">
-          <h4>রমজান মাসে ইফতার বিতরণ</h4>
-          <p>পবিত্র রমজান মাসে ৩০টি পরিবারকে ইফতার সামগ্রী ও নগদ অর্থ সহায়তা প্রদান করা হয়েছে।</p>
-        </div>
-      </div>
-      <div class="activity-card">
-        <div class="act-icon"><i class="fa-solid fa-tree"></i></div>
-        <div class="act-body">
-          <h4>৫০০ ফলজ বৃক্ষরোপণ ২০২২</h4>
-          <p>বৈশ্বিক উষ্ণায়ন মোকাবেলায় বিদ্যাবাড়ির সহায়তায় ৩০০টি ফলজ চারা রোপণ করা হয়। কিছু গাছ অলি চৌধুরী জামে মসজিদে দৃশ্যমান।</p>
-        </div>
-      </div>
-      <div class="activity-card">
-        <div class="act-icon"><i class="fa-solid fa-futbol"></i></div>
-        <div class="act-body">
-          <h4>ক্রীড়া প্রতিযোগিতা আয়োজন</h4>
-          <p>কিশোরদের মাদক থেকে দূরে রাখতে ক্রিকেট, ফুটবল, সাঁতার ও গোলক নিক্ষেপসহ বিভিন্ন ক্রীড়া প্রতিযোগিতার আয়োজন করা হয়।</p>
-        </div>
-      </div>
-      <div class="activity-card">
-        <div class="act-icon"><i class="fa-solid fa-hands-helping"></i></div>
-        <div class="act-body">
-          <h4>চলমান সমাজসেবা কার্যক্রম</h4>
-          <p>ঐক্য, সততা ও পারস্পরিক সহযোগিতার মাধ্যমে একটি আদর্শ, মানবিক ও কল্যাণমুখী সমাজ গঠনে কাজ অব্যাহত রয়েছে।</p>
-        </div>
+      <button class="act-arrow act-prev" onclick="actMove(-1)" aria-label="আগের কার্যক্রম"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="act-arrow act-next" onclick="actMove(1)" aria-label="পরের কার্যক্রম"><i class="fa-solid fa-chevron-right"></i></button>
+      <div class="act-dots" id="actDots">
+        <button class="act-dot active" onclick="actGo(0)"></button>
+        <button class="act-dot" onclick="actGo(1)"></button>
+        <button class="act-dot" onclick="actGo(2)"></button>
+        <button class="act-dot" onclick="actGo(3)"></button>
+        <button class="act-dot" onclick="actGo(4)"></button>
+        <button class="act-dot" onclick="actGo(5)"></button>
       </div>
     </div>
   </div>
@@ -629,10 +750,10 @@ footer p { font-size:14px; color:rgba(255,255,255,0.5); margin-bottom:6px; }
       <span class="sec-eyebrow" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);">যোগাযোগ</span>
       <h2>আমাদের সাথে যোগাযোগ করুন</h2>
       <p>যেকোনো প্রশ্ন বা সহযোগিতার জন্য আমাদের সাথে যোগাযোগ করুন।</p>
-      <div class="contact-detail"><i class="fa-solid fa-location-dot"></i> মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম</div>
-      <div class="contact-detail"><i class="fa-solid fa-phone"></i> 01870932446</div>
-      <div class="contact-detail"><i class="fa-solid fa-envelope"></i> inasbinyousuf@gmail.com</div>
-      <div class="contact-detail"><i class="fa-brands fa-facebook"></i> https://www.facebook.com/alordishari.org.2021</div>
+      <a class="contact-detail" href="https://www.google.com/maps/search/?api=1&query=মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম" target="_blank" rel="noopener"><span class="ci-ico"><i class="fa-solid fa-location-dot"></i></span><span class="ct-text">মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম</span></a>
+      <a class="contact-detail" href="tel:+8801870932446"><span class="ci-ico"><i class="fa-solid fa-phone"></i></span><span class="ct-text">01870932446</span></a>
+      <a class="contact-detail" href="mailto:inasbinyousuf@gmail.com"><span class="ci-ico"><i class="fa-solid fa-envelope"></i></span><span class="ct-text">inasbinyousuf@gmail.com</span></a>
+      <a class="contact-detail" href="https://www.facebook.com/alordishari.org.2021" target="_blank" rel="noopener"><span class="ci-ico"><i class="fa-brands fa-facebook"></i></span><span class="ct-text">https://www.facebook.com/alordishari.org.2021</span></a>
     </div>
     <div class="contact-right">
       <h3>বার্তা পাঠান</h3>
@@ -753,6 +874,34 @@ async function loadCommittee() {
 loadStats();
 loadNotice();
 loadCommittee();
+
+/* ===== ACTIVITIES AUTO-SLIDER ===== */
+let actIndex = 0;
+let actTimer = null;
+const actTrack = document.getElementById('actTrack');
+const actTotal = actTrack ? actTrack.children.length : 0;
+
+function actGo(i){
+  if(!actTrack || actTotal === 0) return;
+  actIndex = (i + actTotal) % actTotal;
+  actTrack.style.transform = `translateX(-${actIndex * 100}%)`;
+  document.querySelectorAll('.act-dot').forEach((d, idx) => d.classList.toggle('active', idx === actIndex));
+}
+function actMove(dir){ actGo(actIndex + dir); actRestart(); }
+function actRestart(){
+  clearInterval(actTimer);
+  actTimer = setInterval(() => actGo(actIndex + 1), 4500);
+}
+if(actTrack){
+  actRestart();
+  const sliderEl = document.querySelector('.activity-slider');
+  sliderEl.addEventListener('mouseenter', () => clearInterval(actTimer));
+  sliderEl.addEventListener('mouseleave', actRestart);
+}
 </script>
+
+<a class="wa-float" href="https://wa.me/8801870932446?text=আসসালামু আলাইকুম, আমি আলোর দিশারী ওয়েবসাইট থেকে যোগাযোগ করছি।" target="_blank" rel="noopener" title="WhatsApp-এ চ্যাট করুন" aria-label="WhatsApp চ্যাট">
+  <i class="fa-brands fa-whatsapp"></i>
+</a>
 </body>
 </html>
