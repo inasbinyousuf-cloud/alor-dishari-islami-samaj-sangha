@@ -3,7 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard — আলোর দিশারী</title>
+<meta name="description" content="আলোর দিশারী ইসলামী সমাজ সংঘ — একটি ইসলামী সমাজসেবী ও কল্যাণমুখী সংগঠন। মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম।">
+<meta name="theme-color" content="#065f30">
+<!-- Favicon — ব্রাউজার ট্যাবে লোগো দেখাবে -->
+<link rel="icon" type="image/jpeg" href="Image/logo.jpg">
+<link rel="apple-touch-icon" href="Image/logo.jpg">
+<!-- Open Graph — WhatsApp / Facebook / Telegram প্রিভিউ -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Admin Panel | আলোর দিশারী">
+<meta property="og:description" content="আলোর দিশারী ইসলামী সমাজ সংঘ — একটি ইসলামী সমাজসেবী ও কল্যাণমুখী সংগঠন। মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম।">
+<meta property="og:image" content="Image/logo.jpg">
+<meta property="og:locale" content="bn_BD">
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Admin Panel | আলোর দিশারী">
+<meta name="twitter:description" content="আলোর দিশারী ইসলামী সমাজ সংঘ — একটি ইসলামী সমাজসেবী ও কল্যাণমুখী সংগঠন। মধ্য ইলশা, বাঁশখালী, চট্টগ্রাম।">
+<meta name="twitter:image" content="Image/logo.jpg">
+<title>Admin Panel | আলোর দিশারী</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 <style>
@@ -273,6 +290,15 @@ tbody tr:hover td{background:#fafffe;}
 <div class="layout">
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
+  <div style="padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:12px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="Image/logo.jpg" alt="লোগো" style="width:42px;height:42px;border-radius:50%;border:2px solid rgba(201,168,76,0.6);background:#fff;object-fit:cover;flex-shrink:0;">
+      <div>
+        <div style="font-size:11.5px;font-weight:800;color:#fff;line-height:1.3;">আলোর দিশারী ইসলামী সমাজ সংঘ</div>
+        <div style="font-size:10px;color:rgba(255,255,255,0.45);margin-top:2px;">Admin Panel</div>
+      </div>
+    </div>
+  </div>
   <div class="sec-lbl">প্রধান</div>
   <a class="nav-i active" href="#" onclick="return nav('overview',this)"><i class="fa fa-gauge-high"></i> সারসংক্ষেপ</a>
 
@@ -284,6 +310,7 @@ tbody tr:hover td{background:#fafffe;}
   <a class="nav-i" href="#" onclick="return nav('addpay',this)" id="navAddPay"><i class="fa fa-plus-circle"></i> পেমেন্ট যোগ</a>
   <a class="nav-i" href="#" onclick="return nav('allpay',this)" id="navAllPay"><i class="fa fa-receipt"></i> সকল পেমেন্ট</a>
   <a class="nav-i" href="payment.html"><i class="fa fa-hand-holding-dollar"></i> পাবলিক পেমেন্ট পেজ</a>
+  <a class="nav-i" href="#" onclick="return nav('communityAdmin',this)" id="navCommunity"><i class="fa fa-comments"></i> সমস্যা ফোরাম</a>
   <a class="nav-i" href="#" onclick="return nav('accounting',this)" id="navAccounting"><i class="fa fa-scale-balanced"></i> তহবিল হিসাব</a>
 
   <div class="sec-lbl">কন্টেন্ট</div>
@@ -999,6 +1026,7 @@ async function renderAccounting(){
 
   const pays = payRes.payments||[];
   const exps = (expRes.expenses||[]).slice().reverse();
+  _accPays = pays; _accExps = exps; // store for print/download
 
   const income  = pays.filter(p=>p.status==="Paid").reduce((s,p)=>s+(Number(p.amount)||0),0);
   const pending = pays.filter(p=>(p.status||"").includes("Pending")).reduce((s,p)=>s+(Number(p.amount)||0),0);
@@ -1015,8 +1043,16 @@ async function renderAccounting(){
   const today=new Date().toISOString().split("T")[0];
 
   setMain(`
-    <div class="pg-head">
+    <div class="pg-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div class="pg-title"><i class="fa fa-scale-balanced"></i> তহবিল হিসাব</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="ab ab-green" onclick="printAccountingReport()" style="display:flex;align-items:center;gap:7px;font-size:13px;padding:9px 18px;">
+          <i class="fa fa-print"></i> প্রিন্ট
+        </button>
+        <button class="ab ab-gold" onclick="downloadAccountingPDF()" style="display:flex;align-items:center;gap:7px;font-size:13px;padding:9px 18px;background:var(--gold);color:#111;border:none;border-radius:8px;cursor:pointer;font-family:inherit;font-weight:700;">
+          <i class="fa fa-file-pdf"></i> PDF ডাউনলোড
+        </button>
+      </div>
     </div>
 
       <div class="stat-row">
@@ -1096,6 +1132,202 @@ async function addExpenseEntry(){
   } else {
     showToast(d.message||"ব্যয় যোগ ব্যর্থ",true);
   }
+}
+
+
+/* ═══════════════════════════════════════════════════
+   ACCOUNTING PRINT & DOWNLOAD
+═══════════════════════════════════════════════════ */
+let _accPays = [];
+let _accExps = [];
+
+// Store data when renderAccounting runs
+const _origRenderAccounting = renderAccounting;
+
+function buildAccountingHTML(pays, exps) {
+  var income  = pays.filter(function(p){return p.status==="Paid";}).reduce(function(s,p){return s+(Number(p.amount)||0);},0);
+  var pending = pays.filter(function(p){return (p.status||"").includes("Pending");}).reduce(function(s,p){return s+(Number(p.amount)||0);},0);
+  var expense = exps.reduce(function(s,e){return s+(Number(e.amount)||0);},0);
+  var balance = income - expense;
+  var today   = new Date().toLocaleDateString("bn-BD");
+  var adminNm = localStorage.getItem("adminName")||"Admin";
+
+  // Group income by category
+  var catMap = {};
+  pays.filter(function(p){return p.status==="Paid";}).forEach(function(p){
+    var k = p.categoryLabel || p.paymentType || "মাসিক চাঁদা";
+    catMap[k] = (catMap[k]||0)+(Number(p.amount)||0);
+  });
+
+  var incomeRows = "";
+  var ci = 0;
+  Object.keys(catMap).forEach(function(k){
+    ci++;
+    incomeRows += "<tr>";
+    incomeRows += "<td style='border:1px solid #aaa;padding:5px 8px;'>" + ci + ". " + k + "</td>";
+    incomeRows += "<td style='border:1px solid #aaa;padding:5px 8px;text-align:center;'>--</td>";
+    incomeRows += "<td style='border:1px solid #aaa;padding:5px 8px;text-align:right;font-weight:600;'>" + Number(catMap[k]).toLocaleString("bn-BD") + "</td>";
+    incomeRows += "</tr>";
+  });
+  if(!incomeRows) incomeRows = "<tr><td colspan='3' style='padding:8px;text-align:center;border:1px solid #aaa;'>কোনো আয় নেই</td></tr>";
+
+  var expenseRows = "";
+  exps.forEach(function(e,i){
+    expenseRows += "<tr>";
+    expenseRows += "<td style='border:1px solid #aaa;padding:5px 8px;'>" + (i+1) + ". " + (e.description||e.category||"--") + "</td>";
+    expenseRows += "<td style='border:1px solid #aaa;padding:5px 8px;text-align:center;'>" + (e.date||"--") + "</td>";
+    expenseRows += "<td style='border:1px solid #aaa;padding:5px 8px;text-align:right;font-weight:600;'>" + Number(e.amount||0).toLocaleString("bn-BD") + "</td>";
+    expenseRows += "</tr>";
+  });
+  if(!expenseRows) expenseRows = "<tr><td colspan='3' style='padding:8px;text-align:center;border:1px solid #aaa;'>কোনো ব্যয় নেই</td></tr>";
+
+  var pendingRow = "";
+  if(pending > 0){
+    pendingRow = "<div style='display:flex;justify-content:space-between;padding:7px 14px;font-size:11pt;border-bottom:1px solid #c5dfc5;'>";
+    pendingRow += "<span style='font-weight:600;'>যাচাই বাকি</span>";
+    pendingRow += "<span style='font-weight:700;color:#f39c12;'>\u09f3 " + pending.toLocaleString("bn-BD") + "</span></div>";
+  }
+
+  var css = "";
+  css += "* { margin:0; padding:0; box-sizing:border-box; font-family:'Noto Sans Bengali',sans-serif; color:#111; }";
+  css += "@page { size:A4; margin:12mm 14mm; }";
+  css += "body { font-size:11pt; line-height:1.5; }";
+  css += ".bx { border:2px solid #065f30; padding:7mm 9mm; min-height:265mm; }";
+  css += ".ts { display:flex; justify-content:space-between; font-size:9pt; font-weight:700; color:#065f30; border-bottom:1.5px solid #065f30; padding-bottom:4px; margin-bottom:7px; }";
+  css += ".bi { text-align:center; font-size:11pt; color:#333; margin-bottom:5px; }";
+  css += ".oh { display:flex; align-items:center; justify-content:center; gap:16px; margin-bottom:5px; }";
+  css += ".lg { width:72px; height:72px; border-radius:50%; border:2.5px solid #065f30; object-fit:cover; }";
+  css += ".on { font-family:serif; font-size:20pt; font-weight:900; color:#c0392b; line-height:1.1; }";
+  css += ".os { font-size:9.5pt; color:#444; text-align:center; }";
+  css += ".tb { text-align:center; border-top:2px solid #065f30; border-bottom:2px solid #065f30; padding:5px; margin:8px 0; font-size:13pt; font-weight:800; color:#065f30; }";
+  css += ".sh { font-size:11pt; font-weight:700; color:#065f30; border-bottom:1px solid #c5dfc5; padding-bottom:3px; margin:12px 0 6px; }";
+  css += "table { width:100%; border-collapse:collapse; font-size:10.5pt; }";
+  css += "th { background:#065f30; color:white; padding:6px 8px; border:1px solid #aaa; font-weight:700; }";
+  css += "tr:nth-child(even) td { background:#f5f5f5; }";
+  css += ".tr td { font-weight:800; background:#e8f7ee; border:1.5px solid #065f30; }";
+  css += ".sb { margin-top:14px; border:2px solid #065f30; border-radius:6px; overflow:hidden; }";
+  css += ".sr { display:flex; justify-content:space-between; padding:7px 14px; font-size:11pt; border-bottom:1px solid #c5dfc5; }";
+  css += ".sr.last { border-bottom:none; background:#065f30; color:white; font-weight:800; font-size:12pt; }";
+  css += ".sa { margin-top:20px; display:flex; justify-content:space-between; }";
+  css += ".sl { width:140px; border-top:1px solid #333; padding-top:4px; text-align:center; font-size:9pt; color:#555; }";
+
+  var h = "";
+  h += "<!DOCTYPE html>";
+  h += "<html lang='bn'><head><meta charset='UTF-8'>";
+  h += "<link href='https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;800;900&family=Noto+Serif+Bengali:wght@700;800;900&display=swap' rel='stylesheet'>";
+  h += "<style>" + css + "</style></head><body>";
+  h += "<div class='bx'>";
+  h += "<div class='ts'><span>\u0990\u0995\u09cd\u09af</span><span>\u09ae\u09be\u09a8\u09ac\u09a4\u09be</span><span>\u09b8\u09be\u09ae\u09be\u099c\u09bf\u0995 \u0989\u09a8\u09cd\u09a8\u09df\u09a8</span></div>";
+  h += "<div class='bi'>\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u064e\u0647\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0652\u0645\u064e\u0670\u0646\u0650 \u0627\u0644\u0631\u0651\u064e\u062d\u0650\u064a\u0645\u0650</div>";
+  h += "<div class='bi' style='font-size:9pt;color:#555;'>\u09ac\u09bf\u09b8\u09ae\u09bf\u09b2\u09cd\u09b2\u09be\u09b9\u09bf\u09b0 \u09b0\u09b9\u09ae\u09be\u09a8\u09bf\u09b0 \u09b0\u09b9\u09bf\u09ae</div>";
+  h += "<div class='oh'>";
+  h += "<img src='Image/logo.jpg' class='lg' onerror='this.style.display=\"none\"'>";
+  h += "<div style='text-align:center;'>";
+  h += "<div class='on'>\u0986\u09b2\u09cb\u09b0 \u09a6\u09bf\u09b6\u09be\u09b0\u09c0 \u0987\u09b8\u09b2\u09be\u09ae\u09c0 \u09b8\u09ae\u09be\u099c \u09b8\u0982\u0998</div>";
+  h += "<div class='os'>\u09b8\u09cd\u09a5\u09be\u09aa\u09bf\u09a4\u0983 \u09e8\u09e6\u09e8\u09e7\u0987\u0982</div>";
+  h += "<div class='os'>\u09ae\u09a7\u09cd\u09af \u0987\u09b2\u09b6\u09be, \u09ac\u09be\u0981\u09b6\u0996\u09be\u09b2\u09c0, \u099a\u099f\u09cd\u099f\u0997\u09cd\u09b0\u09be\u09ae</div>";
+  h += "<div class='os'>(\u098f\u0995\u099f\u09bf \u09b8\u09cd\u09ac\u09c7\u099a\u09cd\u099b\u09be\u09b8\u09c7\u09ac\u09c0 \u0993 \u09b8\u09ae\u09be\u099c \u09b8\u09c7\u09ac\u09be\u09ae\u09c2\u09b2\u0995 \u09b8\u0982\u0997\u09a0\u09a8)</div>";
+  h += "</div></div>";
+  h += "<div class='tb'>\u09a4\u09b9\u09ac\u09bf\u09b2 \u09b9\u09bf\u09b8\u09be\u09ac \u0993 \u09ac\u09cd\u09af\u09df \u09ac\u09bf\u09ac\u09b0\u09a3\u09c0</div>";
+  h += "<div style='font-size:10pt;color:#555;margin-bottom:8px;'>\u09aa\u09cd\u09b0\u09bf\u09a8\u09cd\u099f\u09c7\u09b0 \u09a4\u09be\u09b0\u09bf\u0996\u0983 <b>" + today + "</b> &nbsp;|&nbsp; \u09aa\u09cd\u09b0\u09b8\u09cd\u09a4\u09c1\u09a4\u0995\u09be\u09b0\u09c0\u0983 <b>" + adminNm + "</b></div>";
+  h += "<div class='sh'>\u0986\u09df\u09c7\u09b0 \u09ac\u09bf\u09ac\u09b0\u09a3 (Income)</div>";
+  h += "<table><thead><tr><th>\u09ac\u09bf\u09ac\u09b0\u09a3</th><th>\u09a4\u09be\u09b0\u09bf\u0996</th><th>\u099f\u09be\u0995\u09be</th></tr></thead><tbody>";
+  h += incomeRows;
+  h += "<tr class='tr'><td colspan='2' style='border:1.5px solid #065f30;padding:6px 8px;text-align:right;'>\u09ae\u09cb\u099f \u0986\u09df</td>";
+  h += "<td style='border:1.5px solid #065f30;padding:6px 8px;text-align:right;color:#065f30;'>" + income.toLocaleString("bn-BD") + " \u099f\u09be\u0995\u09be</td></tr>";
+  h += "</tbody></table>";
+  h += "<div class='sh'>\u09ac\u09cd\u09af\u09df\u09c7\u09b0 \u09ac\u09bf\u09ac\u09b0\u09a3 (Expenses)</div>";
+  h += "<table><thead><tr><th>\u09ac\u09bf\u09ac\u09b0\u09a3</th><th>\u09a4\u09be\u09b0\u09bf\u0996</th><th>\u099f\u09be\u0995\u09be</th></tr></thead><tbody>";
+  h += expenseRows;
+  h += "<tr class='tr'><td colspan='2' style='border:1.5px solid #065f30;padding:6px 8px;text-align:right;'>\u09ae\u09cb\u099f \u09ac\u09cd\u09af\u09df</td>";
+  h += "<td style='border:1.5px solid #065f30;padding:6px 8px;text-align:right;color:#e74c3c;'>" + expense.toLocaleString("bn-BD") + " \u099f\u09be\u0995\u09be</td></tr>";
+  h += "</tbody></table>";
+  h += "<div class='sb'>";
+  h += "<div class='sr'><span style='font-weight:600;'>\u09ae\u09cb\u099f \u0986\u09df</span><span style='font-weight:700;color:#065f30;'>\u09f3 " + income.toLocaleString("bn-BD") + "</span></div>";
+  h += "<div class='sr'><span style='font-weight:600;'>\u09ae\u09cb\u099f \u09ac\u09cd\u09af\u09df</span><span style='font-weight:700;color:#e74c3c;'>\u09f3 " + expense.toLocaleString("bn-BD") + "</span></div>";
+  h += pendingRow;
+  h += "<div class='sr last'><span>\u09ac\u09b0\u09cd\u09a4\u09ae\u09be\u09a8 \u09b8\u09cd\u09a5\u09bf\u09a4\u09bf (Balance)</span>";
+  h += "<span>\u09f3 " + Math.abs(balance).toLocaleString("bn-BD") + (balance<0?" (\u0998\u09be\u099f\u09a4\u09bf)":"") + "</span></div>";
+  h += "</div>";
+  h += "<div class='sa'>";
+  h += "<div class='sl'>\u09a4\u09be\u09b0\u09bf\u0996</div>";
+  h += "<div class='sl'>\u0985\u09b0\u09cd\u09a5 \u09b8\u09ae\u09cd\u09aa\u09be\u09a6\u0995\u09c7\u09b0 \u09b8\u09cd\u09ac\u09be\u0995\u09cd\u09b7\u09b0</div>";
+  h += "<div class='sl'>\u09b8\u09ad\u09be\u09aa\u09a4\u09bf\u09b0 \u09b8\u09cd\u09ac\u09be\u0995\u09cd\u09b7\u09b0</div>";
+  h += "<\/div><\/div><\/body><\/html>";
+  return h;
+}
+
+function printAccountingReport() {
+  if(!_accPays.length && !_accExps.length){
+    showToast("\u09aa\u09cd\u09b0\u09a5\u09ae\u09c7 \u09a4\u09b9\u09ac\u09bf\u09b2 \u09b9\u09bf\u09b8\u09be\u09ac \u09aa\u09c7\u099c \u09b2\u09cb\u09a1 \u0995\u09b0\u09c1\u09a8", true);
+    return;
+  }
+  var content = buildAccountingHTML(_accPays, _accExps);
+  var w = window.open("", "_blank", "width=900,height=700");
+  w.document.write(content);
+  w.document.close();
+  w.focus();
+  setTimeout(function(){ w.print(); }, 900);
+}
+
+function downloadAccountingPDF() {
+  if(!_accPays.length && !_accExps.length){
+    showToast("\u09aa\u09cd\u09b0\u09a5\u09ae\u09c7 \u09a4\u09b9\u09ac\u09bf\u09b2 \u09b9\u09bf\u09b8\u09be\u09ac \u09aa\u09c7\u099c \u09b2\u09cb\u09a1 \u0995\u09b0\u09c1\u09a8", true);
+    return;
+  }
+  var content = buildAccountingHTML(_accPays, _accExps);
+  var blob = new Blob([content], { type: "text/html;charset=utf-8" });
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement("a");
+  a.href   = url;
+  a.download = "\u09a4\u09b9\u09ac\u09bf\u09b2-\u09b9\u09bf\u09b8\u09be\u09ac-" + new Date().toLocaleDateString("en-BD").replace(/\//g,"-") + ".html";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("\u09ab\u09be\u0987\u09b2 \u09a1\u09be\u0989\u09a8\u09b2\u09cb\u09a1 \u09b9\u099a\u09cd\u099b\u09c7 \u2014 \u09ac\u09cd\u09b0\u09be\u0989\u099c\u09be\u09b0\u09c7 \u0996\u09c1\u09b2\u09c7 Print \u2192 Save as PDF \u0995\u09b0\u09c1\u09a8");
+}
+
+/* ===== COMMUNITY ADMIN ===== */
+async function renderCommunityAdmin() {
+  loader();
+  try {
+    var d     = await api({ action: "getPosts" });
+    var posts = d.posts || [];
+
+    var postsHtml = "";
+    if(posts.length){
+      posts.forEach(function(p){
+        postsHtml += "<div style='background:white;border:1px solid #eaf0ec;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);'>";
+        postsHtml += "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px;flex-wrap:wrap;'>";
+        postsHtml += "<div><b style='font-size:14px;color:var(--gd);'>" + (p.name||"--") + "</b>";
+        postsHtml += "<span style='font-size:11px;color:#aaa;margin-left:8px;'>" + (p.mobile||"") + " &middot; " + (p.date||"") + " " + (p.time||"") + "</span></div>";
+        postsHtml += "<button class='ab ab-red' style='padding:6px 14px;font-size:12px;' onclick='adminDeletePost(\"" + (p.postId||"").replace(/"/g,"&quot;") + "\")'>";
+        postsHtml += "<i class='fa fa-trash'></i> \u09ae\u09c1\u099b\u09c1\u09a8</button></div>";
+        postsHtml += "<div style='font-size:14px;font-weight:700;color:var(--gm);margin-bottom:5px;'>" + (p.title||"--") + "</div>";
+        postsHtml += "<div style='font-size:13px;color:#555;line-height:1.6;'>" + (p.description||"").slice(0,200) + (p.description&&p.description.length>200?"...":"") + "</div>";
+        if(p.photo) postsHtml += "<img src='" + p.photo + "' style='margin-top:10px;max-width:200px;max-height:130px;object-fit:cover;border-radius:8px;border:1px solid #eee;'>";
+        postsHtml += "</div>";
+      });
+    } else {
+      postsHtml = "<div style='text-align:center;padding:40px;color:#aaa;'><i class='fa fa-inbox' style='font-size:36px;margin-bottom:12px;display:block;'></i>\u0995\u09cb\u09a8\u09cb \u09aa\u09cb\u09b8\u09cd\u099f \u09a8\u09c7\u0987</div>";
+    }
+
+    var statHtml = "<div class='stat-row' style='margin-bottom:20px;'><div class='stat-c'><div class='v'>" + posts.length + "</div><div class='l'>\u09ae\u09cb\u099f \u09aa\u09cb\u09b8\u09cd\u099f</div></div></div>";
+
+    var headHtml = "<div class='pg-head' style='display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;'>";
+    headHtml += "<div class='pg-title'><i class='fa fa-comments' style='color:var(--gm)'></i> \u09b8\u09ae\u09b8\u09cd\u09af\u09be \u09ab\u09cb\u09b0\u09be\u09ae \u09ac\u09cd\u09af\u09ac\u09b8\u09cd\u09a5\u09be\u09aa\u09a8\u09be</div>";
+    headHtml += "<a href='community.html' target='_blank' class='ab ab-green' style='font-size:13px;padding:9px 16px;text-decoration:none;'><i class='fa fa-arrow-up-right-from-square'></i> \u09ab\u09cb\u09b0\u09be\u09ae \u09a6\u09c7\u0996\u09c1\u09a8</a></div>";
+
+    setContent(headHtml + "<div class='cc-body'>" + statHtml + postsHtml + "</div>");
+  } catch(e) {
+    setContent("<div class='cc-body' style='text-align:center;padding:40px;color:#e74c3c;'>\u09aa\u09cb\u09b8\u09cd\u099f \u09b2\u09cb\u09a1 \u0995\u09b0\u09be \u09af\u09be\u09df\u09a8\u09bf</div>");
+  }
+}
+
+async function adminDeletePost(postId) {
+  if(!confirm("\u098f\u0987 \u09aa\u09cb\u09b8\u09cd\u099f\u099f\u09bf \u09ae\u09c1\u099b\u09c7 \u09ab\u09c7\u09b2\u09ac\u09c7\u09a8?")) return;
+  var d = await api({ action:"deletePost", postId:postId, isAdmin:true, adminName:localStorage.getItem("adminName")||"Admin" });
+  if(d.success){ showToast("\u09aa\u09cb\u09b8\u09cd\u099f \u09ae\u09c1\u099b\u09c7 \u09ab\u09c7\u09b2\u09be \u09b9\u09df\u09c7\u099b\u09c7"); renderCommunityAdmin(); }
+  else showToast(d.message||"\u09ae\u09c1\u099b\u09a4\u09c7 \u09ac\u09cd\u09af\u09b0\u09cd\u09a5", true);
 }
 
 /* ===== LOGOUT ===== */

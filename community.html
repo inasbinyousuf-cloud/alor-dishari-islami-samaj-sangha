@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="আলোর দিশারী ইসলামী সমাজ সংঘ — সমস্যা ফোরাম। যেকেউ সমস্যা পোস্ট করুন, সবাই দেখতে পারবে।">
+<meta name="theme-color" content="#065f30">
+<link rel="icon" type="image/jpeg" href="Image/logo.jpg">
+<link rel="apple-touch-icon" href="Image/logo.jpg">
+<meta property="og:type" content="website">
+<meta property="og:title" content="সমস্যা ফোরাম | আলোর দিশারী">
+<meta property="og:description" content="সমস্যা পোস্ট করুন — সদস্যপদ লাগবে না">
+<meta property="og:image" content="Image/logo.jpg">
+<title>সমস্যা ফোরাম | আলোর দিশারী</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+<style>
+:root{
+  --gd:#065f30; --gm:#0b8b44; --gl:#e8f7ee; --gp:#f0faf4;
+  --gold:#c9a84c; --bg:#f0f4f1; --white:#fff;
+  --r:14px; --sh:0 4px 18px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Noto Sans Bengali',sans-serif;}
+body{background:var(--bg);color:#1a2e1e;min-height:100vh;}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  background:linear-gradient(135deg,#0a1e12,var(--gd));
+  padding:0 16px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 16px rgba(0,0,0,0.25);
+}
+.topbar-inner{
+  max-width:860px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  height:60px;gap:12px;
+}
+.tb-brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.tb-logo{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.3);object-fit:cover;background:#fff;}
+.tb-name{color:white;font-size:13.5px;font-weight:800;line-height:1.2;}
+.tb-sub{color:rgba(255,255,255,0.55);font-size:10.5px;font-weight:500;}
+.tb-links{display:flex;align-items:center;gap:8px;}
+.tb-link{
+  color:rgba(255,255,255,0.75);text-decoration:none;font-size:12px;font-weight:600;
+  padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.07);transition:.2s;
+}
+.tb-link:hover{background:rgba(255,255,255,0.18);color:white;}
+.tb-link.active{background:var(--gm);color:white;border-color:var(--gm);}
+
+/* ─── HERO BANNER ─── */
+.hero{
+  background:linear-gradient(135deg,var(--gd),var(--gm));
+  padding:28px 16px 24px;text-align:center;
+}
+.hero h1{font-size:22px;font-weight:800;color:white;margin-bottom:6px;}
+.hero p{color:rgba(255,255,255,0.8);font-size:13px;max-width:500px;margin:0 auto 18px;}
+.btn-post{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--gold);color:#111;
+  font-size:14px;font-weight:800;padding:12px 26px;border-radius:10px;
+  border:none;cursor:pointer;font-family:inherit;transition:.2s;
+  box-shadow:0 4px 14px rgba(201,168,76,0.4);
+}
+.btn-post:hover{background:#b8922e;transform:translateY(-1px);}
+.stats-strip{
+  display:flex;align-items:center;justify-content:center;gap:20px;
+  margin-top:14px;flex-wrap:wrap;
+}
+.stat-chip{
+  background:rgba(255,255,255,0.15);color:white;
+  font-size:11.5px;font-weight:600;padding:5px 12px;border-radius:100px;
+}
+
+/* ─── CONTENT WRAP ─── */
+.content{max-width:860px;margin:0 auto;padding:20px 16px 60px;}
+
+/* ─── FILTER BAR ─── */
+.filter-bar{
+  display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;
+}
+.search-wrap{position:relative;flex:1;min-width:200px;}
+.search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#aaa;font-size:14px;}
+.search-wrap input{
+  width:100%;padding:10px 12px 10px 36px;border:1.5px solid #dde8e0;
+  border-radius:10px;font-size:13px;font-family:inherit;outline:none;
+  background:white;transition:.2s;
+}
+.search-wrap input:focus{border-color:var(--gm);box-shadow:0 0 0 3px rgba(11,139,68,.08);}
+.sort-sel{
+  padding:10px 12px;border:1.5px solid #dde8e0;border-radius:10px;
+  font-size:13px;font-family:inherit;outline:none;background:white;color:#333;cursor:pointer;
+}
+
+/* ─── LOADING ─── */
+.feed-loader{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:48px 16px;color:#aaa;gap:12px;
+}
+.spin{
+  width:32px;height:32px;border:3px solid #e0e0e0;
+  border-top-color:var(--gm);border-radius:50%;animation:rot .7s linear infinite;
+}
+@keyframes rot{to{transform:rotate(360deg);}}
+.empty-feed{
+  text-align:center;padding:56px 16px;color:#aaa;
+}
+.empty-feed i{font-size:42px;margin-bottom:14px;display:block;color:#c5d5ca;}
+.empty-feed p{font-size:14px;}
+
+/* ─── POST CARD ─── */
+.post-card{
+  background:white;border-radius:var(--r);box-shadow:var(--sh);
+  margin-bottom:16px;overflow:hidden;border:1px solid #eaf0ec;
+  transition:.2s;
+}
+.post-card:hover{box-shadow:0 6px 24px rgba(0,0,0,0.11);}
+.pc-header{
+  display:flex;align-items:center;gap:10px;
+  padding:14px 16px 10px;
+}
+.pc-avatar{
+  width:42px;height:42px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gm),var(--gd));
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:white;
+}
+.pc-meta{flex:1;min-width:0;}
+.pc-name{font-size:14px;font-weight:700;color:#1a2e1e;}
+.pc-mobile{font-size:11px;color:#aaa;margin-top:1px;}
+.pc-date{font-size:11px;color:#bbb;margin-left:auto;flex-shrink:0;}
+.pc-body{padding:4px 16px 14px;}
+.pc-title{
+  font-size:15px;font-weight:800;color:var(--gd);
+  margin-bottom:7px;line-height:1.4;
+}
+.pc-desc{
+  font-size:13px;color:#444;line-height:1.7;
+  word-break:break-word;
+}
+.pc-desc.clamped{
+  display:-webkit-box;-webkit-line-clamp:4;line-clamp:4;
+  -webkit-box-orient:vertical;overflow:hidden;
+}
+.pc-photo{
+  width:100%;max-height:320px;object-fit:cover;
+  display:block;border-radius:0 0 0 0;cursor:pointer;
+  border-top:1px solid #eef3ee;
+}
+.pc-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;border-top:1px solid #eef3ee;background:#fafbfa;
+}
+.btn-expand{
+  background:none;border:none;cursor:pointer;
+  font-size:12px;color:var(--gm);font-weight:600;font-family:inherit;padding:0;
+}
+.btn-del{
+  background:none;border:1px solid #e0e0e0;cursor:pointer;
+  font-size:12px;color:#e74c3c;font-weight:600;font-family:inherit;
+  padding:5px 12px;border-radius:7px;transition:.2s;
+  display:flex;align-items:center;gap:5px;
+}
+.btn-del:hover{background:#fff0f0;border-color:#e74c3c;}
+.pc-badge{
+  font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:100px;
+  background:var(--gl);color:var(--gm);
+}
+
+/* ─── MODAL ─── */
+.modal-bg{
+  display:none;position:fixed;inset:0;z-index:500;
+  background:rgba(0,0,0,0.45);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:16px;
+}
+.modal-bg.show{display:flex;}
+.modal{
+  background:white;border-radius:18px;width:100%;max-width:540px;
+  max-height:92vh;overflow-y:auto;
+  box-shadow:0 24px 60px rgba(0,0,0,0.25);animation:msu .3s ease;
+}
+@keyframes msu{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.modal-stripe{height:4px;border-radius:18px 18px 0 0;background:linear-gradient(90deg,var(--gd),var(--gold),var(--gm));}
+.modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 20px 14px;border-bottom:1px solid #eef3ee;
+}
+.modal-head h3{font-size:16px;font-weight:800;color:var(--gd);}
+.btn-close{
+  background:none;border:none;cursor:pointer;
+  font-size:18px;color:#aaa;transition:.2s;padding:2px;
+}
+.btn-close:hover{color:#333;}
+.modal-body{padding:18px 20px;}
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:12.5px;font-weight:700;color:#444;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px;}
+.fg input,.fg textarea,.fg select{
+  width:100%;padding:11px 13px;border:1.5px solid #dde8e0;border-radius:10px;
+  font-size:14px;font-family:inherit;outline:none;transition:.2s;background:#fafafa;
+}
+.fg input:focus,.fg textarea:focus{border-color:var(--gm);background:white;box-shadow:0 0 0 3px rgba(11,139,68,.08);}
+.fg textarea{resize:vertical;min-height:90px;}
+.req{color:#e74c3c;}
+.photo-upload-zone{
+  border:2px dashed #c5dfc5;border-radius:10px;padding:20px;
+  text-align:center;cursor:pointer;transition:.2s;background:#fafcfa;
+}
+.photo-upload-zone:hover{border-color:var(--gm);background:var(--gp);}
+.photo-upload-zone i{font-size:26px;color:#c5dfc5;display:block;margin-bottom:8px;}
+.photo-upload-zone span{font-size:12.5px;color:#aaa;}
+.photo-preview-wrap{position:relative;margin-top:10px;display:none;}
+.photo-preview-wrap img{width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid #eee;}
+.btn-rm-photo{
+  position:absolute;top:6px;right:6px;
+  background:rgba(0,0,0,0.55);color:white;border:none;
+  border-radius:50%;width:26px;height:26px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.modal-footer{padding:14px 20px 18px;display:flex;gap:10px;border-top:1px solid #eef3ee;}
+.btn-submit{
+  flex:1;padding:13px;background:var(--gm);color:white;
+  font-size:14px;font-weight:800;border:none;border-radius:10px;
+  cursor:pointer;font-family:inherit;transition:.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-submit:hover{background:var(--gd);}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed;}
+.btn-cancel{
+  padding:13px 20px;background:none;border:1.5px solid #dde8e0;
+  color:#666;font-size:14px;font-weight:600;border-radius:10px;
+  cursor:pointer;font-family:inherit;transition:.2s;
+}
+.btn-cancel:hover{border-color:#aaa;}
+.err-msg{background:#fff0f0;border:1px solid #ffc5c5;border-radius:8px;padding:10px 14px;color:#c0392b;font-size:13px;font-weight:600;margin-top:10px;display:none;}
+.ok-msg{background:var(--gl);border:1px solid #a3d8a3;border-radius:8px;padding:10px 14px;color:var(--gd);font-size:13px;font-weight:700;margin-top:10px;display:none;}
+.ld-row{display:none;align-items:center;justify-content:center;gap:8px;margin-top:8px;color:var(--gm);font-weight:600;font-size:13px;}
+.ld-sp{width:14px;height:14px;border:2.5px solid var(--gl);border-top-color:var(--gm);border-radius:50%;animation:rot .7s linear infinite;}
+
+/* ─── DELETE CONFIRM ─── */
+.del-modal{background:white;border-radius:16px;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,0.2);animation:msu .3s ease;}
+.del-head{padding:18px 20px 12px;text-align:center;}
+.del-head i{font-size:36px;color:#e74c3c;display:block;margin-bottom:10px;}
+.del-head h3{font-size:16px;font-weight:800;color:#333;}
+.del-head p{font-size:13px;color:#777;margin-top:5px;}
+.del-body{padding:4px 20px 20px;}
+.del-footer{display:flex;gap:10px;padding:0 20px 18px;}
+.btn-confirm-del{
+  flex:1;padding:12px;background:#e74c3c;color:white;
+  font-size:14px;font-weight:700;border:none;border-radius:10px;
+  cursor:pointer;font-family:inherit;transition:.2s;
+}
+.btn-confirm-del:hover{background:#c0392b;}
+.btn-cancel-del{
+  flex:1;padding:12px;background:none;border:1.5px solid #ddd;
+  color:#666;font-size:14px;font-weight:600;border-radius:10px;
+  cursor:pointer;font-family:inherit;
+}
+.del-err{display:none;background:#fff0f0;border:1px solid #ffc5c5;border-radius:8px;padding:9px 13px;color:#c0392b;font-size:12.5px;font-weight:600;margin-bottom:10px;text-align:center;}
+.admin-del-note{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:8px 12px;font-size:12px;color:#795548;margin-bottom:12px;}
+
+/* ─── IMAGE LIGHTBOX ─── */
+.lightbox{
+  display:none;position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,0.9);align-items:center;justify-content:center;cursor:pointer;
+}
+.lightbox.show{display:flex;}
+.lightbox img{max-width:95vw;max-height:90vh;border-radius:8px;box-shadow:0 0 40px rgba(0,0,0,0.5);}
+.lightbox-close{position:absolute;top:16px;right:20px;color:white;font-size:28px;cursor:pointer;}
+
+/* ─── TOAST ─── */
+.toast{
+  position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#1a2e1e;color:white;font-size:13px;font-weight:600;
+  padding:11px 20px;border-radius:10px;z-index:999;
+  transition:.3s;opacity:0;pointer-events:none;white-space:nowrap;
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+@media(max-width:520px){
+  .tb-name{font-size:12px;}
+  .hero h1{font-size:18px;}
+  .stats-strip{gap:8px;}
+  .stat-chip{font-size:10.5px;}
+  .modal,.del-modal{border-radius:14px 14px 0 0;}
+  .modal-bg{align-items:flex-end;padding:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- ─── TOPBAR ─── -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="tb-brand">
+      <img src="Image/logo.jpg" alt="লোগো" class="tb-logo" onerror="this.style.display='none'">
+      <div>
+        <div class="tb-name">আলোর দিশারী ইসলামী সমাজ সংঘ</div>
+        <div class="tb-sub">সমস্যা ফোরাম</div>
+      </div>
+    </a>
+    <div class="tb-links">
+      <a href="index.html" class="tb-link"><i class="fa fa-house"></i></a>
+      <a href="login.html" class="tb-link">লগইন</a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HERO ─── -->
+<div class="hero">
+  <h1><i class="fa fa-comments" style="color:var(--gold);margin-right:8px;"></i>সমস্যা ফোরাম</h1>
+  <p>আপনার এলাকার যেকোনো সমস্যা পোস্ট করুন — সদস্যপদ লাগবে না। সবাই দেখতে ও সাহায্য করতে পারবে।</p>
+  <button class="btn-post" onclick="openPostModal()">
+    <i class="fa fa-plus"></i> নতুন সমস্যা পোস্ট করুন
+  </button>
+  <div class="stats-strip">
+    <div class="stat-chip" id="totalPostStat"><i class="fa fa-layer-group"></i> লোড হচ্ছে...</div>
+    <div class="stat-chip"><i class="fa fa-eye"></i> সবাই দেখতে পারবে</div>
+    <div class="stat-chip"><i class="fa fa-lock-open"></i> লগইন ছাড়াই পোস্ট করুন</div>
+  </div>
+</div>
+
+<!-- ─── CONTENT ─── -->
+<div class="content">
+  <!-- Filter -->
+  <div class="filter-bar">
+    <div class="search-wrap">
+      <i class="fa fa-search"></i>
+      <input type="text" id="searchInput" placeholder="পোস্ট খুঁজুন..." oninput="filterPosts()">
+    </div>
+    <select class="sort-sel" id="sortSel" onchange="filterPosts()">
+      <option value="newest">সর্বশেষ আগে</option>
+      <option value="oldest">পুরানো আগে</option>
+    </select>
+  </div>
+
+  <!-- Feed -->
+  <div id="postFeed">
+    <div class="feed-loader">
+      <div class="spin"></div>
+      <span>পোস্ট লোড হচ্ছে...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NEW POST MODAL ─── -->
+<div class="modal-bg" id="postModal">
+  <div class="modal">
+    <div class="modal-stripe"></div>
+    <div class="modal-head">
+      <h3><i class="fa fa-pen-to-square" style="color:var(--gm);margin-right:7px;"></i>নতুন সমস্যা পোস্ট করুন</h3>
+      <button class="btn-close" onclick="closePostModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fg">
+        <label>আপনার নাম <span class="req">*</span></label>
+        <input type="text" id="np-name" placeholder="সম্পূর্ণ নাম লিখুন">
+      </div>
+      <div class="fg">
+        <label>মোবাইল নম্বর <span class="req">*</span> <span style="font-size:10px;color:#aaa;font-weight:400;">(পোস্ট মুছতে দরকার হবে)</span></label>
+        <input type="tel" id="np-mobile" placeholder="01XXXXXXXXX" maxlength="11">
+      </div>
+      <div class="fg">
+        <label>সমস্যার শিরোনাম <span class="req">*</span></label>
+        <input type="text" id="np-title" placeholder="সংক্ষেপে সমস্যার বিষয় লিখুন">
+      </div>
+      <div class="fg">
+        <label>বিস্তারিত বিবরণ <span class="req">*</span></label>
+        <textarea id="np-desc" rows="4" placeholder="সমস্যার বিস্তারিত বিবরণ দিন..."></textarea>
+      </div>
+      <div class="fg">
+        <label>ছবি সংযুক্ত করুন <span style="font-size:10px;color:#aaa;font-weight:400;">(ঐচ্ছিক)</span></label>
+        <div class="photo-upload-zone" onclick="document.getElementById('np-photo-input').click()">
+          <i class="fa fa-camera"></i>
+          <span>ক্লিক করে ছবি বেছে নিন (JPG/PNG, সর্বোচ্চ ৫ MB)</span>
+        </div>
+        <input type="file" id="np-photo-input" accept="image/jpeg,image/jpg,image/png" style="display:none" onchange="handlePostPhoto(this)">
+        <div class="photo-preview-wrap" id="np-photo-preview">
+          <img id="np-photo-img" src="" alt="preview">
+          <button class="btn-rm-photo" onclick="removePostPhoto()" title="ছবি সরান"><i class="fa fa-times"></i></button>
+        </div>
+      </div>
+      <div class="err-msg" id="np-err"></div>
+      <div class="ld-row" id="np-ld"><div class="ld-sp"></div> পোস্ট হচ্ছে...</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closePostModal()">বাতিল</button>
+      <button class="btn-submit" id="np-submit-btn" onclick="submitPost()">
+        <i class="fa fa-paper-plane"></i> পোস্ট করুন
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── DELETE CONFIRM MODAL ─── -->
+<div class="modal-bg" id="delModal">
+  <div class="del-modal">
+    <div class="del-head">
+      <i class="fa fa-trash-can"></i>
+      <h3>পোস্ট মুছে ফেলবেন?</h3>
+      <p>এই পোস্টটি স্থায়ীভাবে মুছে যাবে।</p>
+    </div>
+    <div class="del-body">
+      <div class="admin-del-note" id="adminDelNote" style="display:none;">
+        <i class="fa fa-shield-halved" style="color:var(--gold);margin-right:5px;"></i>
+        Admin হিসেবে আপনি যেকোনো পোস্ট মুছতে পারবেন।
+      </div>
+      <div id="mobileVerifySection">
+        <div class="fg" style="margin-bottom:0;">
+          <label style="font-size:12px;font-weight:700;color:#444;margin-bottom:6px;display:block;">আপনার মোবাইল নম্বর দিন (যাচাইয়ের জন্য)</label>
+          <input type="tel" id="del-mobile" placeholder="01XXXXXXXXX" maxlength="11" style="width:100%;padding:11px 13px;border:1.5px solid #dde8e0;border-radius:10px;font-size:14px;font-family:inherit;outline:none;">
+        </div>
+      </div>
+      <div class="del-err" id="del-err"></div>
+    </div>
+    <div class="del-footer">
+      <button class="btn-cancel-del" onclick="closeDelModal()">বাতিল</button>
+      <button class="btn-confirm-del" id="del-confirm-btn" onclick="confirmDelete()">
+        <i class="fa fa-trash"></i> মুছুন
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── IMAGE LIGHTBOX ─── -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <span class="lightbox-close">✕</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- ─── TOAST ─── -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════
+   CONFIG
+════════════════════════════════════════════════ */
+const API_URL = "https://script.google.com/macros/s/AKfycbylWYwlgex-a1EB00_rK7Y7_g46DePDMeE3tBSq8TI7BbTpCLtsuASMAxkgwLdnXX1Ncg/exec";
+const IS_ADMIN = localStorage.getItem("adminLoggedIn") === "true";
+const ADMIN_NAME = localStorage.getItem("adminName") || "";
+
+let allPosts = [];
+let pendingDeleteId = null;
+let postPhotoBase64 = "";
+
+/* ════════════════════════════════════════════════
+   API HELPER
+════════════════════════════════════════════════ */
+async function api(payload) {
+  const res  = await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload)
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch(_) { return { success: res.ok }; }
+}
+
+/* ════════════════════════════════════════════════
+   LOAD POSTS
+════════════════════════════════════════════════ */
+async function loadPosts() {
+  try {
+    const d = await api({ action: "getPosts" });
+    allPosts = d.posts || [];
+    document.getElementById("totalPostStat").innerHTML =
+      `<i class="fa fa-layer-group"></i> মোট ${allPosts.length}টি পোস্ট`;
+    filterPosts();
+  } catch(e) {
+    document.getElementById("postFeed").innerHTML = `
+      <div class="empty-feed">
+        <i class="fa fa-wifi-slash"></i>
+        <p>পোস্ট লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করুন।</p>
+      </div>`;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   FILTER & RENDER
+════════════════════════════════════════════════ */
+function filterPosts() {
+  const q    = (document.getElementById("searchInput").value || "").toLowerCase();
+  const sort = document.getElementById("sortSel").value;
+  let posts  = allPosts.filter(p =>
+    !q || (p.title||"").toLowerCase().includes(q) ||
+          (p.description||"").toLowerCase().includes(q) ||
+          (p.name||"").toLowerCase().includes(q)
+  );
+  if (sort === "oldest") posts = posts.slice().reverse();
+  renderPosts(posts);
+}
+
+function maskMobile(mob) {
+  const s = String(mob || "");
+  if (s.length < 7) return s;
+  return s.slice(0,3) + "****" + s.slice(-3);
+}
+
+function renderPosts(posts) {
+  const feed = document.getElementById("postFeed");
+  if (!posts.length) {
+    feed.innerHTML = `
+      <div class="empty-feed">
+        <i class="fa fa-inbox"></i>
+        <p>কোনো পোস্ট পাওয়া যায়নি</p>
+        <button class="btn-post" style="margin-top:16px;font-size:13px;padding:10px 20px;" onclick="openPostModal()">প্রথম পোস্ট করুন</button>
+      </div>`;
+    return;
+  }
+  feed.innerHTML = posts.map(p => buildCard(p)).join("");
+}
+
+function buildCard(p) {
+  const initial = (p.name || "?")[0];
+  const hasPhoto = p.photo && p.photo.length > 5;
+  const longDesc = (p.description || "").length > 200;
+  const postId = p.postId || "";
+
+  return `
+  <div class="post-card" id="card-${postId}">
+    <div class="pc-header">
+      <div class="pc-avatar">${initial}</div>
+      <div class="pc-meta">
+        <div class="pc-name">${escHtml(p.name||"—")}</div>
+        <div class="pc-mobile"><i class="fa fa-phone" style="font-size:10px;color:#bbb;margin-right:3px;"></i>${maskMobile(p.mobile)}</div>
+      </div>
+      <div class="pc-date"><i class="fa fa-clock" style="margin-right:3px;font-size:10px;"></i>${p.date||"—"}</div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-title">${escHtml(p.title||"")}</div>
+      <div class="pc-desc${longDesc?" clamped":""}" id="desc-${postId}">${escHtml(p.description||"")}</div>
+    </div>
+    ${hasPhoto ? `<img class="pc-photo" src="${p.photo}" alt="ছবি" onclick="openLightbox('${p.photo.replace(/'/g,"\\'")}')">` : ""}
+    <div class="pc-footer">
+      ${longDesc ?
+        `<button class="btn-expand" id="exp-${postId}" onclick="toggleDesc('${postId}')">
+          <i class="fa fa-chevron-down"></i> আরো দেখুন
+        </button>` : `<span></span>`}
+      <button class="btn-del" onclick="openDelModal('${postId}')">
+        <i class="fa fa-trash-can"></i> মুছুন
+      </button>
+    </div>
+  </div>`;
+}
+
+function toggleDesc(postId) {
+  const el  = document.getElementById("desc-" + postId);
+  const btn = document.getElementById("exp-" + postId);
+  if (!el || !btn) return;
+  if (el.classList.contains("clamped")) {
+    el.classList.remove("clamped");
+    btn.innerHTML = '<i class="fa fa-chevron-up"></i> কম দেখুন';
+  } else {
+    el.classList.add("clamped");
+    btn.innerHTML = '<i class="fa fa-chevron-down"></i> আরো দেখুন';
+  }
+}
+
+function escHtml(str) {
+  const d = document.createElement("div");
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+/* ════════════════════════════════════════════════
+   PHOTO HANDLING
+════════════════════════════════════════════════ */
+function handlePostPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) {
+    showToast("ছবির সাইজ ৫ MB-এর বেশি হবে না", true);
+    input.value = ""; return;
+  }
+  // Resize to max 800px width before base64
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 800;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      postPhotoBase64 = canvas.toDataURL("image/jpeg", 0.75);
+      document.getElementById("np-photo-img").src = postPhotoBase64;
+      document.getElementById("np-photo-preview").style.display = "block";
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePostPhoto() {
+  postPhotoBase64 = "";
+  document.getElementById("np-photo-input").value = "";
+  document.getElementById("np-photo-preview").style.display = "none";
+  document.getElementById("np-photo-img").src = "";
+}
+
+/* ════════════════════════════════════════════════
+   SUBMIT POST
+════════════════════════════════════════════════ */
+function openPostModal() {
+  document.getElementById("postModal").classList.add("show");
+  document.getElementById("np-name").focus();
+}
+function closePostModal() {
+  document.getElementById("postModal").classList.remove("show");
+  document.getElementById("np-err").style.display = "none";
+  document.getElementById("np-ld").style.display  = "none";
+  document.getElementById("np-submit-btn").disabled = false;
+}
+
+async function submitPost() {
+  const errEl = document.getElementById("np-err");
+  const ldEl  = document.getElementById("np-ld");
+  const btn   = document.getElementById("np-submit-btn");
+  errEl.style.display = "none";
+
+  const name  = document.getElementById("np-name").value.trim();
+  const mob   = document.getElementById("np-mobile").value.trim();
+  const title = document.getElementById("np-title").value.trim();
+  const desc  = document.getElementById("np-desc").value.trim();
+
+  if (!name)  { errEl.textContent = "⚠️ আপনার নাম দিন"; errEl.style.display="block"; return; }
+  if (!mob || !/^01[3-9]\d{8}$/.test(mob)) {
+    errEl.textContent = "⚠️ সঠিক মোবাইল নম্বর দিন (01XXXXXXXXX)";
+    errEl.style.display = "block"; return;
+  }
+  if (!title) { errEl.textContent = "⚠️ সমস্যার শিরোনাম দিন"; errEl.style.display="block"; return; }
+  if (!desc)  { errEl.textContent = "⚠️ বিস্তারিত বিবরণ দিন"; errEl.style.display="block"; return; }
+
+  btn.disabled = true;
+  ldEl.style.display = "flex";
+
+  try {
+    const d = await api({
+      action: "addPost",
+      name, mobile: mob, title, description: desc,
+      photoBase64: postPhotoBase64 || ""
+    });
+
+    ldEl.style.display = "none";
+    if (d.success) {
+      closePostModal();
+      // Reset form
+      ["np-name","np-mobile","np-title","np-desc"].forEach(id => {
+        document.getElementById(id).value = "";
+      });
+      removePostPhoto();
+      showToast("✅ পোস্ট সফলভাবে প্রকাশিত হয়েছে!");
+      await loadPosts();
+    } else {
+      errEl.textContent = "⚠️ " + (d.message || "পোস্ট হয়নি, আবার চেষ্টা করুন");
+      errEl.style.display = "block";
+      btn.disabled = false;
+    }
+  } catch(e) {
+    ldEl.style.display = "none";
+    errEl.textContent = "⚠️ সংযোগ ব্যর্থ হয়েছে";
+    errEl.style.display = "block";
+    btn.disabled = false;
+  }
+}
+
+/* ════════════════════════════════════════════════
+   DELETE
+════════════════════════════════════════════════ */
+function openDelModal(postId) {
+  pendingDeleteId = postId;
+  document.getElementById("del-err").style.display   = "none";
+  document.getElementById("del-mobile").value        = "";
+
+  if (IS_ADMIN) {
+    document.getElementById("adminDelNote").style.display  = "flex";
+    document.getElementById("mobileVerifySection").style.display = "none";
+  } else {
+    document.getElementById("adminDelNote").style.display  = "none";
+    document.getElementById("mobileVerifySection").style.display = "block";
+  }
+  document.getElementById("delModal").classList.add("show");
+}
+
+function closeDelModal() {
+  document.getElementById("delModal").classList.remove("show");
+  pendingDeleteId = null;
+}
+
+async function confirmDelete() {
+  const errEl = document.getElementById("del-err");
+  errEl.style.display = "none";
+
+  const mob    = document.getElementById("del-mobile").value.trim();
+  const btn    = document.getElementById("del-confirm-btn");
+
+  if (!IS_ADMIN && (!mob || !/^01[3-9]\d{8}$/.test(mob))) {
+    errEl.textContent = "সঠিক মোবাইল নম্বর দিন";
+    errEl.style.display = "block"; return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = "মুছছে...";
+
+  try {
+    const d = await api({
+      action:   "deletePost",
+      postId:   pendingDeleteId,
+      mobile:   mob,
+      isAdmin:  IS_ADMIN,
+      adminName: ADMIN_NAME
+    });
+
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-trash"></i> মুছুন';
+
+    if (d.success) {
+      closeDelModal();
+      const card = document.getElementById("card-" + pendingDeleteId);
+      if (card) card.style.display = "none";
+      allPosts = allPosts.filter(p => p.postId !== pendingDeleteId);
+      document.getElementById("totalPostStat").innerHTML =
+        `<i class="fa fa-layer-group"></i> মোট ${allPosts.length}টি পোস্ট`;
+      showToast("পোস্ট মুছে ফেলা হয়েছে");
+    } else {
+      errEl.textContent = d.message || "মোবাইল নম্বর মিলছে না";
+      errEl.style.display = "block";
+    }
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa fa-trash"></i> মুছুন';
+    errEl.textContent = "সংযোগ ব্যর্থ হয়েছে";
+    errEl.style.display = "block";
+  }
+}
+
+/* ════════════════════════════════════════════════
+   LIGHTBOX
+════════════════════════════════════════════════ */
+function openLightbox(src) {
+  document.getElementById("lightbox-img").src = src;
+  document.getElementById("lightbox").classList.add("show");
+}
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("show");
+}
+
+/* ════════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════════ */
+function showToast(msg, isErr) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.style.background = isErr ? "#c0392b" : "#1a2e1e";
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+/* ════════════════════════════════════════════════
+   KEYBOARD & CLICK OUTSIDE
+════════════════════════════════════════════════ */
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    closePostModal();
+    closeDelModal();
+    closeLightbox();
+  }
+});
+document.getElementById("postModal").addEventListener("click", e => {
+  if (e.target === document.getElementById("postModal")) closePostModal();
+});
+document.getElementById("delModal").addEventListener("click", e => {
+  if (e.target === document.getElementById("delModal")) closeDelModal();
+});
+document.getElementById("np-desc").addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.ctrlKey) submitPost();
+});
+
+/* ════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════ */
+window.addEventListener("offline",  () => showToast("ইন্টারনেট সংযোগ নেই", true));
+window.addEventListener("online",   () => showToast("সংযোগ পুনরায় স্থাপিত হয়েছে"));
+loadPosts();
+</script>
+</body>
+</html>
