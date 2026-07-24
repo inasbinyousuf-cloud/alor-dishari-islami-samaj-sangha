@@ -344,53 +344,166 @@ function stBadge(s){
 /* ===== LOAD PROFILE ===== */
 async function loadProfile(){
   try{
-    const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action:"getMember",memberId:MID})});
-    const d=await res.json();
+    const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action:"getMember",memberId:MID})});
+    const text=await res.text();
+    let d={};
+    try{d=JSON.parse(text);}catch(_){}
+
     if(d.success){
       profileCache=d;
-      // Sidebar
-      const name=d.name||MID;
-      document.getElementById("sName").textContent=name;
+      // সত্যিকারের নাম পেলে localStorage আপডেট করো
+      const realName = (d.name && d.name!==MID && d.name.trim()!=="") ? d.name.trim() : "";
+      if(realName) localStorage.setItem("memberName", realName);
+
+      // Sidebar নাম ও ID
+      const displayName = realName || localStorage.getItem("memberName") || MID;
+      document.getElementById("sName").textContent=displayName;
       document.getElementById("sMid").textContent=d.memberId||MID;
-      // Avatar
+
+      // Sidebar Avatar
       const av=document.getElementById("sAvatar");
       if(d.photo&&d.photo.length>10){
-        av.innerHTML=`<img src="${d.photo}" alt="">`;
+        av.innerHTML=`<img src="${d.photo}" alt="ছবি" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
       } else {
-        av.innerHTML=`<span>${name.charAt(0)}</span>`;
+        av.innerHTML=`<span>${displayName.charAt(0).toUpperCase()}</span>`;
       }
+    } else {
+      // API ব্যর্থ হলে cached name ব্যবহার করো
+      const fallName=localStorage.getItem("memberName")||MID;
+      document.getElementById("sName").textContent=fallName;
+      document.getElementById("sMid").textContent=MID;
+      const av=document.getElementById("sAvatar");
+      av.innerHTML=`<span>${fallName.charAt(0).toUpperCase()}</span>`;
     }
-  }catch(e){console.log(e);}
+  }catch(e){
+    console.log("getMember error:",e);
+    const fallName=localStorage.getItem("memberName")||MID;
+    document.getElementById("sName").textContent=fallName;
+    document.getElementById("sMid").textContent=MID;
+  }
+
+  // প্রথমে Profile দেখাও (loadPayments দেখাবে না)
   renderProfile();
-  loadPayments();
+
+  // Stats শুধু numbers আপডেট করবে — content replace করবে না
+  loadStatsOnly();
+}
+
+/* ===== LOAD STATS (content replace করে না, শুধু numbers আপডেট করে) ===== */
+async function loadStatsOnly(){
+  try{
+    const res=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action:"paymentHistory",memberId:MID})});
+    const text=await res.text();
+    let d={};
+    try{d=JSON.parse(text);}catch(_){}
+    const pays=d.payments||[];
+    let total=0,yearT=0,count=0;
+    const yr=new Date().getFullYear();
+    pays.forEach(p=>{
+      count++;
+      const amt=Number(p.amount)||0;
+      total+=amt;
+      if(String(p.date||"").includes(yr)) yearT+=amt;
+    });
+    const BNM=["জানুয়ারি","ফেব্রুয়ারি","মার্চ","এপ্রিল","মে","জুন","জুলাই","আগস্ট","সেপ্টেম্বর","অক্টোবর","নভেম্বর","ডিসেম্বর"];
+    const now=new Date();
+    const curKey=BNM[now.getMonth()]+" "+now.getFullYear();
+    const curPaid=pays
+      .filter(p=>(p.paymentType||"মাসিক চাঁদা").includes("মাসিক")&&(p.month||"").trim()===curKey&&(p.status||"")!=="Rejected")
+      .reduce((s,p)=>s+(Number(p.amount)||0),0);
+    const due=Math.max(0,50-curPaid);
+    // শুধু stat card-এর number আপডেট করো
+    const el=id=>document.getElementById(id);
+    if(el("stTotal"))  el("stTotal").textContent="৳"+total;
+    if(el("stYear"))   el("stYear").textContent="৳"+yearT;
+    if(el("stDue"))    el("stDue").textContent="৳"+due;
+    if(el("stCount"))  el("stCount").textContent=count;
+  }catch(e){ console.log("loadStatsOnly:",e); }
 }
 
 /* ===== RENDER PROFILE ===== */
 function renderProfile(){
-  const d=profileCache;
-  const name=d.name||localStorage.getItem("memberName")||"—";
-  const photo=d.photo||"";
+  const d = profileCache;
+  const mid = d.memberId || MID;
+
+  // নাম নির্ধারণ: API থেকে নাম পেলে ব্যবহার করো, না হলে localStorage, তারপর "—"
+  let name = "";
+  if(d.name && d.name.trim() !== "" && d.name !== mid) name = d.name.trim();
+  else { const cached = localStorage.getItem("memberName")||""; if(cached && cached !== mid) name = cached; }
+  const displayName = name || "নাম পাওয়া যায়নি";
+
+  const photo   = d.photo || "";
+  const hasPhoto= photo && photo.length > 10;
+
   setContent(`
-    <div class="cc-head"><h3><i class="fa fa-user" style="color:var(--gm)"></i> আমার প্রোফাইল</h3>${stBadge(d.status||"Pending")}</div>
+    <div class="cc-head">
+      <h3><i class="fa fa-id-card" style="color:var(--gm)"></i> আমার পরিচয়</h3>
+      ${stBadge(d.status||"Pending")}
+    </div>
     <div class="cc-body">
-      <div class="profile-photo-card">
-        <div class="pp-img">
-          ${photo&&photo.length>10?`<img src="${photo}" alt="photo">`:`<span>${name.charAt(0)}</span>`}
+
+      <!-- প্রোফাইল কার্ড: ছবি → নাম → আইডি -->
+      <div style="text-align:center;padding:24px 16px 20px;background:var(--gp);border-radius:14px;border:1px solid #d4e8d8;margin-bottom:18px;">
+        <!-- ছবি -->
+        <div style="width:96px;height:96px;border-radius:50%;margin:0 auto 14px;
+          border:3px solid var(--gm);overflow:hidden;background:var(--gl);
+          display:flex;align-items:center;justify-content:center;
+          box-shadow:0 0 0 4px rgba(11,139,68,0.12);">
+          ${hasPhoto
+            ? `<img src="${photo}" alt="ছবি" style="width:100%;height:100%;object-fit:cover;">`
+            : `<span style="font-size:36px;font-weight:800;color:var(--gm);">${displayName.charAt(0).toUpperCase()}</span>`
+          }
         </div>
-        <div class="pp-info">
-          <h3>${name}</h3>
-          <div class="pid">${d.memberId||MID}</div><br>
-          ${stBadge(d.status||"Pending")}
+        <!-- নাম (বড় করে) -->
+        <div style="font-size:20px;font-weight:800;color:var(--gd);margin-bottom:6px;line-height:1.3;">
+          ${displayName}
         </div>
+        <!-- সদস্য আইডি (ছোট করে নামের নিচে) -->
+        <div style="display:inline-block;background:white;border:1.5px solid var(--gm);
+          color:var(--gm);font-size:13px;font-weight:700;
+          padding:4px 16px;border-radius:100px;margin-bottom:12px;">
+          ${mid}
+        </div>
+        <br>
+        ${stBadge(d.status||"Pending")}
       </div>
+
+      <!-- তথ্যের গ্রিড -->
       <div class="info-grid">
-        <div class="info-box"><div class="ik">মোবাইল</div><div class="iv"><i class="fa fa-phone" style="color:var(--gm);font-size:12px"></i> ${d.mobile||"—"}</div></div>
-        <div class="info-box"><div class="ik">ইমেইল</div><div class="iv"><i class="fa fa-envelope" style="color:var(--gm);font-size:12px"></i> ${d.email||"—"}</div></div>
-        <div class="info-box"><div class="ik">রক্তের গ্রুপ</div><div class="iv"><i class="fa fa-droplet" style="color:#e74c3c;font-size:12px"></i> ${d.blood||"—"}</div></div>
-        <div class="info-box"><div class="ik">স্ট্যাটাস</div><div class="iv">${stBadge(d.status||"Pending")}</div></div>
-        <div class="info-box"><div class="ik">পিতার নাম</div><div class="iv">${d.father||"—"}</div></div>
-        <div class="info-box"><div class="ik">মাতার নাম</div><div class="iv">${d.mother||"—"}</div></div>
-        <div class="info-box" style="grid-column:1/-1;"><div class="ik">ঠিকানা</div><div class="iv"><i class="fa fa-location-dot" style="color:var(--gm);font-size:12px"></i> ${d.address||"—"}</div></div>
+        <div class="info-box">
+          <div class="ik">মোবাইল</div>
+          <div class="iv"><i class="fa fa-phone" style="color:var(--gm);font-size:12px;margin-right:5px;"></i>${d.mobile||"—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ik">ইমেইল</div>
+          <div class="iv"><i class="fa fa-envelope" style="color:var(--gm);font-size:12px;margin-right:5px;"></i>${d.email||"—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ik">রক্তের গ্রুপ</div>
+          <div class="iv"><i class="fa fa-droplet" style="color:#e74c3c;font-size:12px;margin-right:5px;"></i>${d.blood||"—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ik">স্ট্যাটাস</div>
+          <div class="iv">${stBadge(d.status||"Pending")}</div>
+        </div>
+        <div class="info-box">
+          <div class="ik">পিতার নাম</div>
+          <div class="iv">${d.father||"—"}</div>
+        </div>
+        <div class="info-box">
+          <div class="ik">মাতার নাম</div>
+          <div class="iv">${d.mother||"—"}</div>
+        </div>
+        ${d.dob?`<div class="info-box"><div class="ik">জন্ম তারিখ</div><div class="iv">${d.dob}</div></div>`:""}
+        ${d.occupation?`<div class="info-box"><div class="ik">পেশা</div><div class="iv">${d.occupation}</div></div>`:""}
+        <div class="info-box" style="grid-column:1/-1;">
+          <div class="ik">ঠিকানা</div>
+          <div class="iv"><i class="fa fa-location-dot" style="color:var(--gm);font-size:12px;margin-right:5px;"></i>${
+            [d.address,d.union,d.upazila,d.district].filter(Boolean).join(", ")||"—"
+          }</div>
+        </div>
       </div>
     </div>
   `);
